@@ -1,0 +1,23 @@
+@CHARSET "ISO-8859-1";
+#chado_search-id-feature_name_file_inline {
+	border: 0px;
+	box-shadow: none;
+	padding: 2px 0px;
+	margin: 0px;
+}
+
+#chado_search-filter-marker_search-organism-field,
+#chado_search-filter-marker_search-mapped_organism-field,
+#chado_search-filter-marker_search-map_genome-field {
+	clear:both;
+	margin-left: 0px;
+}
+
+#chado_search-filter-marker_search-mapped_organism-label,
+#chado_search-filter-marker_search-organism-label {
+	margin-bottom: 0px !important;
+}
+
+#chado_search-marker_search-markup-genome_label {
+	width: 110px;
+}

@@ -1,0 +1,65 @@
+# Settings for the chado search
+# NOTE: If you change the setting, you'll need to uninstall and reinstall the module or run 'drush csreload' for some settings to take effect
+# The following are allowed arguments
+# The text in [] will be used as the page title.
+# id (required) A unique id for the search.
+# path (optional) A Drupal path for the search.
+# file (optional) All callbacks are included in the specified file.
+# mview_name (optional) The materialized view used for this search.
+# mview_file (optional) The file contains the mview_callback to create the materialized view.
+# mview_callback (optional) The function to create the search materilized view.
+# summary_allowed (optional) allow listing all results when you visit the URL: <path>/summary or /list
+# all_results_title (optional) the title to show for the all result page when you visit the URL: <path>/summary or /list
+# enabled (optional) The search is only enabled if there is a 'enabled=1' entry.
+# !!IMPORTANT: PHP doesn't allow two functions to have the same name. The 'search_id' you provided below MUST be unique for all enabled searches.
+
+[Sequence Search]
+id=sequence_search
+path=find/features
+file=includes/search/csfl/legume_sequence_search.php
+mview_name=chado_search_sequence_search
+mview_file=includes/mview/csfl/legume_sequence_search.mview.php
+mview_callback=chado_search_create_sequence_search_mview
+enabled=1
+
+[Marker Search]
+id=marker_search
+path=find/markers
+file=includes/search/csfl/legume_marker_search.php
+mview_name=chado_search_marker_search
+mview_file=includes/mview/csfl/legume_marker_search.mview.php
+mview_callback=chado_search_create_marker_search_mview
+enabled=1
+
+[Search Markers on Nearby Loci]
+id=nearby_markers
+path=find/nearby_markers
+file=includes/search/nearby_markers.php
+enabled=0
+
+[Transcript Search]
+id=transcript_search
+path=find/transcript
+file=includes/search/csfl/legume_transcript_search.php
+mview_name=chado_search_transcript_search
+mview_file=includes/mview/csfl/legume_transcript_search.mview.php
+mview_callback=chado_search_create_transcript_search_mview
+enabled=1
+
+[Germplasm Search]
+id=germplasm_search
+path=find/germplasms
+file=includes/search/csfl/legume_germplasm_search.php
+mview_name=chado_search_germplasm_search
+mview_file=includes/mview/csfl/legume_germplasm_search.mview.php
+mview_callback=chado_search_create_germplasm_search_mview
+enabled=1
+
+[QTL Search]
+id=qtl_search
+path=find/qtl
+file=includes/search/csfl/legume_qtl_search.php
+mview_name=chado_search_qtl_search
+mview_file=includes/mview/csfl/legume_qtl_search.mview.php
+mview_callback=chado_search_create_qtl_search_mview
+enabled=1

@@ -1,0 +1,7 @@
+name = Mainlab Chado Search
+description = A module to provide advanced search function for the Tripal/Chado database.
+core = 7.x
+#project = chado_search
+package = Mainlab
+version = 7.x-1.0
+dependencies[] = tripal_core

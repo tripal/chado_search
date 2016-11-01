@@ -1,0 +1,124 @@
+# Settings for the chado search
+# NOTE: If you change the setting, you'll need to uninstall and reinstall the module or run 'drush csreload' for some settings to take effect
+# The following are allowed arguments
+# The text in [] will be used as the page title.
+# id (required) A unique id for the search.
+# path (optional) A Drupal path for the search.
+# file (optional) All callbacks are included in the specified file.
+# mview_name (optional) The materialized view used for this search.
+# mview_file (optional) The file contains the mview_callback to create the materialized view.
+# mview_callback (optional) The function to create the search materilized view.
+# summary_allowed (optional) allow listing all results when you visit the URL: <path>/summary or /list
+# all_results_title (optional) the title to show for the all result page when you visit the URL: <path>/results
+# enabled (optional) The search is only enabled if there is a 'enabled=1' entry.
+# !!IMPORTANT: PHP doesn't allow two functions to have the same name. The 'search_id' you provided below MUST be unique for all enabled searches.
+
+#The following are the GDR specific version of searches
+[Gene Search]
+id=gene_search
+path=search/genes
+file=includes/search/gdr/gdr_gene_search.php
+mview_name=chado_search_gene_search
+mview_file=includes/mview/gdr/gdr_gene_search.mview.php
+mview_callback=chado_search_create_gene_search_mview
+enabled=1
+
+[Sequence Search]
+id=sequence_search
+path=search/features
+file=includes/search/gdr/gdr_sequence_search.php
+mview_name=chado_search_sequence_search
+mview_file=includes/mview/gdr/gdr_sequence_search.mview.php
+mview_callback=chado_search_create_sequence_search_mview
+enabled=1
+
+[Marker Search]
+id=marker_search
+path=search/markers
+file=includes/search/gdr/gdr_marker_search.php
+mview_name=chado_search_marker_search
+mview_file=includes/mview/gdr/gdr_marker_search.mview.php
+mview_callback=chado_search_create_marker_search_mview
+enabled=1
+
+[Search Markers on Nearby Loci]
+id=nearby_markers
+path=search/nearby_markers
+file=includes/search/gdr/gdr_nearby_markers.php
+enabled=1
+
+[Germplasm Search]
+id=germplasm_search
+path=search/germplasm
+file=includes/search/gdr/gdr_germplasm_search.php
+mview_name=chado_search_germplasm_search
+mview_file=includes/mview/gdr/gdr_germplasm_search.mview.php
+mview_callback=chado_search_create_germplasm_search_mview
+enabled=0
+
+[Germplasm Image Search]
+id=germplasm_search_by_image
+path=search/germplasm/image
+file=includes/search/gdr/gdr_germplasm_search_by_image.php
+mview_name=chado_search_germplasm_search_by_image
+mview_file=includes/mview/gdr/gdr_germplasm_search_by_image.mview.php
+mview_callback=chado_search_create_germplasm_search_by_image_mview
+num_per_page=10
+enabled=1
+
+[Haplotype Block Search]
+id=haplotype_block_search
+path=search/haplotype_blocks
+file=includes/search/gdr/gdr_haplotype_block_search.php
+mview_name=chado_search_haplotype_block_search
+mview_file=includes/mview/gdr/gdr_haplotype_block_search.mview.php
+mview_callback=chado_search_create_haplotype_block_search_mview
+enabled=1
+
+[QTL Search]
+id=qtl_search
+path=search/qtl
+file=includes/search/gdr/gdr_qtl_search.php
+mview_name=chado_search_qtl_search
+mview_file=includes/mview/gdr/gdr_qtl_search.mview.php
+mview_callback=chado_search_create_qtl_search_mview
+enabled=1
+
+[Search Maps]
+id=featuremap
+path=search/featuremap
+file=includes/search/gdr/gdr_featuremap.php
+mview_name=chado_search_featuremap
+mview_file=includes/mview/gdr/gdr_featuremap.mview.php
+mview_callback=chado_search_create_featuremap_mview
+enabled=1
+summary_allowed=1
+
+[Species Summary]
+id=species
+path=search/species
+file=includes/search/gdr/gdr_species.php
+mview_name=chado_search_species
+num_per_page=100
+mview_file=includes/mview/gdr/gdr_species.mview.php
+mview_callback=chado_search_create_species_mview
+enabled=1
+summary_allowed=1
+
+[SSR Genotype Search]
+id=ssr_genotype_search
+path=search/ssr_genotype
+file=includes/search/gdr/gdr_ssr_genotype_search.php
+mview_name=chado_search_ssr_genotype_search
+mview_file=includes/mview/gdr/gdr_ssr_genotype_search.mview.php
+mview_callback=chado_search_create_ssr_genotype_search_mview
+enabled=1
+
+[SNP Genotype Search]
+id=snp_genotype_search
+path=search/snp_genotype
+file=includes/search/gdr/gdr_snp_genotype_search.php
+mview_name=chado_search_snp_genotype_search
+mview_file=includes/mview/gdr/gdr_snp_genotype_search.mview.php
+mview_callback=chado_search_create_snp_genotype_search_mview
+enabled=1
