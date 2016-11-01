@@ -15,7 +15,7 @@
 # !!IMPORTANT: PHP doesn't allow two functions to have the same name. The 'search_id' you provided below MUST be unique for all enabled searches.
 
 # Defatul searches
-[Sequence Search]
+[Search Sequence]
 id=sequence_search
 path=find/features
 file=includes/search/sequence_search.php
@@ -89,7 +89,7 @@ path=find/qtl_nearby_markers
 file=includes/search/cottongen/cottongen_qtl_nearby_markers.php
 enabled=1
 
-[Trait Evaluation Search]
+[Search Trait Evaluation]
 id=qualitative_traits
 path=find/qualitative_traits
 file=includes/search/cottongen/cottongen_qualitative_traits.php
@@ -99,7 +99,7 @@ mview_callback=chado_search_create_qualitative_traits_mview
 summary_title=Qualitative Trait Summary
 enabled=1
 
-[Trait Evaluation Search]
+[Search Trait Evaluation]
 id=quantitative_traits
 path=find/quantitative_traits
 file=includes/search/cottongen/cottongen_quantitative_traits.php
@@ -109,7 +109,7 @@ mview_callback=chado_search_create_quantitative_traits_mview
 summary_title=Quantitative Trait Summary
 enabled=1
 
-[Germplasm Search]
+[Search Germplasm]
 id=germplasm_search
 path=find/germplasm
 file=includes/search/cottongen/cottongen_germplasm_search.php
@@ -118,7 +118,7 @@ mview_file=includes/mview/cottongen/cottongen_germplasm_search.mview.php
 mview_callback=chado_search_create_germplasm_search_mview
 enabled=1
 
-[Germplasm Search]
+[Search Germplasm]
 id=germplasm_search_by_pedigree
 path=find/germplasm/pedigree
 file=includes/search/cottongen/cottongen_germplasm_search_by_pedigree.php
@@ -127,7 +127,7 @@ mview_file=includes/mview/cottongen/cottongen_germplasm_search_by_pedigree.mview
 mview_callback=chado_search_create_germplasm_search_by_pedigree_mview
 enabled=1
 
-[Germplasm Search]
+[Search Germplasm]
 id=germplasm_search_by_country
 path=find/germplasm/country
 file=includes/search/cottongen/cottongen_germplasm_search_by_country.php
@@ -136,7 +136,7 @@ mview_file=includes/mview/cottongen/cottongen_germplasm_search_by_country.mview.
 mview_callback=chado_search_create_germplasm_search_by_country_mview
 enabled=1
 
-[Germplasm Search]
+[Search Germplasm]
 id=germplasm_search_by_collection
 path=find/germplasm/collection
 file=includes/search/cottongen/cottongen_germplasm_search_by_collection.php
@@ -145,7 +145,7 @@ mview_file=includes/mview/cottongen/cottongen_germplasm_search_by_collection.mvi
 mview_callback=chado_search_create_germplasm_search_by_collection_mview
 enabled=1
 
-[Germplasm Search]
+[Search Germplasm]
 id=germplasm_search_by_image
 path=find/germplasm/image
 file=includes/search/cottongen/cottongen_germplasm_search_by_image.php
@@ -155,7 +155,7 @@ mview_callback=chado_search_create_germplasm_search_by_image_mview
 num_per_page=10
 enabled=1
 
-[Gene Search]
+[Search Gene and Transcripts]
 id=gene_search
 path=find/genes
 file=includes/search/cottongen/cottongen_gene_search.php
@@ -164,7 +164,7 @@ mview_file=includes/mview/cottongen/cottongen_gene_search.mview.php
 mview_callback=chado_search_create_gene_search_mview
 enabled=1
 
-[QTL Search]
+[Search QTL]
 id=qtl_search
 path=find/qtl
 file=includes/search/cottongen/cottongen_qtl_search.php
