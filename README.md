@@ -310,6 +310,7 @@ following content:
         (https://www.rosaceae.org/search/snp_genotype)
         
   4. legume.settings.txt
+  
       this file contains the following search interfaces (with URL as live example): 
       
     * [Sequence Search]
