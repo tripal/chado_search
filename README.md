@@ -174,132 +174,132 @@ function chado_search_node_search_form ($form) {
 ## Example Setting Files
   1. default.settings.txt
      this file contains three search interfaces: 
-         1) Sequence Search
-         2) Marker Search
-         3) Gene Search
+         * Sequence Search
+         * Marker Search
+         * Gene Search
 
   2. cottongen.settings.txt
       this file contains the following search interfaces (with URL as live example): 
-         1) Sequence Search
+         * Sequence Search
              https://www.cottongen.org/find/features
              
-         2) Search for Mapped Markers
+         * Search for Mapped Markers
              https://www.cottongen.org/find/mapped_markers
              
-         3) Advanced Marker Search
+         * Advanced Marker Search
              https://www.cottongen.org/find/markers
              
-         4) Marker Source Information
+         * Marker Source Information
              https://www.cottongen.org/find/marker/source
              
-         5) Search Mapped Sequence by Map Name
+         * Search Mapped Sequence by Map Name
              https://www.cottongen.org/find/mapped_sequence/map
              
-         6) Search Mapped Sequence by Chromosome Number
+         * Search Mapped Sequence by Chromosome Number
              https://www.cottongen.org/find/mapped_sequence/chromosome
              
-         7) Search Mapped Sequence by Genome Group
+         * Search Mapped Sequence by Genome Group
              https://www.cottongen.org/find/mapped_sequence/genome
              
-         8) Search Markers on Nearby Marker Loci
+         * Search Markers on Nearby Marker Loci
              https://www.cottongen.org/find/nearby_markers
              
-         9) Search Markers on Nearby QTL
+         * Search Markers on Nearby QTL
              https://www.cottongen.org/find/qtl_nearby_markers
              
-         10) Trait Evaluation Search (Qualitative Traits)
+         * Trait Evaluation Search (Qualitative Traits)
              https://www.cottongen.org/find/qualitative_traits
              
-         11) Trait Evaluation Search (Quantitative Traits)
+         * Trait Evaluation Search (Quantitative Traits)
              https://www.cottongen.org/find/quantitative_traits
              
-         12) Germplasm Search
+         * Germplasm Search
              https://www.cottongen.org/find/germplasm
              
-         13) Germplasm Search (by Pedigree)
+         * Germplasm Search (by Pedigree)
              https://www.cottongen.org/find/germplasm/pedigree
              
-         14) Germplasm Search (by Country)
+         * Germplasm Search (by Country)
              https://www.cottongen.org/	find/germplasm/country
              
-         15) Germplasm Search (by Collection)
+         * Germplasm Search (by Collection)
              https://www.cottongen.org/find/germplasm/collection
              
-         16) Germplasm Search (by Image)
+         * Germplasm Search (by Image)
              https://www.cottongen.org/find/germplasm/image
              
-         17) Gene Search
+         * Gene Search
              https://www.cottongen.org/	find/genes
              
-         18) QTL Search
+         * QTL Search
              https://www.cottongen.org/find/qtl
              
-         19) ND Geolocation
+         * ND Geolocation
              https://www.cottongen.org/find/nd_geolocation
              
-         20) Map Data Summary
+         * Map Data Summary
              https://www.cottongen.org/find/featuremap
              
-         21) Species Summary
+         * Species Summary
              https://www.cottongen.org/find/species
 
   3. gdr.settings.txt
       this file contains the following search interfaces (with URL as live example): 
-         1) Gene Search
+         * Gene Search
              https://www.rosaceae.org/search/genes
              
-         2) Sequence Search
+         * Sequence Search
              https://www.rosaceae.org/search/features
              
-         3) Marker Search
+         * Marker Search
              https://www.rosaceae.org/search/markers
              
-         4) Search Markers on Nearby Loci
+         * Search Markers on Nearby Loci
              https://www.rosaceae.org/search/nearby_markers
              
-         5) Germplasm Search
+         * Germplasm Search
              https://www.rosaceae.org/search/germplasm
              
-         6) Germplasm Image Search
+         * Germplasm Image Search
              https://www.rosaceae.org/search/germplasm/image
              
-         7) Haplotype Block Search
+         * Haplotype Block Search
              https://www.rosaceae.org/search/haplotype_blocks
              
-         8) QTL Search
+         * QTL Search
              https://www.rosaceae.org/search/qtl
              
-         9) Search Maps
+         * Search Maps
              https://www.rosaceae.org/search/featuremap
              
-         10) Species Summary
+         * Species Summary
              https://www.rosaceae.org/search/species
              
-         11) SSR Genotype Search
+         * SSR Genotype Search
              https://www.rosaceae.org/search/ssr_genotype
              
-         12) SNP Genotype Search
+         * SNP Genotype Search
              https://www.rosaceae.org/search/snp_genotype
              
   4. legume.settings.txt
       this file contains the following search interfaces (with URL as live example): 
       
-         1) Sequence Search
+         * Sequence Search
              https://www.coolseasonfoodlegume.org/find/features
              
-         2) Marker Search
+         * Marker Search
              https://www.coolseasonfoodlegume.org/find/markers
              
-         3) Search Markers on Nearby Loci
+         * Search Markers on Nearby Loci
              https://www.coolseasonfoodlegume.org/find/nearby_markers
              
-         4) Transcript Search
+         * Transcript Search
              https://www.coolseasonfoodlegume.org/find/transcript
              
-         5) Germplasm Search
+         * Germplasm Search
              https://www.coolseasonfoodlegume.org/find/germplasms
              
-         6) QTL Search
+         * QTL Search
              https://www.coolseasonfoodlegume.org/find/qtl
              
 ## Problems/Suggestions
