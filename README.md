@@ -105,8 +105,8 @@ After downloading the module, extract it into your site's module directory
    Go to: Mainlab > Chado Search and click on either 'Disable' or 'Enable' for a search 
    i.e. http://your.site/admin/mainlab/chado_search/settings
    
-   Note: Make sure your web server has write permission to the settings.conf so you can
-              turn a search on or off using the web interface.
+     Note: Make sure your web server has write permission to the settings.conf so you can
+                turn a search on or off using the web interface.
                  
  - Adding/Deleting data for a search:
  
