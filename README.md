@@ -60,10 +60,10 @@ After downloading the module, extract it into your site's module directory
     required for the search to function.
     
 3. Populate the materialized views by using the Tripal administrative interface:
-  3.1 Go to: Tripal > Chado Schema > Materialized Views
-  3.2 Identify corresponding materialized views in your 'settings.conf' and click on 
+  i. Go to: Tripal > Chado Schema > Materialized Views
+  ii. Identify corresponding materialized views in your 'settings.conf' and click on 
         'Populate' to submit a Tripal job.
-  3.3 Launch the job from the console. This can usually be done by switching to the web
+  iii. Launch the job from the console. This can usually be done by switching to the web
         root directory and issue the drush command:
         ```
         drush trp-run-jobs --username=<an admin user>
