@@ -83,7 +83,7 @@ After downloading the module, extract it into your site's module directory
         ```
         
   Note: More information about using the Tripal Materialized Views system can be found at 
-           http://tripal.info/node/105)
+           http://tripal.info/node/105
 
 4. Visit the search page in your browse by going to the path set in your 'settings.conf' file.
     For example, the default 'Sequence Search' can be accessed by visiting:
@@ -95,8 +95,10 @@ After downloading the module, extract it into your site's module directory
     Note: you can change the path to anything you like but remember to clear the Drupal 
     cache to refresh Drupal's menu registry. An easy way to do so is to run the following 
     drush command after you make the change:
+    
+    ```
       drush csreload
-
+    ```
 ## Administration
  - Enabling/Disabling a search:
  
@@ -120,7 +122,10 @@ After downloading the module, extract it into your site's module directory
     with Mainlab Chado Search and later decide to get it back, delete the materialized 
     view by using the Tripal administrative interface and refresh the 'settings.conf' using 
     the following drush command.
-      drush csreload
+    
+    ```
+    drush csreload
+    ```
       
     Note: you'll still need to populate the materialized view using Tripal's administrative 
     interface after bringing it back.
