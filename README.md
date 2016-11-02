@@ -1,5 +1,4 @@
-Project
---------------------
+# Mainab Chado Search
 Mainlab Chado Search is a module that enables advanced search function for biological 
 data stored in a Tripal/Chado database (see http://gmod.org/wiki/Chado and 
 http://tripal.info). By default,  a set of search interfaces are provided, such as 'Gene Search' 
@@ -21,22 +20,18 @@ The Mainlab Chado Search is created by Main Bioinformatics Lab (Main Lab) at
 Washington State University. Information about the Main Lab can be found at: 
 https://www.bioinfo.wsu.edu
  
-Requirement
---------------------
+## Requirement
  - Drupal 7.x
  - Tripal 7.x-2.x
 
-Version
---------------------
+## Version
 1.0.0
 
-Download
---------------------
+## Download
 The Mainlab Chado Search module can be downloaded from GitHub:
 https://www.github.com/mainlab-dev/chado_search
 
-Installation
---------------------
+## Installation
 After downloading the module, extract it into your site's module directory 
 (e.g. sites/all/modules) then follow the instructions below:
 
@@ -87,8 +82,7 @@ After downloading the module, extract it into your site's module directory
     drush command after you make the change:
       drush csreload
 
-Administration
---------------------
+## Administration
  - Enabling/Disabling a search:
    Go to: Mainlab > Chado Search and click on either 'Disable' or 'Enable' for a search 
    i.e. http://your.site/admin/mainlab/chado_search/settings
@@ -113,8 +107,7 @@ Administration
     Note: you'll still need to populate the materialized view using Tripal's administrative 
     interface after bringing it back.
     
-Customization
---------------------
+## Customization
 You can customize the search for your site by modifying the 'settings.conf' file and using 
 the Tripal MView interface. 
 
@@ -122,8 +115,7 @@ For developers, you can also create your own search by copying/modifying, or cre
 the search interface php and/or the materialized view definition php files. See details below 
 in the Create New Search section.
 
-Create New Search (for Developers)
---------------------
+## Create New Search (for Developers)
 For site developers, Mainlab Chado Search provides a set of APIs that'll be useful for 
 developing new search interfaces. At this time, no technical support is offered, nor is the 
 detailed API documentation. An example (i.e. Node Search) below, however, shows 
@@ -141,7 +133,7 @@ Note2: Use of materialized view is recommended but not required.
 
 2. Create the search interface php file 'includes/search/example/node_search.php' with the
 following content:
-========================= CODE ==============================
+```
 <?php
 
 use ChadoSearch\Set;
@@ -171,7 +163,7 @@ function chado_search_node_search_form ($form) {
   ->where($where)
   ->execute($form, $form_state);
 }
-========================= CODE ==============================
+```
 
 3. Make the 'settings.conf' effective:
     drush csreload 
@@ -179,8 +171,7 @@ function chado_search_node_search_form ($form) {
 
 4. Access the search page by visiting: http://your.site/find/node
 
-Example Setting Files
---------------------
+## Example Setting Files
   1. default.settings.txt
      this file contains three search interfaces: 
          1) Sequence Search
@@ -311,8 +302,7 @@ Example Setting Files
          6) QTL Search
              https://www.coolseasonfoodlegume.org/find/qtl
              
-Problems/Suggestions
---------------------
+## Problems/Suggestions
 Mainlab Chado Search module is still under active development. For questions or bug 
 report, please contact the developers at the Main Bioinformatics Lab by emailing to: 
 dev@bioinfo.wsu.edu
