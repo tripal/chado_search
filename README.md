@@ -262,13 +262,13 @@ following content:
         (https://www.cottongen.org/find/qtl)
         
     * [ND Geolocation]
-        (https://www.cottongen.org/find/nd_geolocation)
+        (https://www.cottongen.org/find/nd_geolocation/list)
         
     * [Map Data Summary]
-        (https://www.cottongen.org/find/featuremap)
+        (https://www.cottongen.org/find/featuremap/list)
         
     * [Species Summary]
-        (https://www.cottongen.org/find/species)
+        (https://www.cottongen.org/find/species/list)
 
   3. gdr.settings.txt
   
