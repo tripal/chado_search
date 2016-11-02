@@ -319,9 +319,6 @@ following content:
     * [Marker Search]
         (https://www.coolseasonfoodlegume.org/find/markers)
         
-    * [Search Markers on Nearby Loci]
-        (https://www.coolseasonfoodlegume.org/find/nearby_markers)
-        
     * [Transcript Search]
         (https://www.coolseasonfoodlegume.org/find/transcript)
         
