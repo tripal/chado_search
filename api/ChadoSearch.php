@@ -12,14 +12,6 @@ use ChadoSearch\result\CustomDownload;
 use ChadoSearch\result\Fasta;
 use ChadoSearch\result\ResultQuery;
 
-use ChadoSearch\sql\Statement;
-use ChadoSearch\sql\ColumnCond;
-use ChadoSearch\sql\MultiColumnsCond;
-use ChadoSearch\sql\SelectCond;
-use ChadoSearch\sql\BetweenCond;
-use ChadoSearch\sql\FileCond;
-use ChadoSearch\sql\FileMultiColumnsCond;
-
 class ChadoSearch {
 
   public $search_id, $path, $number_per_page;
