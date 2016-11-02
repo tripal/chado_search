@@ -285,9 +285,6 @@ following content:
     * [Search Markers on Nearby Loci]
         (https://www.rosaceae.org/search/nearby_markers)
         
-    * [Germplasm Search]
-        (https://www.rosaceae.org/search/germplasm)
-        
     * [Germplasm Image Search]
         (https://www.rosaceae.org/search/germplasm/image)
         
