@@ -198,12 +198,14 @@ following content:
 
 ## Example Setting Files
   1. default.settings.txt
+  
      this file contains three search interfaces: 
     * Sequence Search
     * Marker Search
     * Gene Search
 
   2. cottongen.settings.txt
+  
       this file contains the following search interfaces (with URL as live example): 
     * [Sequence Search]
         (https://www.cottongen.org/find/features)
@@ -269,6 +271,7 @@ following content:
         (https://www.cottongen.org/find/species)
 
   3. gdr.settings.txt
+  
       this file contains the following search interfaces (with URL as live example): 
     * [Gene Search]
         (https://www.rosaceae.org/search/genes)
