@@ -122,53 +122,55 @@ detailed API documentation. An example (i.e. Node Search) below, however, shows
 minimal steps required to create a new search from scratch:
 
 1. Create a stanza in the 'settings.conf'. For example, a basic stanza looks like:
+  ```
   [Node Search]
   id=node_search
   path=find/node
   file=includes/search/example/node_search.php
   enabled=1
-
-Note1: See 'default.settings.txt' for additional information about the configurable options.
-Note2: Use of materialized view is recommended but not required.
+  ```
+  - Note1: See 'default.settings.txt' for additional information about the configurable options.
+  - Note2: Use of materialized view is recommended but not required.
 
 2. Create the search interface php file 'includes/search/example/node_search.php' with the
 following content:
-```
-<?php
-
-use ChadoSearch\Set;
-use ChadoSearch\Sql;
-
-/*************************************************************
- * hook_form()  
- */
-function chado_search_node_search_form ($form) {
-  $form->addTextFilter(
-      Set::textFilter()
-      ->id('title')
-      ->title('Title')
-  );
-  $form->addSubmit();    
-  return $form;
-}
-
-/*************************************************************
- * hook_form_submit()
- */
- function chado_search_node_search_form_submit ($form, &$form_state) {
-  $sql = "SELECT nid, title FROM node";
-  $where [0] = Sql::textFilter('title', $form_state, 'title');
-  Set::result()
-  ->sql($sql)
-  ->where($where)
-  ->execute($form, $form_state);
-}
-```
+  ```
+  <?php
+  
+  use ChadoSearch\Set;
+  use ChadoSearch\Sql;
+  
+  /*************************************************************
+   * hook_form()  
+   */
+  function chado_search_node_search_form ($form) {
+    $form->addTextFilter(
+        Set::textFilter()
+        ->id('title')
+        ->title('Title')
+    );
+    $form->addSubmit();    
+    return $form;
+  }
+  
+  /*************************************************************
+   * hook_form_submit()
+   */
+   function chado_search_node_search_form_submit ($form, &$form_state) {
+    $sql = "SELECT nid, title FROM node";
+    $where [0] = Sql::textFilter('title', $form_state, 'title');
+    Set::result()
+    ->sql($sql)
+    ->where($where)
+    ->execute($form, $form_state);
+  }
+  ```
 
 3. Make the 'settings.conf' effective:
-    drush csreload 
-    (or 'drush cc menu' at minimum)
-
+  ```
+  drush csreload 
+  (or 'drush cc menu' at minimum)
+  ```
 4. Access the search page by visiting: http://your.site/find/node
 
 ## Example Setting Files
@@ -180,127 +182,127 @@ function chado_search_node_search_form ($form) {
 
   2. cottongen.settings.txt
       this file contains the following search interfaces (with URL as live example): 
-    * Sequence Search
-        https://www.cottongen.org/find/features
+    * [Sequence Search]
+        (https://www.cottongen.org/find/features)
         
-    * Search for Mapped Markers
-        https://www.cottongen.org/find/mapped_markers
+    * [Search for Mapped Markers]
+        (https://www.cottongen.org/find/mapped_markers)
         
-    * Advanced Marker Search
-        https://www.cottongen.org/find/markers
+    * [Advanced Marker Search]
+        (https://www.cottongen.org/find/markers)
         
-    * Marker Source Information
-        https://www.cottongen.org/find/marker/source
+    * [Marker Source Information]
+        (https://www.cottongen.org/find/marker/source)
         
-    * Search Mapped Sequence by Map Name
-        https://www.cottongen.org/find/mapped_sequence/map
+    * [Search Mapped Sequence by Map Name]
+        (https://www.cottongen.org/find/mapped_sequence/map)
         
-    * Search Mapped Sequence by Chromosome Number
-        https://www.cottongen.org/find/mapped_sequence/chromosome
+    * [Search Mapped Sequence by Chromosome Number]
+        (https://www.cottongen.org/find/mapped_sequence/chromosome)
         
-    * Search Mapped Sequence by Genome Group
-        https://www.cottongen.org/find/mapped_sequence/genome
+    * [Search Mapped Sequence by Genome Group]
+        (https://www.cottongen.org/find/mapped_sequence/genome)
         
-    * Search Markers on Nearby Marker Loci
-        https://www.cottongen.org/find/nearby_markers
+    * [Search Markers on Nearby Marker Loci]
+        (https://www.cottongen.org/find/nearby_markers)
         
-    * Search Markers on Nearby QTL
-        https://www.cottongen.org/find/qtl_nearby_markers
+    * [Search Markers on Nearby QTL]
+        (https://www.cottongen.org/find/qtl_nearby_markers)
         
-    * Trait Evaluation Search (Qualitative Traits)
-        https://www.cottongen.org/find/qualitative_traits
+    * [Trait Evaluation Search (Qualitative Traits)]
+        (https://www.cottongen.org/find/qualitative_traits)
         
-    * Trait Evaluation Search (Quantitative Traits)
-        https://www.cottongen.org/find/quantitative_traits
+    * [Trait Evaluation Search (Quantitative Traits)]
+        (https://www.cottongen.org/find/quantitative_traits)
         
-    * Germplasm Search
-        https://www.cottongen.org/find/germplasm
+    * [Germplasm Search]
+        (https://www.cottongen.org/find/germplasm)
         
-    * Germplasm Search (by Pedigree)
-        https://www.cottongen.org/find/germplasm/pedigree
+    * [Germplasm Search (by Pedigree)]
+        (https://www.cottongen.org/find/germplasm/pedigree)
         
-    * Germplasm Search (by Country)
-        https://www.cottongen.org/find/germplasm/country
+    * [Germplasm Search (by Country)]
+        (https://www.cottongen.org/find/germplasm/country)
         
-    * Germplasm Search (by Collection)
-        https://www.cottongen.org/find/germplasm/collection
+    * [Germplasm Search (by Collection)]
+        (https://www.cottongen.org/find/germplasm/collection)
         
-    * Germplasm Search (by Image)
-        https://www.cottongen.org/find/germplasm/image
+    * [Germplasm Search (by Image)]
+        (https://www.cottongen.org/find/germplasm/image)
         
-    * Gene Search
-        https://www.cottongen.org/find/genes
+    * [Gene Search]
+        (https://www.cottongen.org/find/genes)
         
-    * QTL Search
-        https://www.cottongen.org/find/qtl
+    * [QTL Search]
+        (https://www.cottongen.org/find/qtl)
         
-    * ND Geolocation
-        https://www.cottongen.org/find/nd_geolocation
+    * [ND Geolocation]
+        (https://www.cottongen.org/find/nd_geolocation)
         
-    * Map Data Summary
-        https://www.cottongen.org/find/featuremap
+    * [Map Data Summary]
+        (https://www.cottongen.org/find/featuremap)
         
-    * Species Summary
-        https://www.cottongen.org/find/species
+    * [Species Summary]
+        (https://www.cottongen.org/find/species)
 
   3. gdr.settings.txt
       this file contains the following search interfaces (with URL as live example): 
-    * Gene Search
-        https://www.rosaceae.org/search/genes
+    * [Gene Search]
+        (https://www.rosaceae.org/search/genes)
         
-    * Sequence Search
-        https://www.rosaceae.org/search/features
+    * [Sequence Search]
+        (https://www.rosaceae.org/search/features)
         
-    * Marker Search
-        https://www.rosaceae.org/search/markers
+    * [Marker Search]
+        (https://www.rosaceae.org/search/markers)
         
-    * Search Markers on Nearby Loci
-        https://www.rosaceae.org/search/nearby_markers
+    * [Search Markers on Nearby Loci]
+        (https://www.rosaceae.org/search/nearby_markers)
         
-    * Germplasm Search
-        https://www.rosaceae.org/search/germplasm
+    * [Germplasm Search]
+        (https://www.rosaceae.org/search/germplasm)
         
-    * Germplasm Image Search
-        https://www.rosaceae.org/search/germplasm/image
+    * [Germplasm Image Search]
+        (https://www.rosaceae.org/search/germplasm/image)
         
-    * Haplotype Block Search
-        https://www.rosaceae.org/search/haplotype_blocks
+    * [Haplotype Block Search]
+        (https://www.rosaceae.org/search/haplotype_blocks)
         
-    * QTL Search
-        https://www.rosaceae.org/search/qtl
+    * [QTL Search]
+        (https://www.rosaceae.org/search/qtl)
         
-    * Search Maps
-        https://www.rosaceae.org/search/featuremap
+    * [Search Maps]
+        (https://www.rosaceae.org/search/featuremap)
         
-    * Species Summary
-        https://www.rosaceae.org/search/species
+    * [Species Summary]
+        (https://www.rosaceae.org/search/species)
         
-    * SSR Genotype Search
-        https://www.rosaceae.org/search/ssr_genotype
+    * [SSR Genotype Search]
+        (https://www.rosaceae.org/search/ssr_genotype)
         
-    * SNP Genotype Search
-        https://www.rosaceae.org/search/snp_genotype
+    * [SNP Genotype Search]
+        (https://www.rosaceae.org/search/snp_genotype)
         
   4. legume.settings.txt
       this file contains the following search interfaces (with URL as live example): 
       
-    * Sequence Search
-        https://www.coolseasonfoodlegume.org/find/features
+    * [Sequence Search]
+        (https://www.coolseasonfoodlegume.org/find/features)
         
-    * Marker Search
-        https://www.coolseasonfoodlegume.org/find/markers
+    * [Marker Search]
+        (https://www.coolseasonfoodlegume.org/find/markers)
         
-    * Search Markers on Nearby Loci
-        https://www.coolseasonfoodlegume.org/find/nearby_markers
+    * [Search Markers on Nearby Loci]
+        (https://www.coolseasonfoodlegume.org/find/nearby_markers)
         
-    * Transcript Search
-        https://www.coolseasonfoodlegume.org/find/transcript
+    * [Transcript Search]
+        (https://www.coolseasonfoodlegume.org/find/transcript)
         
-    * Germplasm Search
-        https://www.coolseasonfoodlegume.org/find/germplasms
+    * [Germplasm Search]
+        (https://www.coolseasonfoodlegume.org/find/germplasms)
         
-    * QTL Search
-        https://www.coolseasonfoodlegume.org/find/qtl
+    * [QTL Search]
+        (https://www.coolseasonfoodlegume.org/find/qtl)
         
 ## Problems/Suggestions
 Mainlab Chado Search module is still under active development. For questions or bug 
