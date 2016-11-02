@@ -11,10 +11,10 @@ The Mainlab Chado Search module depends on the Tripal materialized views system 
 gathering data the site administrator wishes to make searchable. Using a materialized view 
 not only improves the search performance, but also allows the administrator to restrict 
 data by modifying the materialized view definition. This design also allows site developers 
-to use this module when the data storage in Chado is not exactly the same by adjusting 
-materialized views (See ‘Customization’ section). The data collecton templates and loader (
-Mainlab Chado Loader, see https://www.github.com/mainlab-dev/mainlab_chado_loader) 
-are also provided as a separate module.
+to adopt this module when data in Chado is not stored in the exact same way
+(See ‘Customization’ section). Data collecton templates and loader (Mainlab Chado Loader, 
+see https://www.github.com/mainlab-dev/mainlab_chado_loader) are also available as a 
+separate module.
 
 The Mainlab Chado Search is created by Main Bioinformatics Lab (Main Lab) at 
 Washington State University. Information about the Main Lab can be found at: 
@@ -29,6 +29,7 @@ https://www.bioinfo.wsu.edu
 
 ## Download
 The Mainlab Chado Search module can be downloaded from GitHub:
+
 https://www.github.com/mainlab-dev/chado_search
 
 ## Installation
@@ -36,12 +37,18 @@ After downloading the module, extract it into your site's module directory
 (e.g. sites/all/modules) then follow the instructions below:
 
 1. Create a 'settings.conf' file in the 'chado_search/file' directory. For example,
-      cd chado_search/file
-      cp default.settings.txt settings.conf
+
+    ```
+    cd chado_search/file
+    cp default.settings.txt settings.conf
+    ```
     
     Note1: if you make changes to the 'settings.conf' after the module is enabled, you'll need 
     to run the following drush command to make it effective:
-      drush csreload
+    
+    ```
+    drush csreload
+    ```
     
     Note2: Mainlab Chado Search currently provides example setting files listed below. You 
     can find more information about these setting files in the 'Example Setting Files' section 
@@ -51,23 +58,30 @@ After downloading the module, extract it into your site's module directory
       - gdr.settings.txt
       - legume.settings.txt
 
-2. Enable the module by using the Drupal administrative interface: 
-      Go to: Modules, check Mainlab Chado Search (under the Mainlab category) and save 
+2. Enable the module by using the Drupal administrative interface:
+ 
+      Go to: Modules, check Mainlab Chado Search (under the Mainlab category) and save
+       
     or by using the 'drush' command:
-      drush pm-enable chado_search
-
+    
+    ```
+    drush pm-enable chado_search
+    ```
+    
     This will create all search interfaces listed in the 'settings.conf' and all materialized views 
     required for the search to function.
     
 3. Populate the materialized views by using the Tripal administrative interface:
-  i. Go to: Tripal > Chado Schema > Materialized Views
-  ii. Identify corresponding materialized views in your 'settings.conf' and click on 
+  1. Go to: Tripal > Chado Schema > Materialized Views
+  2. Identify corresponding materialized views in your 'settings.conf' and click on 
         'Populate' to submit a Tripal job.
-  iii. Launch the job from the console. This can usually be done by switching to the web
+  3. Launch the job from the console. This can usually be done by switching to the web
         root directory and issue the drush command:
+        
         ```
         drush trp-run-jobs --username=<an admin user>
         ```
+        
   Note: More information about using the Tripal Materialized Views system can be found at 
            http://tripal.info/node/105)
 
@@ -85,6 +99,7 @@ After downloading the module, extract it into your site's module directory
 
 ## Administration
  - Enabling/Disabling a search:
+ 
    Go to: Mainlab > Chado Search and click on either 'Disable' or 'Enable' for a search 
    i.e. http://your.site/admin/mainlab/chado_search/settings
    
@@ -92,11 +107,13 @@ After downloading the module, extract it into your site's module directory
               turn a search on or off using the web interface.
                  
  - Adding/Deleting data for a search:
+ 
    After adding or deleting data to/from Chado, you'll need to update related materialized 
    views to reflect the change. Information about using the Tripal Materialized Views system 
    can be found at http://tripal.info/node/105
 
- - Maintaining the materialized views
+ - Maintaining the materialized views:
+ 
     You can make changes to the materialized views using the Tripal MView interface. You  
     can identify the materialized views created by Mainlab Chado Search by looking for the 
     prefix 'chado_search_'. If you make changes to a default materialized view that comes 
