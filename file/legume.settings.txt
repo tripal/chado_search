@@ -37,13 +37,13 @@ path=find/nearby_markers
 file=includes/search/nearby_markers.php
 enabled=0
 
-[Transcript Search]
-id=transcript_search
-path=find/transcript
-file=includes/search/csfl/legume_transcript_search.php
-mview_name=chado_search_transcript_search
-mview_file=includes/mview/csfl/legume_transcript_search.mview.php
-mview_callback=chado_search_create_transcript_search_mview
+[Gene Search]
+id=gene_search
+path=find/genes
+file=includes/search/csfl/legume_gene_search.php
+mview_name=chado_search_gene_search
+mview_file=includes/mview/csfl/legume_gene_search.mview.php
+mview_callback=chado_search_create_gene_search_mview
 enabled=1
 
 [Germplasm Search]

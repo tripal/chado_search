@@ -16,6 +16,7 @@ function chado_search_sequence_search_form ($form) {
       ->table('chado_search_sequence_search')
       ->multiple(TRUE)
       ->newLine()
+      ->labelWidth(120)
   );
   $form->addSelectFilter(
       Set::selectFilter()
@@ -24,6 +25,7 @@ function chado_search_sequence_search_form ($form) {
       ->column('feature_type')
       ->table('chado_search_sequence_search')
       ->multiple(TRUE)
+      ->labelWidth(120)
       ->newLine()
   );
   $form->addSelectFilter(
@@ -33,18 +35,7 @@ function chado_search_sequence_search_form ($form) {
       ->column('analysis_name')
       ->table('chado_search_sequence_search')
       ->multiple( TRUE)
-      ->newLine()
-  );
-  $form->addTextFilter(
-      Set::textFilter()
-      ->id('feature_name')
-      ->title('Name')
-  );
-  $form->addFile(
-      Set::file()
-      ->id('feature_name_file')
-      ->title("File Upload")
-      ->description("Provide sequence names in a file. Separate each name by a new line.")
+      ->labelWidth(120)
       ->newLine()
   );
   $form->addDynamicSelectFilter(
@@ -53,7 +44,8 @@ function chado_search_sequence_search_form ($form) {
       ->title('Location')
       ->dependOnId('organism')
       ->callback('chado_search_sequence_search_ajax_location')
-  );
+      ->labelWidth(120)
+      );
   $form->addBetweenFilter(
       Set::betweenFilter()
       ->id('fmin')
@@ -62,6 +54,19 @@ function chado_search_sequence_search_form ($form) {
       ->title2("and")
       ->size(15)
       ->labelWidth2(50)
+      ->newLine()
+      );
+  $form->addTextFilter(
+      Set::textFilter()
+      ->id('feature_name')
+      ->title('Sequence Name')
+      ->labelWidth(120)
+  );
+  $form->addFile(
+      Set::file()
+      ->id('feature_name_file')
+      ->labelWidth(1)
+      ->newLine()
   );
   $form->addSubmit();
   $form->addReset();

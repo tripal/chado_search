@@ -13,7 +13,7 @@ not only improves the search performance, but also allows the administrator to r
 data by modifying the materialized view definition. This design also allows site developers 
 to adopt this module when data in Chado is not stored in the exact same way
 (See ‘Customization’ section). Data collecton templates and loader (Mainlab Chado Loader, 
-see https://github.com/mainlab-dev/mainlab_chado_loader/releases/latest) are also 
+see https://github.com/tripal/mainlab_chado_loader/releases/latest) are also 
 available as a separate module.
 
 The Mainlab Chado Search is created by Main Bioinformatics Lab (Main Lab) at 
@@ -30,7 +30,7 @@ https://www.bioinfo.wsu.edu
 ## Download
 The Mainlab Chado Search module can be downloaded from GitHub:
 
-https://www.github.com/mainlab-dev/chado_search/releases/latest
+https://www.github.com/tripal/chado_search/releases/latest
 
 ## Installation
 After downloading the module, extract it into your site's module directory 
@@ -316,8 +316,8 @@ following content:
     * [Marker Search]
         (https://www.coolseasonfoodlegume.org/find/markers)
         
-    * [Transcript Search]
-        (https://www.coolseasonfoodlegume.org/find/transcript)
+    * [Gene and Transcript Search]
+        (https://www.coolseasonfoodlegume.org/find/genes)
         
     * [Germplasm Search]
         (https://www.coolseasonfoodlegume.org/find/germplasms)
