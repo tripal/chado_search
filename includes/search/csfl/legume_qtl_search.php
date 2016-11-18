@@ -63,10 +63,11 @@ function chado_search_qtl_search_form ($form) {
       ->text('(e.g. QBrp.ncl-1.1)')
       ->newLine()
   );
+  $icon = '/' . drupal_get_path('module', 'chado_search') . '/theme/images/question.gif';
   $form->addTextFilter(
       Set::textFilter()
       ->id('qtl_label')
-      ->title('QTL/MTL Label')
+      ->title('QTL/MTL Label <a href="/trait_abbreviations"><img src="' . $icon . '"></a>')
       ->labelWidth(130)
   );
   $form->addMarkup(
@@ -76,9 +77,12 @@ function chado_search_qtl_search_form ($form) {
   );
   $form->addSubmit();
   $form->addReset();
-  $desc = "Search QTLs and/or MTLs (Mendelian Trait Loci) by any combination of species, 
-      trait category, trait name, published symbol or label. Please see <a href='/trait_abbreviations'>
-      this table </a>for the CSFL abbreviations for QTL traits.";
+  $desc =
+  'Search QTLs and/or MTLs (Mendelian Trait Loci) by any combination of species, 
+      trait category, trait name, published symbol or label. Please see <a href=\'/trait_abbreviations\'>
+      this table </a>for the CSFL abbreviations for QTL traits.
+     <b>| ' . l('Short video tutorial', 'https://youtu.be/Cu42oH_PXvc', array('attributes' => array('target' => '_blank'))) . ' | ' . l('Text tutorial', '/UserManual') . ' | ' .
+       l('Email us with problems and suggestions', 'contact') . '</b>';
   $form->addFieldset(
       Set::fieldset()
       ->id('qtl_search')

@@ -30,12 +30,16 @@ function chado_search_germplasm_search_form ($form) {
   );
   $form->addSubmit();
   $form->addReset();
+  $desc =
+  'Search germplasm by name or alias. Wild card (*) can be used to match any word.
+     <b>| ' . l('Short video tutorial', 'https://youtu.be/oqiuSI99mMg', array('attributes' => array('target' => '_blank'))) . ' | ' . l('Text tutorial', '/UserManual') . ' | ' .
+       l('Email us with problems and suggestions', 'contact') . '</b>';
   $form->addFieldset(
       Set::fieldset()
       ->id('germplasm_search')
       ->startWidget('organism')
       ->endWidget('reset')
-      ->description("Search germplasm by name or alias. Wild card (*) can be used to match any word.")
+      ->description($desc)
   );
   return $form;
 }

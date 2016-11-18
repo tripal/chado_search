@@ -94,9 +94,10 @@ function chado_search_marker_search_form ($form) {
   $form->addSubmit();
   $form->addReset();
   $desc =
-  'Search for markers in GDR. In advanced marker search site, users can perform combinatorial queries using categories
+  'Search for markers. Users can perform combinatorial queries using categories
 such as name, type, species, anchored position in genome and/or genetic map position.
-     <b>| ' . l('Email us with problems and suggestions', 'contact') . '</b>';
+     <b>| ' . l('Short video tutorial', 'https://youtu.be/oqiuSI99mMg', array('attributes' => array('target' => '_blank'))) . ' | ' . l('Text tutorial', '/UserManual') . ' | ' .
+       l('Email us with problems and suggestions', 'contact') . '</b>';
      $form->addFieldset(
          Set::fieldset()
          ->id('top_level')

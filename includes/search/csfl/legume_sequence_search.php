@@ -42,7 +42,7 @@ function chado_search_sequence_search_form ($form) {
       Set::dynamicSelectFilter()
       ->id('location')
       ->title('Location')
-      ->dependOnId('organism')
+      ->dependOnId('analysis')
       ->callback('chado_search_sequence_search_ajax_location')
       ->labelWidth(120)
       );
@@ -70,7 +70,12 @@ function chado_search_sequence_search_form ($form) {
   );
   $form->addSubmit();
   $form->addReset();
-  $desc = "Search for sequences by entering names in the field below. Alternatively, you may upload a file of names. You may also filter results by sequence type and the sequence source. To select multiple options click while holding the \"ctrl\" key. The results can be downloaded in FASTA or CSV tabular format.";
+  $desc =
+  'Search for sequences by entering names in the field below. 
+      Alternatively, you may upload a file of names. You may also filter results by sequence type and the sequence source. 
+      To select multiple options click while holding the \"ctrl\" key. The results can be downloaded in FASTA or CSV tabular format.
+     <b>| ' . l('Short video tutorial', 'https://youtu.be/i0IuE1qQn0s', array('attributes' => array('target' => '_blank'))) . ' | ' . l('Text tutorial', '/UserManual') . ' | ' .
+       l('Email us with problems and suggestions', 'contact') . '</b>';
   $form->addFieldset(
       Set::fieldset()
       ->id('sequence_search')
@@ -144,6 +149,6 @@ function chado_search_legume_sequence_search_link_jbrowse ($paras) {
 */
 // User defined: Populating the landmark for selected organism
 function chado_search_sequence_search_ajax_location ($val) {
-  $sql = "SELECT distinct landmark, char_length(landmark) AS length FROM {chado_search_sequence_search} WHERE organism = :organism ORDER BY length, landmark";
-  return chado_search_bind_dynamic_select(array(':organism' => $val), 'landmark', $sql);
+  $sql = "SELECT distinct landmark, char_length(landmark) AS length FROM {chado_search_sequence_search} WHERE analysis_name = :analysis ORDER BY length, landmark";
+  return chado_search_bind_dynamic_select(array(':analysis' => $val), 'landmark', $sql);
 }
