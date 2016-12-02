@@ -28,6 +28,7 @@ use ChadoSearch\form\combo\Fieldset;
 use ChadoSearch\form\combo\Tab;
 use ChadoSearch\form\combo\SelectShortcut;
 use ChadoSearch\form\combo\Throbber;
+use ChadoSearch\form\combo\CustomOutput;
 
 class ChadoSearchForm {
   
@@ -360,6 +361,21 @@ class ChadoSearchForm {
     $f->postext = $conf->getPosttext();
     $f->newline = $conf->getNewLine();
     $f->attach($this->form, $this->form_state);
+  }
+  
+  // Allow user to customize output
+  public function addCustomOutput ($conf) {
+    if (!Set::check($conf, 'SetCustomOutput')) {
+      return;
+    }
+    $f = new CustomOutput($this);
+    $f->id = $conf->getId();
+    $f->options = $conf->getOptions();
+    $f->defaults = $conf->getDefaults();
+    $f->title = $conf->getTitle();
+    $f->desc = $conf->getDescription();
+    $f->attach($this->form, $this->form_state);
+    
   }
   
   /**********************************************************

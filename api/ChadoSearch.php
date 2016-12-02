@@ -172,6 +172,16 @@ class ChadoSearch {
     // Show the first page
     if ($total_items != 0) {
 
+      // Get custom outputs setting if it exists
+      if (key_exists('custom_output_options', $form_state['values'])) {
+        $custom_output = $form_state['values']['custom_output_options'];
+        foreach ($custom_output AS $k => $v) {
+          if (!$v) {
+            $disableCols .= ";$k";
+          }
+        }
+      }
+      
       // Store settings to session variables
       SessionVar::setSessionVar($search_id, 'disabled-columns', $disableCols);
       SessionVar::setSessionVar($search_id, 'changed-headers', $changeHeaders);

@@ -28,6 +28,11 @@ function chado_search_germplasm_search_form ($form) {
       ->title("File Upload")
       ->description("Provide germplasm names in a file. Separate each name by a new line.")
   );
+  $form->addCustomOutput (
+      Set::customOutput()
+      ->id('custom_output')
+      ->options(chado_search_germplasm_search_table_definition())
+      );
   $form->addSubmit();
   $form->addReset();
   $desc =

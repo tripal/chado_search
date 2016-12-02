@@ -16,9 +16,13 @@ class Table extends Source {
   private function htmlTable($search_id, $result, $page, $num_per_page, $headers, $order, $autoscroll) {
     // Disable columns on request
     $disabledCols = SessionVar::getSessionVar($search_id, 'disabled-columns');
+    $show_counter = TRUE;
     if ($disabledCols) {
       $dcols = explode(';', $disabledCols);
       foreach ($dcols AS $dc) {
+        if ($dc == 'row-counter') {
+          $show_counter = FALSE;
+        }
         foreach($headers AS $hk => $hv) {
           $pattern = explode(':', $hk);
           if ($pattern[0] == $dc) {
@@ -85,9 +89,10 @@ class Table extends Source {
       }
     }
     // Prepare table header
-    $table .= "
-        <tr>
-        <th>#</th>";
+    $table .= "<tr>";
+    if ($show_counter) {
+        $table .= "<th>#</th>";
+    }
     foreach ($headers AS $k => $v) {
       $key = explode(":", $k);
       if (key_exists(1, $key) && ($key[1] == 's' || $key[1] == 'sortable')) {
@@ -108,7 +113,10 @@ class Table extends Source {
         $row_class = "chado_search-result-table-odd-row";
       }
       $item = $counter + $offset;
-      $table .= "<tr class=\"$row_class\"><td>$item</td>";
+      $table .= "<tr class=\"$row_class\">";
+      if ($show_counter) {
+        $table .= "<td>$item</td>";
+      }
       foreach ($headers AS $k => $v) {
         $key = explode(":", $k);
         $col = $key[0]; // column name

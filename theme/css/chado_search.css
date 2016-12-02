@@ -190,3 +190,8 @@
 .chado_search-dynamic-text-fields-wrapper {
 	float: left;
 }
+
+/* Custom Output Fieldset */
+.chado_search-custom_output-widget {
+	width: 100%;
+}

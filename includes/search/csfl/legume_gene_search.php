@@ -7,7 +7,8 @@ use ChadoSearch\Sql;
  * Search form, form validation, and submit function
  */
 // Search form
-function chado_search_gene_search_form ($form) {  
+function chado_search_gene_search_form ($form) {
+  
   $form->addSelectFilter(
       Set::selectFilter()
       ->id('genus')
@@ -84,8 +85,20 @@ function chado_search_gene_search_form ($form) {
       Set::markup()
       ->id('keyword_example')
       ->text('(eg. polygalacturonase, resistance, EC:1.4.1.3, cell cycle, ATP binding, zinc finger)')
+      ->newLine()
   );
-  
+  $customizables = array(
+    'organism' => 'Organism',
+    'feature_type' => 'Type',
+    'analysis' => 'Source',
+    'location' => 'Location',
+  );
+  $form->addCustomOutput (
+      Set::customOutput()
+      ->id('custom_output')
+      ->options($customizables)
+      ->defaults(array('organism', 'feature_type'))
+  );
   $form->addSubmit();
   $form->addReset();
   $desc =
@@ -100,7 +113,8 @@ function chado_search_gene_search_form ($form) {
       ->endWidget('reset')
       ->description($desc)
   );
-  
+
+
   return $form;
 }
 

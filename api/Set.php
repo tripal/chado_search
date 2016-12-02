@@ -5,6 +5,7 @@ namespace ChadoSearch;
 use ChadoSearch\set\result\SetResult;
 
 use ChadoSearch\set\form\SetBetweenFilter;
+use ChadoSearch\set\form\SetCustomOutput;
 use ChadoSearch\set\form\SetDynamicMarkup;
 use ChadoSearch\set\form\SetDynamicSelectFilter;
 use ChadoSearch\set\form\SetDynamicTextFields;
@@ -25,6 +26,7 @@ use ChadoSearch\set\form\SetTextAreaFilter;
 use ChadoSearch\set\form\SetTextField;
 use ChadoSearch\set\form\SetTextFilter;
 use ChadoSearch\set\form\SetThrobber;
+use ChadoSearch\form\combo\CustomOutput;
 
 /**
  * A control class to set configuration parameters
@@ -61,6 +63,10 @@ class Set {
    */
   static public function betweenFilter () {
     return new SetBetweenFilter();
+  }
+  
+  static public function customOutput () {
+    return new SetCustomOutput();
   }
   
   static public function dynamicMarkup () {
