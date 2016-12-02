@@ -86,7 +86,18 @@ function chado_search_gene_search_form ($form) {
       ->id('keyword_example')
       ->text('(eg. polygalacturonase, resistance, EC:1.4.1.3, cell cycle, ATP binding, zinc finger)')
   );
-  
+  $customizables = array(
+    'organism' => 'Organism',
+    'feature_type' => 'Type',
+    'analysis' => 'Source',
+    'location' => 'Location',
+  );
+  $form->addCustomOutput (
+      Set::customOutput()
+      ->id('custom_output')
+      ->options($customizables)
+      ->defaults(array('organism', 'feature_type'))
+  );
   $form->addSubmit();
   $form->addReset();
   $desc = 
