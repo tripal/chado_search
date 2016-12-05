@@ -54,7 +54,7 @@ class ResultQuery{
       $mycols = SearchDatabase::getColumns($gtable);
       $gbsql = "";
       foreach ($mycols AS $col) {
-        if ($col->column_name != $gcol) {
+        if (!in_array($col->column_name, explode(',', $gcol))) {
           if ($col->data_type == 'text' || $col->data_type == 'character varying') { // Aggregate if the data type is text or character varing
             $gbsql .= "string_agg(distinct $col->column_name, '$separator') AS $col->column_name, ";
           } else { // get the max value for other data types
