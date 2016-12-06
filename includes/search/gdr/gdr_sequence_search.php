@@ -47,19 +47,6 @@ function chado_search_sequence_search_form ($form) {
       ->cache(TRUE)
       ->newLine()
   );
-  $form->addTextFilter(
-      Set::textFilter()
-      ->id('feature_name')
-      ->title('Name')
-      ->newLine()
-  );
-  $form->addFile(
-      Set::file()
-      ->id('feature_name_file')
-      ->title("File Upload")
-      ->description("Provide sequence names in a file. Separate each name by a new line.")
-      ->newLine()
-  );
   $form->addDynamicSelectFilter(
       Set::dynamicSelectFilter()
       ->id('location')
@@ -75,6 +62,20 @@ function chado_search_sequence_search_form ($form) {
       ->title2("and")
       ->labelWidth2(50)
       ->size(15)
+      ->newLine()
+  );
+  $form->addTextFilter(
+      Set::textFilter()
+      ->id('feature_name')
+      ->title('Name')
+      ->newLine()
+  );
+  $form->addFile(
+      Set::file()
+      ->id('feature_name_file')
+      ->title("File Upload")
+      ->description("Provide sequence names in a file. Separate each name by a new line.")
+      ->newLine()
   );
   $form->addSubmit();
   $form->addReset();

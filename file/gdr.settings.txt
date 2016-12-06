@@ -41,6 +41,15 @@ mview_file=includes/mview/gdr/gdr_marker_search.mview.php
 mview_callback=chado_search_create_marker_search_mview
 enabled=1
 
+[SNP Marker Search]
+id=snp_marker_search
+path=search/snp_markers
+file=includes/search/gdr/gdr_snp_marker_search.php
+mview_name=chado_search_snp_marker_search
+mview_file=includes/mview/gdr/gdr_snp_marker_search.mview.php
+mview_callback=chado_search_create_snp_marker_search_mview
+enabled=1
+
 [Search Markers on Nearby Loci]
 id=nearby_markers
 path=search/nearby_markers

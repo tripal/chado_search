@@ -109,7 +109,7 @@ function chado_search_create_sequence_search_mview() {
       INNER JOIN
       (SELECT A.analysis_id, A.name FROM analysis A
       LEFT JOIN analysisprop AP ON AP.analysis_id = A.analysis_id
-      WHERE (AP.value IS NULL OR AP.value IN ('reftrans', 'unigene', 'whole_genome', 'bulk_data', 'ncbi_data', 'transcriptome', 'other_transcripts'))
+      WHERE AP.value IN ('reftrans', 'unigene', 'whole_genome', 'tripal_analysis_unigene', 'bulk_data', 'ncbi_data', 'transcriptome', 'other_transcripts')
       AND A.name != 'GDR Gene Database'
       ) ANA ON ANA.analysis_id = AF.analysis_id
       INNER JOIN feature F ON F.feature_id = AF.feature_id
