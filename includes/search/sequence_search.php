@@ -35,6 +35,23 @@ function chado_search_sequence_search_form ($form) {
       ->multiple(TRUE)
       ->newLine()
   );
+  $form->addDynamicSelectFilter(
+      Set::dynamicSelectFilter()
+      ->id('location')
+      ->title('Location')
+      ->dependOnId('analysis')
+      ->callback('chado_search_sequence_search_ajax_location')
+  );
+  $form->addBetweenFilter(
+      Set::betweenFilter()
+      ->id('fmin')
+      ->title("between")
+      ->id2('fmax')
+      ->title2("and")
+      ->labelWidth2(50)
+      ->size(15)
+      ->newLine()
+  );
   $form->addTextFilter(
       Set::textFilter()
       ->id('feature_name')
@@ -47,23 +64,6 @@ function chado_search_sequence_search_form ($form) {
       ->title("File Upload")
       ->description("Provide sequence names in a file. Separate each name by a new line.")
       ->newLine()
-  );
-  
-  $form->addDynamicSelectFilter(
-      Set::dynamicSelectFilter()
-      ->id('location')
-      ->title('Location')
-      ->dependOnId('organism')
-      ->callback('chado_search_sequence_search_ajax_location')
-  );
-  $form->addBetweenFilter(
-      Set::betweenFilter()
-      ->id('fmin')
-      ->title("between")
-      ->id2('fmax')
-      ->title2("and")
-      ->labelWidth2(50)
-      ->size(15)
   );
   $form->addSubmit();
   $form->addReset();
@@ -129,6 +129,6 @@ function chado_search_sequence_search_link_feature ($feature_id) {
 */
 // User defined: Populating the landmark for selected organism
 function chado_search_sequence_search_ajax_location ($val) {
-  $sql = "SELECT distinct landmark FROM {chado_search_sequence_search} WHERE organism = :organism ORDER BY landmark";
-  return chado_search_bind_dynamic_select(array(':organism' => $val), 'landmark', $sql);
+  $sql = "SELECT distinct landmark FROM {chado_search_sequence_search} WHERE analysis_name = :analysis_name ORDER BY landmark";
+  return chado_search_bind_dynamic_select(array(':analysis_name' => $val), 'landmark', $sql);
  }
