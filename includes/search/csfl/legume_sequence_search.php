@@ -73,7 +73,7 @@ function chado_search_sequence_search_form ($form) {
   $desc =
   'Search for sequences by entering names in the field below. 
       Alternatively, you may upload a file of names. You may also filter results by sequence type and the sequence source. 
-      To select multiple options click while holding the \"ctrl\" key. The results can be downloaded in FASTA or CSV tabular format.
+      To select multiple options click while holding the "ctrl" key. The results can be downloaded in FASTA or CSV tabular format.
      <b>| ' . l('Short video tutorial', 'https://youtu.be/i0IuE1qQn0s', array('attributes' => array('target' => '_blank'))) . ' | ' . l('Text tutorial', '/UserManual') . ' | ' .
        l('Email us with problems and suggestions', 'contact') . '</b>';
   $form->addFieldset(
