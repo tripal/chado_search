@@ -14,9 +14,12 @@ class Fasta extends Source {
   }
   
   private function jsFasta($search_id, $path) {
+    $progress_path = '';
     if ($path == NULL) {
       $path = "search/$search_id/fasta";
+      $progress_path = "search/$search_id/download/progress";
     } else {
+      $progress_path = "$path/download/progress";
       $path = $path . "/fasta";
     }
     $dpost = "form_build_id=" . $_POST['form_build_id'];
@@ -28,6 +31,16 @@ class Fasta extends Source {
               var link = '$base_url';
               link += '/$path';
               $('.chado_search-$search_id-waiting-box').show();
+              var check_progress = setInterval(function(){
+                // Check the progress
+                $.ajax({
+                  url: '$base_url' + '/' + '$progress_path',
+                  dataType: 'json',
+                  success: function(data){
+                    $('#chado_search-$search_id-waiting-box-progress').text(data.progress + ' %');
+                  }
+                });
+              }, 2000);
               $.ajax({
                 url: link,
                 data: '$dpost',
@@ -36,6 +49,8 @@ class Fasta extends Source {
                 success: function(data){
                   window.location = data.path;
                   $('.chado_search-$search_id-waiting-box').hide();
+                  $('#chado_search-$search_id-waiting-box-progress').text('0 %');
+                  clearInterval(check_progress);
                 }
               });
             }
@@ -65,7 +80,6 @@ class Fasta extends Source {
     if ($customFasta) {
       $sql = $customFasta($sql);
     }
-    $result = chado_query($sql);
     $sid = session_id();
     $file = 'sequence.fasta.gz';
     $dir = 'sites/default/files/tripal/chado_search/' . $sid;
@@ -81,14 +95,22 @@ class Fasta extends Source {
           uniquename,
           residues,
           (SELECT name FROM {cvterm} WHERE cvterm_id = type_id) AS type,
-          (SELECT genus || ' ' || species FROM {organism} O WHERE O.organism_id = F.organism_id) AS org FROM {feature} F";
-    $where = " WHERE feature_id IN (";
-    while ($row = $result->fetchObject()) {
-      $where .= $row->$column . ",";
-    }
-    $where = rtrim($where, ",") . ")";
-    $result = chado_query($fsql . $where);
+          (SELECT genus || ' ' || species FROM {organism} O WHERE O.organism_id = F.organism_id) AS org 
+        FROM {feature} F
+        WHERE feature_id IN (SELECT $column FROM ($sql) BASE)
+        AND residues IS NOT NULL
+        AND residues != ''";    
+    $result = chado_query($fsql);
+    $total_items = SessionVar::getSessionVar($search_id,'total-items');
+    $progress_var = 'chado_search-'. session_id() . '-' . $search_id . '-download-progress';
+    $progress = 0;
+    $counter = 1;
     while ($feature = $result->fetchObject()) {
+      $current = round ($counter / $total_items * 100);
+      if ($current != $progress) {
+        $progress = $current;
+        variable_set($progress_var, "$counter processed. $progress");
+      }
       // If the sequence type is genetic marker, we want to add more information to the ID
       if ($feature->type == 'genetic_marker') {
         $mksql =
@@ -109,13 +131,19 @@ class Fasta extends Source {
           fwrite($handle, ">" . $feature->uniquename . "\n");
         }
       }
-  
       // Write sequences
       fwrite($handle, wordwrap($feature->residues, 80, "\n", TRUE) . "\n");
+      $counter ++;
+    }
+    // If there is no sequence available
+    if ($counter == 1) {
+      fwrite($handle, "No sequence available.\n");
     }
     gzclose($handle);
     chmod($path, 0777);
     $url = "/sites/default/files/tripal/chado_search/$sid/$file";
+    // Reset progress bar
+    variable_del($progress_var);
     return array ('path' => $url);
   }
 }

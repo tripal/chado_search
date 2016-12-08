@@ -195,3 +195,10 @@
 .chado_search-custom_output-widget {
 	width: 100%;
 }
+
+/* Progress bar */
+.chado_search-waiting-box-progress {
+  text-align: center;
+  font-size: 90%;
+  margin-top:10px;	
+}

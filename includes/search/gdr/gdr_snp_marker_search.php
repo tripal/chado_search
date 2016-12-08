@@ -179,6 +179,6 @@ function chado_search_snp_marker_search_link_gbrowse ($paras) {
 */
 // User defined: Populating the landmark for selected organism
 function chado_search_snp_marker_search_ajax_location ($val) {
-  $sql = "SELECT distinct landmark, CASE WHEN regexp_replace(landmark, E'\\\D','','g') = '' THEN 999999 ELSE regexp_replace(landmark, E'\\\D','','g')::numeric END AS lnumber FROM {chado_search_snp_marker_search} WHERE landmark_organism = :landmark_org ORDER BY lnumber";
-  return chado_search_bind_dynamic_select(array(':landmark_org' => $val), 'landmark', $sql);
+  $sql = "SELECT distinct landmark, CASE WHEN regexp_replace(landmark, E'\\\D','','g') = '' THEN 999999 ELSE regexp_replace(landmark, E'\\\D','','g')::numeric END AS lnumber FROM {chado_search_snp_marker_search} WHERE genome = :genome ORDER BY lnumber";
+  return chado_search_bind_dynamic_select(array(':genome' => $val), 'genome', $sql);
 }

@@ -61,6 +61,13 @@ class ChadoSearch {
         'access arguments' => array('access content'),
         'type' => MENU_CALLBACK,
     );
+    $items["$url/download/progress"] = array(
+      'description' => 'Ajax call back for checking download progress',
+      'page callback' => 'chado_search_ajax_download_progress',
+      'page arguments' => array($search_id, $url, "$num_per_page"),
+      'access arguments' => array('access content'),
+      'type' => MENU_CALLBACK,
+    );
     $items["$url/fasta"] = array(
         'description' => 'Ajax call back for downloading fasta file',
         'page callback' => 'chado_search_ajax_download_fasta_feature',
@@ -188,6 +195,7 @@ class ChadoSearch {
       SessionVar::setSessionVar($search_id, 'rewrite-columns', $rewriteCols);
       SessionVar::setSessionVar($search_id, 'custom-fasta-download', $customFasta);
       SessionVar::setSessionVar($search_id, 'autoscroll', $autoscroll);
+      SessionVar::setSessionVar($search_id, 'total-items', $total_items);
       
       // Build the result
       $div .= 

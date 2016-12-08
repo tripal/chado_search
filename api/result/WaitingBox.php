@@ -14,7 +14,7 @@ class WaitingBox extends Source {
       "<div id=\"chado_search-$search_id-waiting-box-overlay\" class=\"chado_search-waiting-box-overlay chado_search-$search_id-waiting-box\">
         </div>
         <div id=\"chado_search-$search_id-waiting-box-message\" class=\"chado_search-waiting-box-message chado_search-$search_id-waiting-box\">
-          <h3>Please wait...</h3>
+          <h3>Please wait... <div id=\"chado_search-$search_id-waiting-box-progress\" class=\"chado_search-waiting-box-progress\"></div></h3>
         </div>";
     return $waitingBox;
   }

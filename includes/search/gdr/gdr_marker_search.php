@@ -290,7 +290,7 @@ function chado_search_marker_search_download_definition () {
   return $headers;
 }
 // Custom download for GDR
-function chado_search_marker_search_gdr_download ($handle, $result, $sql) {
+function chado_search_marker_search_gdr_download ($handle, $result, $sql, $total_items, $progress_var) {
   global $base_url;
   // Get max no of primers
   $primer_count = "
@@ -338,8 +338,16 @@ function chado_search_marker_search_gdr_download ($handle, $result, $sql) {
       ";
   $sql = "SELECT *, ($sql_primers) AS primers, ($sql_citation) AS citation, (SELECT nid FROM chado_feature WHERE feature_id = marker_feature_id) AS feature_nid, (SELECT nid FROM chado_organism WHERE organism_id = Marker.organism_id) AS organism_nid FROM ($sql) Marker";
   $result = chado_query($sql);
+  $search_id = 'marker_search';
+  $progress = 0;
+  $counter = 1;
   // Write reults
   while ($obj = $result->fetchObject()) {
+    $current = round ($counter / $total_items * 100);
+    if ($current != $progress) {
+      $progress = $current;
+      variable_set($progress_var, $progress);
+    }
     fwrite($handle, "\"=HYPERLINK(\"\"$base_url/node/$obj->feature_nid\"\",\"\"$obj->marker_name\"\")\",\"$obj->alias\",\"$obj->marker_type\",\"=HYPERLINK(\"\"$base_url/node/$obj->organism_nid\"\",\"\"$obj->organism\"\")\",\"$obj->map_name\",\"$obj->lg_uniquename\",\"$obj->start\",\"$obj->stop\",\"$obj->location\",\"$obj->citation\"");
     $primers = explode('||', $obj->primers);
     foreach ($primers AS $primer) {
@@ -349,5 +357,8 @@ function chado_search_marker_search_gdr_download ($handle, $result, $sql) {
       fwrite($handle, ",\"$pname\",\"$pseq\"");
     }
     fwrite($handle, "\n");
+    $counter ++;
   }
+  // Reset progress bar
+  variable_del($progress_var);
 }

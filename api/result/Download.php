@@ -31,6 +31,16 @@ class Download extends Source {
               var link = '$base_url';
               link += '/$path';
               $('.chado_search-$search_id-waiting-box').show();
+              var check_progress = setInterval(function(){
+                // Check the progress
+                $.ajax({
+                  url: link + '/progress',
+                  dataType: 'json',
+                  success: function(data){
+                    $('#chado_search-$search_id-waiting-box-progress').text(data.progress + ' %');
+                  }
+                });
+              }, 2000);
               $.ajax({
                 url: link,
                 data: sendData,
@@ -39,6 +49,8 @@ class Download extends Source {
                 success: function(data){
                   window.location = data.path;
                   $('.chado_search-$search_id-waiting-box').hide();
+                  $('#chado_search-$search_id-waiting-box-progress').text('0 %');
+                  clearInterval(check_progress);
                 }
               });
              }
@@ -130,10 +142,12 @@ class Download extends Source {
     }
     $path = $dir . "/" . $file;
     $handle = fopen($path, 'w');
+    $total_items = SessionVar::getSessionVar($search_id,'total-items');
+    $progress_var = 'chado_search-'. session_id() . '-' . $search_id . '-download-progress';
     // If there is a custom function call, pass in $handle and $result for it to modify output
     $custom_function = isset($_POST['custom_function_call']) ? $_POST['custom_function_call'] : NULL;
     if ($custom_function) {
-      $custom_function($handle, $result, $sql);
+      $custom_function($handle, $result, $sql, $total_items, $progress_var);
     } else {
       fwrite($handle, "#,");
       $col = 0;
@@ -146,8 +160,14 @@ class Download extends Source {
           fwrite($handle, "\n");
         }
       }
+      $progress = 0;
       $counter = 1;
       while ($row = $result->fetchObject()) {
+        $current = round ($counter / $total_items * 100);
+        if ($current != $progress) {
+          $progress = $current;
+          variable_set($progress_var, $progress);
+        }
         fwrite($handle, "\"$counter\",");
         $col = 0;
         foreach ($headers AS $k => $v) {
@@ -170,6 +190,9 @@ class Download extends Source {
     fclose($handle);
     chmod($path, 0777);
     $url = "/sites/default/files/tripal/chado_search/$sid/$file";
+    
+    // Reset progress bar
+    variable_del($progress_var);
     return array ('path' => $url);
   }
 }

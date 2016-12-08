@@ -294,6 +294,12 @@ function chado_search_ajax_download ($search_id, $url, $num_per_page) {
   return drupal_json_output(Download::createDownload($search_id, $url, $headers));
 }
 
+// Get AJAX download progress
+function chado_search_ajax_download_progress ($search_id, $url, $num_per_page) {
+  $progress = variable_get('chado_search-' . session_id() . '-' . $search_id . '-download-progress', 0);
+  return drupal_json_output( array('progress' => $progress));
+}
+
 // Create AJAX Fasta download directly from the feature table
 function chado_search_ajax_download_fasta_feature ($search_id, $url, $num_per_page) {
   $func = 'chado_search_' . $search_id . '_download_fasta_definition';
