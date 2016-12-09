@@ -98,6 +98,7 @@ function chado_search_ssr_genotype_search_base_query() {
   $query = "SELECT 
                  'P_' || marker_uniquename AS marker_allele, 
                  'View ' || count (stock_uniquename) || ' germplasm(s)' AS germplasm, 
+                 marker_uniquename,
                  * 
                FROM {chado_search_ssr_genotype_search} CSDS";
   return $query;

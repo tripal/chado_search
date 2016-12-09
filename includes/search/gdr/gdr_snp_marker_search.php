@@ -143,13 +143,15 @@ function chado_search_snp_marker_search_link_gbrowse ($paras) {
     $url = "http://www.rosaceae.org/gb/gbrowse/fragaria_vesca_v1.1-lg?name=$loc&enable=NCBI%20Sequence%20Alignments";
   }
   else if ($genome == 'Fragaria vesca Whole Genome v2.0.a1 Assembly & Annotation') {
-    $url = "http://www.rosaceae.org/gb/gbrowse/fragaria_vesca_v2.0.a1/?name=$loc";
+    //$url = "http://www.rosaceae.org/gb/gbrowse/fragaria_vesca_v2.0.a1/?name=$loc";
+    $url = "https://www.rosaceae.org/jbrowse/index.html?data=data/fragaria/fvesca_v2.0.a1&loc=$loc&tracks=DNA,genes,strawberry_90k_snp";
   }
   else if ($genome == 'Prunus persica Whole Genome v1.0 Assembly & Annotation') {
-    $url = "http://www.rosaceae.org/gb/gbrowse/prunus_persica?name=$loc&enable=NCBI%20Sequence%20Alignments";
+    $url = "http://www.rosaceae.org/gb/gbrowse/prunus_persica?name=$loc&enable=IRSC_6K_cherry_SNP_array&enable=IRSC_9K_peach_SNP_array";
   } 
   else if ($genome == 'Prunus persica Whole Genome Assembly v2.0 & Annotation v2.1 (v2.0.a1)') {
-    $url = "http://www.rosaceae.org/gb/gbrowse/prunus_persica_v2.0.a1?name=$loc&enable=NCBI%20Sequence%20Alignments";  
+    //$url = "http://www.rosaceae.org/gb/gbrowse/prunus_persica_v2.0.a1?name=$loc&enable=NCBI%20Sequence%20Alignments";
+    $url = "https://www.rosaceae.org/jbrowse/index.html?data=data/prunus/ppersica_v2.0.a1&loc=$loc&tracks=DNA,genes,irsc_cherry_6k_snp,irsc_peach_9k_snp";
   } 
   else if ($genome == 'Malus x domestica Whole Genome v1.0p Assembly & Annotation') {
       $url = "http://www.rosaceae.org/gb/gbrowse/malus_x_domestica_v1.0-primary?name=$loc&enable=NCBI%20Sequence%20Alignments";
