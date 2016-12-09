@@ -37,6 +37,7 @@ class Download extends Source {
                   url: link + '/progress',
                   dataType: 'json',
                   success: function(data){
+                  $('#chado_search-$search_id-waiting-box-progress').show();
                     $('#chado_search-$search_id-waiting-box-progress').text(data.progress + ' %');
                   }
                 });
@@ -135,7 +136,7 @@ class Download extends Source {
   
     // Create result
     $result = chado_query($sql);
-    $sid = session_id();
+    $sid = time() . session_id();
     $file = 'download.csv';
     $dir = 'sites/default/files/tripal/chado_search/' . $sid;
     if (!file_exists($dir)) {

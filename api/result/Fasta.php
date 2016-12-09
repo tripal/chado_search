@@ -37,6 +37,7 @@ class Fasta extends Source {
                   url: '$base_url' + '/' + '$progress_path',
                   dataType: 'json',
                   success: function(data){
+                    $('#chado_search-$search_id-waiting-box-progress').show();
                     $('#chado_search-$search_id-waiting-box-progress').text(data.progress + ' %');
                   }
                 });
@@ -81,7 +82,7 @@ class Fasta extends Source {
     if ($customFasta) {
       $sql = $customFasta($sql);
     }
-    $sid = session_id();
+    $sid = time() . session_id();
     $file = 'sequence.fasta.gz';
     $dir = 'sites/default/files/tripal/chado_search/' . $sid;
     if (!file_exists($dir)) {

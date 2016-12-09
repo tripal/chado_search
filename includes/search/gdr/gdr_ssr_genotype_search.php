@@ -149,7 +149,7 @@ function chado_search_ssr_genotype_search_download_custom_table ($handle, $resul
   }
 }
 
-function chado_search_ssr_genotype_search_download_long_form ($handle, $result, $sql) {
+function chado_search_ssr_genotype_search_download_long_form ($handle, $result, $sql, $total_items, $progress_var) {
   $sql = preg_replace('/(string_agg|count|max) ?\((.+?)\)/', '$2', $sql);
   $sql = str_replace(array(", '; '", 'distinct ', ' GROUP BY marker_uniquename,allele'), array('', '', ''), $sql);
   $sql = "
@@ -172,15 +172,15 @@ function chado_search_ssr_genotype_search_download_long_form ($handle, $result, 
   fwrite($handle, $header);
   $counter = 1;
   global $base_url;
-    while ($row = $result->fetchObject()) {
-      $stock_nid = chado_get_nid_from_id('stock', $row->stock_id);
-      $feature_nid = chado_get_nid_from_id('feature', $row->feature_id);
-      fwrite($handle, "\"$row->project_name\",\"=HYPERLINK(\"\"$base_url/node/$stock_nid\"\", \"\"$row->stock_uniquename\"\")\",\"=HYPERLINK(\"\"$base_url/node/$feature_nid\"\", \"\"$row->marker_uniquename\"\")\",\"$row->genotype\"\n");
-      $counter ++;
-    }
+  while ($row = $result->fetchObject()) {
+    $stock_nid = chado_get_nid_from_id('stock', $row->stock_id);
+    $feature_nid = chado_get_nid_from_id('feature', $row->feature_id);
+    fwrite($handle, "\"$row->project_name\",\"=HYPERLINK(\"\"$base_url/node/$stock_nid\"\", \"\"$row->stock_uniquename\"\")\",\"=HYPERLINK(\"\"$base_url/node/$feature_nid\"\", \"\"$row->marker_uniquename\"\")\",\"$row->genotype\"\n");
+    $counter ++;
+  }
 }
 
-function chado_search_ssr_genotype_search_download_wide_form ($handle, $result, $sql) {
+function chado_search_ssr_genotype_search_download_wide_form ($handle, $result, $sql, $total_items, $progress_var) {
   $sql = preg_replace('/(string_agg|count|max) ?\((.+?)\)/', '$2', $sql);
   $sql = str_replace(array(", '; '", 'distinct ', ' GROUP BY marker_uniquename,allele'), array('', '', ''), $sql);
   $sql = "
@@ -204,38 +204,37 @@ function chado_search_ssr_genotype_search_download_wide_form ($handle, $result, 
   $counter = 1;
   $headings = array();
   $data = array();
-    while ($row = $result->fetchObject()) {
-      $headings[$row->feature_id] = $row->marker_uniquename;
-      if (!key_exists($row->project_name . '__' . $row->stock_uniquename . '__' . $row->stock_id, $data)) {
-        $values = array();
-      } else {
-        $values = $data[$row->project_name . '__' . $row->stock_uniquename . '__' . $row->stock_id];
-      }
-      $values [$row->marker_uniquename] = $row->genotype;
-      $data[$row->project_name . '__' . $row->stock_uniquename . '__' . $row->stock_id] = $values;      
-      $counter ++;
+  while ($row = $result->fetchObject()) {
+    $headings[$row->feature_id] = $row->marker_uniquename;
+    if (!key_exists($row->project_name . '---' . $row->stock_uniquename . '---' . $row->stock_id, $data)) {
+      $values = array();
+    } else {
+      $values = $data[$row->project_name . '---' . $row->stock_uniquename . '---' . $row->stock_id];
     }
-    global $base_url;
-    // Print headings
-    foreach ($headings AS $feature_id => $val) {
-      $feature_nid = chado_get_nid_from_id('feature', $feature_id);
-      fwrite($handle, ",\"=HYPERLINK(\"\"$base_url/node/$feature_nid\"\", \"\"".$val . "\"\")\"");
+    $values [$row->marker_uniquename] = $row->genotype;
+    $data[$row->project_name . '---' . $row->stock_uniquename . '---' . $row->stock_id] = $values;      
+    $counter ++;
+  }
+  global $base_url;
+  // Print headings
+  foreach ($headings AS $feature_id => $val) {
+    $feature_nid = chado_get_nid_from_id('feature', $feature_id);
+    fwrite($handle, ",\"=HYPERLINK(\"\"$base_url/node/$feature_nid\"\", \"\"".$val . "\"\")\"");
+  }
+  fwrite($handle, "\n");
+  // Print data
+  foreach ($data AS $key => $val) {
+    $arr = explode("---", $key);
+    $project = $arr[0];
+    $stock = $arr[1];
+    $stock_id = $arr[2];
+    $stock_nid = chado_get_nid_from_id('stock', $stock_id);
+    fwrite($handle, "\"" . $project . "\",\"=HYPERLINK(\"\"$base_url/node/$stock_nid\"\", \"\"" . $stock . "\"\")\"");
+    foreach ($headings AS $h) {
+      fwrite($handle, ",\"" . $val[$h] . "\"");
     }
     fwrite($handle, "\n");
-    // Print data
-    foreach ($data AS $key => $val) {
-      $arr = explode("__", $key);
-      $project = $arr[0];
-      $stock = $arr[1];
-      $stock_id = $arr[2];
-      $stock_nid = chado_get_nid_from_id('stock', $stock_id);
-      fwrite($handle, "\"" . $project . "\",\"=HYPERLINK(\"\"$base_url/node/$stock_nid\"\", \"\"" . $stock . "\"\")\"");
-      foreach ($headings AS $h) {
-        fwrite($handle, ",\"" . $val[$h] . "\"");
-      }
-      fwrite($handle, "\n");
-    }
-
+  }
 }
 
 // Define call back to link the featuremap to its  node for result table
