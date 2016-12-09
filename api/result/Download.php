@@ -50,6 +50,7 @@ class Download extends Source {
                   window.location = data.path;
                   $('.chado_search-$search_id-waiting-box').hide();
                   $('#chado_search-$search_id-waiting-box-progress').text('0 %');
+                  $('#chado_search-$search_id-waiting-box-progress').hide();
                   clearInterval(check_progress);
                 }
               });
