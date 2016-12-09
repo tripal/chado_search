@@ -82,8 +82,8 @@ class Fasta extends Source {
     if ($customFasta) {
       $sql = $customFasta($sql);
     }
-    $sid = time() . session_id();
-    $file = 'sequence.fasta.gz';
+    $sid = session_id();
+    $file = $search_id . '_sequence.fasta.gz';
     $dir = 'sites/default/files/tripal/chado_search/' . $sid;
     if (!file_exists($dir)) {
       mkdir ($dir, 0777);

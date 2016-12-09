@@ -136,8 +136,8 @@ class Download extends Source {
   
     // Create result
     $result = chado_query($sql);
-    $sid = time() . session_id();
-    $file = 'download.csv';
+    $sid = session_id();
+    $file = $search_id . '_download.csv';
     $dir = 'sites/default/files/tripal/chado_search/' . $sid;
     if (!file_exists($dir)) {
       mkdir ($dir, 0777);

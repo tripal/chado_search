@@ -223,7 +223,7 @@ function chado_search_ssr_genotype_search_download_wide_form ($handle, $result, 
   }
   fwrite($handle, "\n");
   // Print data
-  foreach ($data AS $key => $val) {
+  foreach ($data AS $key => $value) {
     $arr = explode("---", $key);
     $project = $arr[0];
     $stock = $arr[1];
@@ -231,7 +231,7 @@ function chado_search_ssr_genotype_search_download_wide_form ($handle, $result, 
     $stock_nid = chado_get_nid_from_id('stock', $stock_id);
     fwrite($handle, "\"" . $project . "\",\"=HYPERLINK(\"\"$base_url/node/$stock_nid\"\", \"\"" . $stock . "\"\")\"");
     foreach ($headings AS $h) {
-      fwrite($handle, ",\"" . $val[$h] . "\"");
+      fwrite($handle, ",\"" . $value[$h] . "\"");
     }
     fwrite($handle, "\n");
   }
