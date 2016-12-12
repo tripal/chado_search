@@ -39,6 +39,7 @@ function chado_search_snp_marker_search_form ($form) {
       ->title('Genome')
       ->column('genome')
       ->table('chado_search_snp_marker_search')
+      ->disable(array('Malus x domestica Whole Genome v1.0 Assembly & Annotation'))
       ->cache(TRUE)
       ->newLine()
   );
@@ -69,7 +70,7 @@ function chado_search_snp_marker_search_form ($form) {
   $form->addReset();
   $desc =
   'Search for SNP markers in GDR.
-     <b>| ' . l('Short video tutorial', 'https://www.youtube.com/watch?v=oqiuSI99mMg', array('attributes' => array('target' => '_blank'))) . ' | ' . l('Text tutorial', 'tutorial/marker_search') . ' | ' .
+     <b>| ' .
        l('Email us with problems and suggestions', 'contact') . '</b>';
   $form->addFieldset(
       Set::fieldset()

@@ -178,6 +178,7 @@ function chado_search_ssr_genotype_search_download_long_form ($handle, $result, 
     fwrite($handle, "\"$row->project_name\",\"=HYPERLINK(\"\"$base_url/node/$stock_nid\"\", \"\"$row->stock_uniquename\"\")\",\"=HYPERLINK(\"\"$base_url/node/$feature_nid\"\", \"\"$row->marker_uniquename\"\")\",\"$row->genotype\"\n");
     $counter ++;
   }
+  fclose($handle);
 }
 
 function chado_search_ssr_genotype_search_download_wide_form ($handle, $result, $sql, $total_items, $progress_var) {
@@ -223,7 +224,15 @@ function chado_search_ssr_genotype_search_download_wide_form ($handle, $result, 
   }
   fwrite($handle, "\n");
   // Print data
+  $total_items = $counter;
+  $progress = 0;
+  $counter = 0;
   foreach ($data AS $key => $value) {
+    $current = round ($counter / $total_items * 100);
+    if ($current != $progress) {
+      $progress = $current;
+      variable_set($progress_var, $progress);
+    }
     $arr = explode("---", $key);
     $project = $arr[0];
     $stock = $arr[1];
@@ -234,7 +243,9 @@ function chado_search_ssr_genotype_search_download_wide_form ($handle, $result, 
       fwrite($handle, ",\"" . $value[$h] . "\"");
     }
     fwrite($handle, "\n");
+    $counter ++;
   }
+  fclose($handle);
 }
 
 // Define call back to link the featuremap to its  node for result table

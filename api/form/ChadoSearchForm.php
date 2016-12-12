@@ -246,6 +246,7 @@ class ChadoSearchForm {
     $f->label_width = $conf->getLabelWidth();
     $f->size = $conf->getSize();
     $f->newline = $conf->getNewLine();
+    $f->disables = $conf->getDisable();
     $f->attach($this->form, $this->form_state);
   }
   

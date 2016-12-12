@@ -17,6 +17,7 @@ class SelectFilter extends Filter {
   public $cache;
   public $label_width;
   public $size;
+  public $disables;
   
   public function setForm (&$form, &$form_state) {
     $search_name = $this->search_name;
@@ -109,7 +110,9 @@ class SelectFilter extends Filter {
       }
       while ($obj = $results->fetchObject()) {
         if (trim($obj->$column) != "") {
-          $options[$obj->$column] = $obj->$column;
+          if (!is_array($this->disables) || !in_array($obj->$column, $this->disables)){
+            $options[$obj->$column] = $obj->$column;
+          }
         }
       }
     }

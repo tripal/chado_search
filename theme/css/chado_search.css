@@ -10,7 +10,10 @@
 /**************** 
   Result Theming 
 ****************/
-
+.chado_search-result {
+	overflow-x: auto;
+	width: 100%;
+}
 /* Result summary */
 .chado_search-result-summary {
   float:left;
