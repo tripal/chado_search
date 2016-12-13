@@ -65,15 +65,13 @@ function chado_search_marker_search_form ($form) {
       ->newLine()
   );  
   // Restricted by Location
-  $form->addMarkup(
-      Set::markup()
-      ->id('genome_label')
-      ->text("<strong>Genome</strong>")
-  );
-  $form->addSelect(
-      Set::select()
+  $form->addSelectFilter(
+      Set::selectFilter()
       ->id('genome')
-      ->options(array(0=> 'Any', 'Prunus persica' => 'P. persica Genome v1.0', 'Fragaria vesca' => 'F. vesca Genome v1.0'))
+      ->title('Genome')
+      ->column('genome')
+      ->table('chado_search_marker_search')
+      ->cache(TRUE)
       ->newLine()
   );
   $form->addDynamicSelectFilter(
@@ -158,7 +156,7 @@ function chado_search_marker_search_form_submit ($form, &$form_state) {
   $where [2] = Sql::selectFilter('marker_type', $form_state, 'marker_type');
   $where [3] = Sql::selectFilter('organism', $form_state, 'organism');
   $where [4] = Sql::selectFilter('mapped_organism', $form_state, 'mapped_organism');
-  $where [5] = Sql::selectFilter('genome', $form_state, 'landmark_organism');
+  $where [5] = Sql::selectFilter('genome', $form_state, 'genome');
   $where [6] = Sql::selectFilter('location', $form_state, 'landmark');
   $where [7] = Sql::betweenFilter('fmin', 'fmax', $form_state, 'fmin', 'fmax');
   $where [8] = Sql::selectFilter('map_name', $form_state, 'map_name');
@@ -264,8 +262,8 @@ function chado_search_marker_search_download_fasta_definition () {
 }
 // User defined: Populating the landmark for selected organism
 function chado_search_marker_search_ajax_location ($val) {
-  $sql = "SELECT distinct landmark, CASE WHEN regexp_replace(landmark, E'\\\D','','g') = '' THEN 999999 ELSE regexp_replace(landmark, E'\\\D','','g')::numeric END AS lnumber FROM {chado_search_marker_search} WHERE landmark_organism = :landmark_org ORDER BY lnumber";
-  return chado_search_bind_dynamic_select(array(':landmark_org' => $val), 'landmark', $sql);
+  $sql = "SELECT distinct landmark, CASE WHEN regexp_replace(landmark, E'\\\D','','g') = '' THEN 999999 ELSE regexp_replace(landmark, E'\\\D','','g')::numeric END AS lnumber FROM {chado_search_marker_search} WHERE genome = :genome ORDER BY lnumber";
+  return chado_search_bind_dynamic_select(array(':genome' => $val), 'genome', $sql);
 }
 // User defined: Populating the linkage group for selected map
 function chado_search_marker_search_ajax_linkage_group ($val) {

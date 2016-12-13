@@ -55,16 +55,16 @@ function chado_search_create_marker_search_mview() {
       'stop' => array (
         'type' => 'float' 
       ),
+      'genome' => array (
+        'type' => 'varchar',
+        'length' => '255'
+      ),
       'landmark_feature_id' => array (
         'type' => 'int' 
       ),
       'landmark' => array (
         'type' => 'varchar',
         'length' => '255' 
-      ),
-      'landmark_organism' => array (
-        'type' => 'varchar',
-        'length' => '510' 
       ),
       'fmin' => array (
         'type' => 'int' 
@@ -100,9 +100,26 @@ function chado_search_create_marker_search_mview() {
       UPPER(replace(MTYPE.value, '_', ' ')) AS marker_type,
       cast(START.value as real) AS start,
       cast(STOP.value as real) AS stop,
+      --- Select genome name
+      (
+       SELECT name FROM analysis A
+       WHERE 
+         (
+           (SELECT value FROM analysisprop 
+            WHERE analysis_id = A.analysis_id
+            AND type_id = 
+                (SELECT cvterm_id FROM cvterm WHERE name = 'Analysis Type')
+           ) = 'whole_genome'
+         )
+       AND 
+         (
+           (SELECT analysis_id FROM analysisfeature AF
+            WHERE AF.feature_id = LOC.srcfeature_id
+           ) = A.analysis_id
+         ) 
+      ) AS genome,
       LOC.srcfeature_id AS landmark_feature_id,
       LOC.uniquename AS landmark,
-      (SELECT genus || ' ' || species FROM organism WHERE organism_id = (SELECT organism_id FROM feature WHERE feature_id = LOC.srcfeature_id)) AS landmark_organism,
       LOC.fmin,
       LOC.fmax,
       LOC.name || ':' || (fmin + 1) || '..' || fmax AS location,
@@ -143,55 +160,26 @@ function chado_search_create_marker_search_mview() {
       FROM featureposprop
       WHERE type_id = (SELECT cvterm_id FROM cvterm WHERE name = 'stop' AND cv_id = (SELECT cv_id FROM cv WHERE name = 'MAIN'))
       ) STOP ON STOP.featurepos_id = MAP.featurepos_id
+      --- Get genome location
       LEFT JOIN
       (SELECT
-      max(MK.feature_id) AS feature_id,
-      max(SRC.feature_id) AS srcfeature_id,
-      max(SRC.name) AS name,
-      max(SRC.uniquename) AS uniquename,
-      max(SRCLOC.fmin) AS fmin,
-      max(SRCLOC.fmax)AS fmax
-      FROM feature MK
-      INNER JOIN featureloc MATCHLOC ON MATCHLOC.srcfeature_id = MK.feature_id
-      INNER JOIN featureloc SRCLOC ON MATCHLOC.feature_id = SRCLOC.feature_id
-      INNER JOIN feature SRC ON SRC.feature_id  = SRCLOC.srcfeature_id
-      WHERE
-      MK.type_id =
-      (SELECT cvterm_id FROM cvterm WHERE name = 'genetic_marker'
-      AND cv_id = (SELECT cv_id FROM cv WHERE name = 'sequence'))
-      AND
-      SRC.type_id IN
-      (SELECT cvterm_id FROM cvterm WHERE name IN ('chromosome', 'supercontig')
-      AND cv_id = (SELECT cv_id FROM cv WHERE name = 'sequence'))
-      GROUP BY (MK.feature_id, SRC.feature_id, SRC.name, SRCLOC.fmin, SRCLOC.fmax)
-      UNION
-      SELECT 
-         max(FL.feature_id) AS feature_id, 
-         max(srcfeature_id) AS srcfeature_id, 
-         max(F.name) AS name, 
-         max(F.uniquename) AS uniquename, 
-         max(fmin) AS fmin, 
+         max(FL.feature_id) AS feature_id,
+         max(srcfeature_id) AS srcfeature_id,
+         max(F.name) AS name,
+         max(F.uniquename) AS uniquename,
+         max(fmin) AS fmin,
          max(fmax) AS fmax
       FROM featureloc FL
       INNER JOIN feature F ON F.feature_id = FL.srcfeature_id
       INNER JOIN feature F2 ON F2.feature_id = FL.feature_id
-      WHERE F.type_id IN (SELECT cvterm_id FROM cvterm WHERE name IN ('chromosome', 'supercontig') AND cv_id = (SELECT cv_id FROM cv WHERE name = 'sequence'))                
+      WHERE 
+      --- Alignments to the 'chromosome' or 'supercontig'
+        (F.type_id IN (SELECT cvterm_id FROM cvterm WHERE name IN ('chromosome', 'supercontig') AND cv_id = (SELECT cv_id FROM cv WHERE name = 'sequence'))
+      --- Alignments to the 'contig' for M x domestica
+         OR (F.type_id = (SELECT cvterm_id FROM cvterm WHERE name = 'contig' AND cv_id = (SELECT cv_id FROM cv WHERE name = 'sequence'))
+                AND F.organism_id = (SELECT organism_id FROM organism WHERE genus = 'Malus' AND species = 'x domestica'))
+        )
       AND F2.type_id = (SELECT cvterm_id FROM cvterm WHERE name = 'genetic_marker' AND cv_id = (SELECT cv_id FROM cv WHERE name = 'sequence'))
-      GROUP BY (FL.feature_id, srcfeature_id, F.name, F.uniquename, fmin, fmax)
-      UNION
-      SELECT 
-         max(FL.feature_id) AS feature_id, 
-         max(srcfeature_id) AS srcfeature_id, 
-         max(F.name) AS name, 
-         max(F.uniquename) AS uniquename, 
-         max(fmin) AS fmin, 
-         max(fmax) AS fmax
-      FROM featureloc FL
-      INNER JOIN feature F ON F.feature_id = FL.srcfeature_id
-      INNER JOIN feature F2 ON F2.feature_id = FL.feature_id
-      WHERE F.type_id IN (SELECT cvterm_id FROM cvterm WHERE name = 'contig' AND cv_id = (SELECT cv_id FROM cv WHERE name = 'sequence'))                
-      AND F2.type_id = (SELECT cvterm_id FROM cvterm WHERE name = 'genetic_marker' AND cv_id = (SELECT cv_id FROM cv WHERE name = 'sequence'))
-      AND F.organism_id = (SELECT organism_id FROM organism WHERE genus = 'Malus' AND species = 'x domestica')
       GROUP BY (FL.feature_id, srcfeature_id, F.name, F.uniquename, fmin, fmax)
       ) LOC ON LOC.feature_id = MARKER.feature_id
       LEFT JOIN
