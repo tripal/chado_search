@@ -8,6 +8,7 @@ class CustomOutput extends Filter {
   public $defaults;
   public $title;
   public $desc;
+  public $groupby_selection;
   
   public function setForm (&$form, &$form_state) {
     $search_name = $this->search_name;
@@ -38,5 +39,8 @@ class CustomOutput extends Filter {
       '#default_value' => $defaults,
     );
     
+    if ($this->groupby_selection) {
+      $form['#custom_output-groupby_selection'] = TRUE;
+    }
   }
 }

@@ -58,8 +58,11 @@ class ResultQuery{
           if ($col->data_type == 'text' || $col->data_type == 'character varying') { // Aggregate if the data type is text or character varing
             $gbsql .= "string_agg(distinct $col->column_name, '$separator') AS $col->column_name, ";
           } else { // get the max value for other data types
-            $gbsql .= "max($col->column_name) AS $col->column_name, ";
+            $gbsql .= "first($col->column_name) AS $col->column_name, ";
           }
+        }
+        else {
+          $gbsql .= "$col->column_name, ";
         }
       }    
 
@@ -86,7 +89,9 @@ class ResultQuery{
         $counter ++;
       }
       $this->sql = $replace_sql;
-      $this->sql .= " GROUP BY $gcol";
+      if (!$notchanged) {
+        $this->sql .= " GROUP BY $gcol";
+      }
       if ($separator == "</br>") {
         $this->dl_sql = str_replace('</br>', '; ', $this->sql);
       }
@@ -115,8 +120,12 @@ class ResultQuery{
   }
   
   function count() {
-    $count_sql = $this->getCountSQL();
-    $total = chado_query($count_sql)->fetchField();
-    return $total;
+    try {
+      $count_sql = $this->getCountSQL();
+      $total = chado_query($count_sql)->fetchField();
+      return $total;
+    } catch (PDOException $e) {
+      drupal_set_message('Unable to count results. Please check your SQL statement. ' . $e->getMessage(), 'error');
+    }
   }
 }

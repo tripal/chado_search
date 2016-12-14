@@ -375,6 +375,7 @@ class ChadoSearchForm {
     $f->defaults = $conf->getDefaults();
     $f->title = $conf->getTitle();
     $f->desc = $conf->getDescription();
+    $f->groupby_selection = $conf->getGroupBySelection();
     $f->attach($this->form, $this->form_state);
     
   }

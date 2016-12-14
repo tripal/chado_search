@@ -59,13 +59,28 @@ function chado_search_snp_marker_search_form ($form) {
       ->title2("and")
       ->labelWidth2(50)
       ->size(10)
-      );
+  );
   $form->addMarkup(
       Set::markup()
       ->id('location_unit')
       ->text("<strong>bp</strong>")
       ->newLine()
-      );
+  );
+  $form->addCustomOutput(
+      Set::customOutput()
+      ->id('custom_output')
+      ->options(
+          array(
+            'array_name' => 'SNP Array Name', 
+            'array_id' => 'SNP Array ID', 
+            'alias' => 'Alias', 
+            'allele'=> 'Allele', 
+            'location' => 'Location', 
+             'flanking_sequence' => 'Flanking Sequence'
+          )
+      )
+      ->groupBySelection(TRUE)
+  );
   $form->addSubmit();
   $form->addReset();
   $desc =
@@ -97,6 +112,7 @@ function chado_search_snp_marker_search_form_submit ($form, &$form_state) {
     ->sql($sql)
     ->where($where)
     ->tableDefinitionCallback('chado_search_snp_marker_search_table_definition')
+    ->rewriteCols('alias=chado_search_snp_marker_search_rewrite_column_alias')
     ->execute($form, $form_state);
 }
 
@@ -168,6 +184,11 @@ function chado_search_snp_marker_search_link_gbrowse ($paras) {
   }
   return chado_search_link_url ($url);
 }
+
+function chado_search_snp_marker_search_rewrite_column_alias ($val) {
+  return str_replace(':::' , '. ', $val);
+}
+
 /*************************************************************
  * AJAX callbacks
 */

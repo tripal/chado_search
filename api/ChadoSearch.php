@@ -117,7 +117,7 @@ class ChadoSearch {
    *     - key: <column>:<(s)ortable>:<callback>:<argument1>:<argument2>:<argument3>...
    *     - value: displayed column name
    * $form_state: Drupal $form_state variable
-   * $groupby - group the result by column(s). format = '<column>:<table>:<separator>'
+   * $groupby - group the result by column(s). format = '<column>:<table>:<separator>'. You need to have a '*' in the SQL SELECT statement in order to be replaced by the arregated version of SELECT statement. If not, $groupby will be ignored.
    * $fasta_download - create a Fasta download link
    * $append - a free SQL string that will be append to the end of the statement
    * $disableCols - hide these columns from the result table. format = '<column1>;<column2>;<column3>;...'
@@ -131,136 +131,155 @@ class ChadoSearch {
   */ 
   // Main Result
   public function createResult (&$form_state, $conf) {
-    if (!is_array($form_state) || !isset($form_state['build_info']['form_id'])) {
-      form_set_error('invalid_form_state', 'Fail to generate results. Please check the $form_state  you passed for the createResult($form_state, $conf) function.');
-      return;
-    }
-    if (!is_object($conf) || !method_exists($conf, 'getSql')) {
-      form_set_error('invalid_conf', 'Fail to generate results. Please check the $conf  you passed for the createResult($form_state, $conf) function.');
-      return;
-    }
-    
-    // Get parameters from $conf
-    $sql = $conf->getSql();
-    $where = $conf->getWhere();
-    $table_definition_callback = $conf->getTableDefinitionCallback();
-    $groupby = $conf->getGroupby();
-    $fasta_download = $conf->getFastaDownload();
-    $append = $conf->getAppend();
-    $disableCols = $conf->getDisableCols();
-    $changeHeaders = $conf->getChangeHeaders();
-    $rewriteCols = $conf->getRewriteCols();
-    $autoscroll = $conf->getAutoscroll();
-    $customDownload = $conf->getCustomDownload();
-    $customFasta = $conf->getCustomFasta();
-    $showDownload = $conf->getShowDownload();
-    $showPager = $conf->getShowPager();
-    
-    $search_id = $this->search_id;
-    
-    // Prepare SQL
-    $result_query = new ResultQuery($search_id, $sql);
-    $result_query
-      ->addWhere($where)
-      ->addGroupBy($groupby)
-      ->appendSQL($append);
-    $sql = $result_query->getSQL();
-    $total_items = $result_query->count();
-    $total_pages =Pager::totalPages($total_items, $this->number_per_page);
-
-    // Prepare the result
-    $div = "";
-    // Show all result instead of just creating a search form
-    if(key_exists('#show_all_results',$form_state)) {
-      $div ="<style type=\"text/css\">body {display: block;}</style>";
-      $autoscroll = $form_state['#show_all_results_scroll'];
-    }
-    
-    // Show the first page
-    if ($total_items != 0) {
-
+    try {
+      if (!is_array($form_state) || !isset($form_state['build_info']['form_id'])) {
+        form_set_error('invalid_form_state', 'Fail to generate results. Please check the $form_state  you passed for the createResult($form_state, $conf) function.');
+        return;
+      }
+      if (!is_object($conf) || !method_exists($conf, 'getSql')) {
+        form_set_error('invalid_conf', 'Fail to generate results. Please check the $conf  you passed for the createResult($form_state, $conf) function.');
+        return;
+      }
+      
+      // Get parameters from $conf
+      $sql = $conf->getSql();
+      $where = $conf->getWhere();
+      $table_definition_callback = $conf->getTableDefinitionCallback();
+      $groupby = $conf->getGroupby();
+      $fasta_download = $conf->getFastaDownload();
+      $append = $conf->getAppend();
+      $disableCols = $conf->getDisableCols();
+      $changeHeaders = $conf->getChangeHeaders();
+      $rewriteCols = $conf->getRewriteCols();
+      $autoscroll = $conf->getAutoscroll();
+      $customDownload = $conf->getCustomDownload();
+      $customFasta = $conf->getCustomFasta();
+      $showDownload = $conf->getShowDownload();
+      $showPager = $conf->getShowPager();
+      
+      $search_id = $this->search_id;
+      
       // Get custom outputs setting if it exists
+      $disables = array();
       if (key_exists('custom_output_options', $form_state['values'])) {
         $custom_output = $form_state['values']['custom_output_options'];
         foreach ($custom_output AS $k => $v) {
           if (!$v) {
             $disableCols .= ";$k";
+            $disables [] = $k;
           }
         }
       }
-      
-      // Store settings to session variables
-      SessionVar::setSessionVar($search_id, 'disabled-columns', $disableCols);
-      SessionVar::setSessionVar($search_id, 'changed-headers', $changeHeaders);
-      SessionVar::setSessionVar($search_id, 'rewrite-columns', $rewriteCols);
-      SessionVar::setSessionVar($search_id, 'custom-fasta-download', $customFasta);
-      SessionVar::setSessionVar($search_id, 'autoscroll', $autoscroll);
-      SessionVar::setSessionVar($search_id, 'total-items', $total_items);
-      
-      // Build the result
-      $div .= 
-      "<div id=\"$search_id-result-summary\" class=\"chado_search-result-summary\">
-          <div id=\"$search_id-result-count\" class=\"chado_search-result-count\">
-            <strong>$total_items</strong> records were returned
-          </div>";
-
-      // Add Download(s)
-      if ($showDownload) {
-        // Custom Download(s)
-        $custom_dl = new CustomDownload($search_id, $customDownload);
-        $div .= $custom_dl->getSrc();
-        
-        // Fasta Download
-        if ($fasta_download) {
-          $fasta = new Fasta($this->search_id, $this->path);
-          $div .= $fasta->getSrc();
-        }
-        
-        // Table Download
-        $dl_default = isset($customDownload['disable_default']) ? FALSE : TRUE;
-        $download = new Download($this->search_id, $this->path, $dl_default);
-        $div .= $download->getSrc();
-        
-        // Download Label
-        $div .=
-          "<div id=\"$search_id-download-label\" class=\"chado_search-download-label\">
-              Download
-           </div>";
-      }
-      
-      $div .= "</div>";
-      
-      // Add Table
-      $lsql = "$sql LIMIT $this->number_per_page;";
-      $result = chado_query($lsql);
-      if (function_exists($table_definition_callback)) {
-        $headers = $table_definition_callback();
-      }
-      else {
-        $hsql = "SELECT * FROM ($sql LIMIT 1) T";
-        $fields = array_keys(db_query($hsql)->fetchAssoc());
+      // Custom output: group by user selection    
+      if (isset($form_state['#custom_output-groupby_selection'])) {
+        //TODO: Group by selected output columns
+        $fsql = "SELECT * FROM ($sql LIMIT 1) T";
+        $fields = array_keys(chado_query($fsql)->fetchAssoc());
+        $columns = '';
         foreach($fields AS $field) {
-          $headers[$field] = $field;
+          
         }
-        SessionVar::setSessionVar($search_id, 'default-headers', $headers);
       }
-      $table = new Table($this->search_id, $result, 0, $this->number_per_page, $headers, NULL, $autoscroll);
-      $div .= $table->getSrc();
-
-      // Add Pager (and code for switching pages/sorting results)
-      $pager = new Pager($this->search_id, $this->path, $total_pages, $showPager);
-      $div .= $pager->getSrc();
       
-    // If there is no result, show the following message
-    } else {
-      $div = 
-        "<div id=\"$search_id-no-result\" class=\"chado_search-no-result\">
-            <strong>0</strong> records were returned.
-          </div>";
+      // Prepare SQL
+      $result_query = new ResultQuery($search_id, $sql);
+      $result_query
+        ->addWhere($where)
+        ->addGroupBy($groupby)
+        ->appendSQL($append);
+      $sql = $result_query->getSQL();
+      //dpm($sql);
+      $total_items = $result_query->count();
+      $total_pages =Pager::totalPages($total_items, $this->number_per_page);
+  
+      // Prepare the result
+      $div = "";
+      // Show all result instead of just creating a search form
+      if(key_exists('#show_all_results',$form_state)) {
+        $div ="<style type=\"text/css\">body {display: block;}</style>";
+        $autoscroll = $form_state['#show_all_results_scroll'];
+      }
+      
+      // Show the first page
+      if ($total_items != 0) {
+        
+        // Store settings to session variables
+        SessionVar::setSessionVar($search_id, 'disabled-columns', $disableCols);
+        SessionVar::setSessionVar($search_id, 'changed-headers', $changeHeaders);
+        SessionVar::setSessionVar($search_id, 'rewrite-columns', $rewriteCols);
+        SessionVar::setSessionVar($search_id, 'custom-fasta-download', $customFasta);
+        SessionVar::setSessionVar($search_id, 'autoscroll', $autoscroll);
+        SessionVar::setSessionVar($search_id, 'total-items', $total_items);
+        
+        // Build the result
+        $div .= 
+        "<div id=\"$search_id-result-summary\" class=\"chado_search-result-summary\">
+            <div id=\"$search_id-result-count\" class=\"chado_search-result-count\">
+              <strong>$total_items</strong> records were returned
+            </div>";
+  
+        // Add Download(s)
+        if ($showDownload) {
+          // Custom Download(s)
+          $custom_dl = new CustomDownload($search_id, $customDownload);
+          $div .= $custom_dl->getSrc();
+          
+          // Fasta Download
+          if ($fasta_download) {
+            $fasta = new Fasta($this->search_id, $this->path);
+            $div .= $fasta->getSrc();
+          }
+          
+          // Table Download
+          $dl_default = isset($customDownload['disable_default']) ? FALSE : TRUE;
+          $download = new Download($this->search_id, $this->path, $dl_default);
+          $div .= $download->getSrc();
+          
+          // Download Label
+          $div .=
+            "<div id=\"$search_id-download-label\" class=\"chado_search-download-label\">
+                Download
+             </div>";
+        }
+        
+        $div .= "</div>";
+        
+        // Add Table
+        $lsql = "$sql LIMIT $this->number_per_page;";
+        $result = chado_query($lsql);
+        // Call header definition callback
+        if (function_exists($table_definition_callback)) {
+          $headers = $table_definition_callback();
+        }
+        // Default header if header difinition does not exist
+        else {
+          $hsql = "SELECT * FROM ($sql LIMIT 1) T";
+          $fields = array_keys(db_query($hsql)->fetchAssoc());
+          foreach($fields AS $field) {
+            $headers[$field] = $field;
+          }
+          SessionVar::setSessionVar($search_id, 'default-headers', $headers);
+        }
+        $table = new Table($this->search_id, $result, 0, $this->number_per_page, $headers, NULL, $autoscroll);
+        $div .= $table->getSrc();
+  
+        // Add Pager (and code for switching pages/sorting results)
+        $pager = new Pager($this->search_id, $this->path, $total_pages, $showPager);
+        $div .= $pager->getSrc();
+        
+      // If there is no result, show the following message
+      } else {
+        $div = 
+          "<div id=\"$search_id-no-result\" class=\"chado_search-no-result\">
+              <strong>0</strong> records were returned.
+            </div>";
+      }
+      
+      // Attach the result to form
+      $form_state['values']['result'] = $div;
+      $form_state['rebuild'] = true;
+    } catch (PDOException $e) {
+      drupal_set_message('Unable to create results. Please check your SQL statement. ' . $e->getMessage(), 'error');
     }
-    
-    // Attach the result to form
-    $form_state['values']['result'] = $div;
-    $form_state['rebuild'] = true;
   }
 }

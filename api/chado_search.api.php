@@ -192,6 +192,10 @@ function chado_search_wrapper_form ($form, &$form_state, $search_id, $url, $num_
   $final_form['#search_id'] = $search_id;
   $final_form['#search_url'] = $url;
   $final_form['#number_per_page'] = $num_per_page;
+  if (isset($final_form['#custom_output-groupby_selection'])) {
+    $form_state['#custom_output-groupby_selection'] = TRUE;
+  }
+  
   $allowed = chado_search_get_setting_by_id($search_id, 'summary_allowed');
   if (($show_result == 'summary' || $show_result == 'list') && $allowed) {
     $title = chado_search_get_setting_by_id($search_id, 'summary_title');
@@ -312,6 +316,7 @@ function chado_search_ajax_download_fasta_feature ($search_id, $url, $num_per_pa
   return drupal_json_output(Fasta::createFasta($search_id, $url, $feauture_id_column));
 }
 
+// Provide an API function for updating AJAX form elements
 function chado_search_ajax_form_update($form, &$form_state) {
   $update = $form_state['triggering_element']['#attribute']['update'];
   if (is_array($update)) {
@@ -356,28 +361,36 @@ function chado_search_link_url ($url) {
 // Bind unique values of a certain column to the ComputedTextFields element
 // This function is usually called by an AJAX function to populate the values in a select box
 function chado_search_bind_dynamic_textfields($value, $column, $sql) {
-  foreach($value AS $k => $v) {
-    $value[$k] = urldecode($v);
+  try {
+    foreach($value AS $k => $v) {
+      $value[$k] = urldecode($v);
+    }
+    $result = chado_query ($sql, $value)->fetchObject();
+    $data = array ();
+    if ($result) {
+      array_push ($data, $result->$column);
+    }
+    return $data;
+  } catch (PDOException $e) {
+    drupal_set_message('Unable to bind DynamicTextFields form element. Please check your SQL statement in the AJAX callback. ' . $e->getMessage(), 'error');
   }
-  $result = chado_query ($sql, $value)->fetchObject();
-  $data = array ();
-  if ($result) {
-    array_push ($data, $result->$column);
-  }
-  return $data;
 }
 
 // Bind unique values of a certain column to the DynamicSelect element
 // This function is usually called by an AJAX function to populate the values in a select box
 function chado_search_bind_dynamic_select($value, $column, $sql) {
-  $result = chado_query($sql, $value);
-  $data = array(0 => 'Any');
-  while ($obj = $result->fetchObject()) {
-    if ($obj->$column) {
-      $data[$obj->$column] = $obj->$column;
+  try {
+    $result = chado_query($sql, $value);
+    $data = array(0 => 'Any');
+    while ($obj = $result->fetchObject()) {
+      if ($obj->$column) {
+        $data[$obj->$column] = $obj->$column;
+      }
     }
+    return $data;
+  } catch (PDOException $e) {
+    drupal_set_message('Unable to bind DynamicSelectFilter form element. Please check your SQL statement in the AJAX callback. ' . $e->getMessage(), 'error');
   }
-  return $data;
 }
 
 function chado_search_get_class($obj = NULL) {

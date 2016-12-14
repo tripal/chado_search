@@ -117,19 +117,20 @@ LEFT JOIN
   ) ARR_ID ON ARR_ID.synonym_id = FS.synonym_id
 --- Get aliases
 LEFT JOIN
-  (SELECT DISTINCT feature_id, value FROM featureprop WHERE type_id =
+  (SELECT feature_id, string_agg(value, ':::') AS value FROM featureprop WHERE type_id =
      (SELECT cvterm_id FROM cvterm
       WHERE name = 'alias'
       AND cv_id = (SELECT cv_id FROM cv WHERE name = 'MAIN')
      )
+   GROUP BY feature_id
   ) ALIAS ON ALIAS.feature_id = SNP.feature_id
 --- Get allele
 LEFT JOIN
-  (SELECT DISTINCT feature_id, value FROM featureprop WHERE type_id =
+  (SELECT feature_id, first(value) AS value FROM featureprop WHERE type_id IN
      (SELECT cvterm_id FROM cvterm
-      WHERE name = 'allele'
-      AND cv_id = (SELECT cv_id FROM cv WHERE name = 'sequence')
+      WHERE name IN ('allele', 'SNP')
      )
+   GROUP BY feature_id
   ) ALLELE ON ALLELE.feature_id = SNP.feature_id
 --- Get genome location
       LEFT JOIN

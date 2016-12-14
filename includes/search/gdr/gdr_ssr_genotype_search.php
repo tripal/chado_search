@@ -98,7 +98,6 @@ function chado_search_ssr_genotype_search_base_query() {
   $query = "SELECT 
                  'P_' || marker_uniquename AS marker_allele, 
                  'View ' || count (stock_uniquename) || ' germplasm(s)' AS germplasm, 
-                 marker_uniquename,
                  * 
                FROM {chado_search_ssr_genotype_search} CSDS";
   return $query;
@@ -150,7 +149,7 @@ function chado_search_ssr_genotype_search_download_custom_table ($handle, $resul
 }
 
 function chado_search_ssr_genotype_search_download_long_form ($handle, $result, $sql, $total_items, $progress_var) {
-  $sql = preg_replace('/(string_agg|count|max) ?\((.+?)\)/', '$2', $sql);
+  $sql = preg_replace('/(string_agg|count|first) ?\((.+?)\)/', '$2', $sql);
   $sql = str_replace(array(", '; '", 'distinct ', ' GROUP BY marker_uniquename,allele'), array('', '', ''), $sql);
   $sql = "
       SELECT 
@@ -168,21 +167,27 @@ function chado_search_ssr_genotype_search_download_long_form ($handle, $result, 
         (SELECT distinct project_name, stock_id, stock_uniquename, feature_id, marker_uniquename, replace(genotype, marker_uniquename || '_', '') AS genotype, genotype_id FROM (" . $sql . ") T
                ORDER BY project_name, stock_uniquename, marker_uniquename, genotype) T2 GROUP BY project_name, stock_uniquename, marker_uniquename";
   $result = chado_query($sql);
+  $total_items = $result->rowCount();
   $header = "\"Dataset\",\"Germplasm\",\"Marker Name\",\"Allele\"\n";
   fwrite($handle, $header);
+  $progress = 0;
   $counter = 1;
   global $base_url;
   while ($row = $result->fetchObject()) {
+    $current = round ($counter / $total_items * 100);
+    if ($current != $progress) {
+      $progress = $current;
+      variable_set($progress_var, $progress);
+    }
     $stock_nid = chado_get_nid_from_id('stock', $row->stock_id);
     $feature_nid = chado_get_nid_from_id('feature', $row->feature_id);
     fwrite($handle, "\"$row->project_name\",\"=HYPERLINK(\"\"$base_url/node/$stock_nid\"\", \"\"$row->stock_uniquename\"\")\",\"=HYPERLINK(\"\"$base_url/node/$feature_nid\"\", \"\"$row->marker_uniquename\"\")\",\"$row->genotype\"\n");
     $counter ++;
   }
-  fclose($handle);
 }
 
 function chado_search_ssr_genotype_search_download_wide_form ($handle, $result, $sql, $total_items, $progress_var) {
-  $sql = preg_replace('/(string_agg|count|max) ?\((.+?)\)/', '$2', $sql);
+  $sql = preg_replace('/(string_agg|count|first) ?\((.+?)\)/', '$2', $sql);
   $sql = str_replace(array(", '; '", 'distinct ', ' GROUP BY marker_uniquename,allele'), array('', '', ''), $sql);
   $sql = "
       SELECT 
@@ -240,12 +245,12 @@ function chado_search_ssr_genotype_search_download_wide_form ($handle, $result, 
     $stock_nid = chado_get_nid_from_id('stock', $stock_id);
     fwrite($handle, "\"" . $project . "\",\"=HYPERLINK(\"\"$base_url/node/$stock_nid\"\", \"\"" . $stock . "\"\")\"");
     foreach ($headings AS $h) {
-      fwrite($handle, ",\"" . $value[$h] . "\"");
+      $datum = key_exists($h, $value) ? $value[$h] : '';
+      fwrite($handle, ",\"" . $datum . "\"");
     }
     fwrite($handle, "\n");
     $counter ++;
   }
-  fclose($handle);
 }
 
 // Define call back to link the featuremap to its  node for result table

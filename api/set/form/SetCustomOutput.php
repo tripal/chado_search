@@ -7,6 +7,7 @@ class SetCustomOutput extends SetBase {
   private $defaults;
   private $title;
   private $desc;
+  private $groupby_selection;
   
   /**
    * Setters
@@ -32,6 +33,11 @@ class SetCustomOutput extends SetBase {
     return $this;
   }
   
+  public function groupBySelection ($bool) {
+    $this->groupby_selection = $bool;
+    return $this;
+  }
+  
   /**
    * Getters
    */
@@ -49,5 +55,9 @@ class SetCustomOutput extends SetBase {
   
   public function getDescription() {
     return $this->desc;
+  }
+  
+  public function getGroupBySelection() {
+    return $this->groupby_selection;
   }
 }
