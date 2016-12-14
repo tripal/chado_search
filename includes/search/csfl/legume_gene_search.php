@@ -15,6 +15,7 @@ function chado_search_gene_search_form ($form) {
       ->title('Genus')
       ->column('genus')
       ->table('chado_search_gene_search')
+      ->disable(array('Cre', 'Moss', 'synthetic', 'Virus-induced'))
       ->cache(TRUE)
       ->labelWidth(163)
   );
