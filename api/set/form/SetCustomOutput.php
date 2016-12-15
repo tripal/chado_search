@@ -33,8 +33,8 @@ class SetCustomOutput extends SetBase {
     return $this;
   }
   
-  public function groupBySelection ($bool) {
-    $this->groupby_selection = $bool;
+  public function groupBySelection ($base_table) {
+    $this->groupby_selection = $base_table;
     return $this;
   }
   

@@ -9,6 +9,7 @@ class ResultQuery{
   public $search_id;
   public $sql;
   private $dl_sql;
+  private $sequence = 0; // make sure SQL clauses are added in sequence: 1. WHERE 2. GROUPBY 3. <append-free-text>
   
   function __construct($search_id, $sql) {
     $this->search_id = $search_id;
@@ -16,6 +17,10 @@ class ResultQuery{
   }
   
   function addWhere ($where) {
+    if ($this->sequence > 0) {
+      drupal_set_message("Cannot add WHERE clause after GROUPBY or free-text addition", 'error');
+      return $this;
+    }
     if ($where != NULL) {
       // Re-arrange $where to make sure the indice are in order
       $tmpwhere = array();
@@ -37,11 +42,16 @@ class ResultQuery{
       if ($con != ' WHERE ') {
         $this->sql .= $con;
       }
+      $this->sequence = 1;
     }
     return $this;
   }
   
   function addGroupBy ($groupby) {
+    if ($this->sequence > 1) {
+      drupal_set_message("Cannot add GROUP BY clause after free-text addition", 'error');
+      return $this;
+    }
     $separator = '';
     if ($groupby != NULL) {
       $gb = explode(":", $groupby);
@@ -95,6 +105,7 @@ class ResultQuery{
       if ($separator == "</br>") {
         $this->dl_sql = str_replace('</br>', '; ', $this->sql);
       }
+      $this->sequence = 2;
     }
     return $this;
   }
@@ -102,6 +113,7 @@ class ResultQuery{
   function appendSQL($append) {
     if ($append) {
       $this->sql .= ' ' . $append;
+      $this->sequence = 3;
     }
     return $this;
   }

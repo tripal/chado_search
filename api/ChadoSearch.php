@@ -160,25 +160,22 @@ class ChadoSearch {
       $search_id = $this->search_id;
       
       // Get custom outputs setting if it exists
-      $disables = array();
+      $group_selection = '';
       if (key_exists('custom_output_options', $form_state['values'])) {
         $custom_output = $form_state['values']['custom_output_options'];
         foreach ($custom_output AS $k => $v) {
           if (!$v) {
             $disableCols .= ";$k";
-            $disables [] = $k;
+          }
+          else {
+            $group_selection .= "$k,";
           }
         }
       }
       // Custom output: group by user selection    
       if (isset($form_state['#custom_output-groupby_selection'])) {
-        //TODO: Group by selected output columns
-        $fsql = "SELECT * FROM ($sql LIMIT 1) T";
-        $fields = array_keys(chado_query($fsql)->fetchAssoc());
-        $columns = '';
-        foreach($fields AS $field) {
-          
-        }
+        $base_table = $form_state['#custom_output-groupby_selection'];
+        $groupby = $group_selection . ":" . $base_table;
       }
       
       // Prepare SQL

@@ -40,7 +40,7 @@ class CustomOutput extends Filter {
     );
     
     if ($this->groupby_selection) {
-      $form['#custom_output-groupby_selection'] = TRUE;
+      $form['#custom_output-groupby_selection'] = $this->groupby_selection;
     }
   }
 }
