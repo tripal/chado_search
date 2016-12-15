@@ -371,7 +371,7 @@ function chado_search_bind_dynamic_textfields($value, $column, $sql) {
       array_push ($data, $result->$column);
     }
     return $data;
-  } catch (PDOException $e) {
+  } catch (\PDOException $e) {
     drupal_set_message('Unable to bind DynamicTextFields form element. Please check your SQL statement in the AJAX callback. ' . $e->getMessage(), 'error');
   }
 }
@@ -388,7 +388,7 @@ function chado_search_bind_dynamic_select($value, $column, $sql) {
       }
     }
     return $data;
-  } catch (PDOException $e) {
+  } catch (\PDOException $e) {
     drupal_set_message('Unable to bind DynamicSelectFilter form element. Please check your SQL statement in the AJAX callback. ' . $e->getMessage(), 'error');
   }
 }

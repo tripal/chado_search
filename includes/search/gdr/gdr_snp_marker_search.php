@@ -66,7 +66,7 @@ function chado_search_snp_marker_search_form ($form) {
       ->text("<strong>bp</strong>")
       ->newLine()
   );
-  $form->addCustomOutput(
+/*   $form->addCustomOutput(
       Set::customOutput()
       ->id('custom_output')
       ->options(
@@ -79,8 +79,8 @@ function chado_search_snp_marker_search_form ($form) {
              'flanking_sequence' => 'Flanking Sequence'
           )
       )
-      ->groupBySelection(TRUE)
-  );
+      ->groupBySelection('chado_search_snp_marker_search')
+  ); */
   $form->addSubmit();
   $form->addReset();
   $desc =

@@ -168,14 +168,16 @@ class ChadoSearch {
             $disableCols .= ";$k";
           }
           else {
-            $group_selection .= "$k,";
+            if ($k != 'row-counter') {
+              $group_selection .= "$k,";
+            }
           }
         }
       }
       // Custom output: group by user selection    
       if (isset($form_state['#custom_output-groupby_selection'])) {
         $base_table = $form_state['#custom_output-groupby_selection'];
-        $groupby = $group_selection . ":" . $base_table;
+        $groupby = rtrim($group_selection, ',') . ":" . $base_table;
       }
       
       // Prepare SQL
@@ -275,7 +277,7 @@ class ChadoSearch {
       // Attach the result to form
       $form_state['values']['result'] = $div;
       $form_state['rebuild'] = true;
-    } catch (PDOException $e) {
+    } catch (\PDOException $e) {
       drupal_set_message('Unable to create results. Please check your SQL statement. ' . $e->getMessage(), 'error');
     }
   }

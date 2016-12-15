@@ -136,7 +136,7 @@ class ResultQuery{
       $count_sql = $this->getCountSQL();
       $total = chado_query($count_sql)->fetchField();
       return $total;
-    } catch (PDOException $e) {
+    } catch (\PDOException $e) {
       drupal_set_message('Unable to count results. Please check your SQL statement. ' . $e->getMessage(), 'error');
     }
   }

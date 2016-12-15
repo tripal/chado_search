@@ -173,7 +173,7 @@ class SelectFilter extends Filter {
       $form[$id]['#suffix'] = 
         "   </div>
            </div>";
-    } catch (PDOException $e) {
+    } catch (\PDOException $e) {
       drupal_set_message('Unable to create SelectFilter form element. Please check your settings. ' . $e->getMessage(), 'error');
     }
   }
