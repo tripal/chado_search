@@ -15,6 +15,7 @@ class SetSelectFilter extends SetElement {
   private $label_width = 0;
   private $size = 0;
   private $disables = NULL;
+  private $only = NULL;
   
   /**
    * Setters
@@ -75,6 +76,11 @@ class SetSelectFilter extends SetElement {
     return $this;
   }
   
+  public function only ($values) {
+  	$this->only = $values;
+  	return $this;
+  }
+  
   /**
    * Getters
    */
@@ -120,5 +126,9 @@ class SetSelectFilter extends SetElement {
   
   public function getDisable () {
     return $this->disables;
+  }
+  
+  public function getOnly () {
+  	return $this->only;
   }
 }

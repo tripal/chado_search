@@ -15,6 +15,7 @@ function chado_search_sequence_search_form ($form) {
       ->column('organism')
       ->table('chado_search_sequence_search')
       ->multiple(TRUE)
+  	  ->only(array('Lens culinaris', 'Pisum sativum', 'Cicer arietinum', 'Vicia faba'))
       ->newLine()
       ->labelWidth(120)
   );

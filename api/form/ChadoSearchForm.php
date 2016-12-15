@@ -247,6 +247,7 @@ class ChadoSearchForm {
     $f->size = $conf->getSize();
     $f->newline = $conf->getNewLine();
     $f->disables = $conf->getDisable();
+    $f->only = $conf->getOnly();
     $f->attach($this->form, $this->form_state);
   }
   
