@@ -56,6 +56,7 @@ function chado_search_marker_search_form ($form) {
       ->table('chado_search_marker_search')
       ->multiple(TRUE)
       ->cache(TRUE)
+      ->disable(array('N/A N/A'))
       ->labelWidth(260)
       ->newLine()
       );
