@@ -63,9 +63,9 @@ function chado_search_create_snp_marker_search_mview() {
   SNP.feature_id,
   SNP.uniquename AS snp_uniquename,
   SNP.name AS snp_name,
-  L.library_id,
-  L.name AS snp_array_name,
-  ARR_ID.name AS array_id,  
+  ARR.library_id,
+  ARR.snp_array_name,
+  ARR.array_id,  
   --- Select genome name
   (
 SELECT name FROM analysis A
@@ -85,7 +85,7 @@ AND
   ) 
   ) AS genome,      
   LOC.srcfeature_id AS landmark_feature_id,
-  LOC.uniquename AS landmark,
+  LOC.name AS landmark,
   LOC.fmin,
   LOC.fmax,
   LOC.name || ':' || (fmin + 1) || '..' || fmax AS location,
@@ -104,17 +104,19 @@ INNER JOIN
        (SELECT cv_id FROM cv WHERE name = 'MAIN')
     )
   ) MTYPE ON SNP.feature_id = MTYPE.feature_id
---- Get SNP array name
-LEFT JOIN feature_synonym FS ON SNP.feature_id = FS.feature_id
-LEFT JOIN library_synonym LS ON FS.synonym_id = LS.synonym_id
-LEFT JOIN library L ON L.library_id = LS.library_id
---- Get SNP array ID
+--- Get SNP array name and SNP array ID
 LEFT JOIN
-  (SELECT DISTINCT synonym_id, name FROM synonym WHERE type_id =
-    (SELECT cvterm_id FROM cvterm WHERE name = 'SNP_chip' AND cv_id =
-      (SELECT cv_id FROM cv WHERE name = 'MAIN')
-    )
-  ) ARR_ID ON ARR_ID.synonym_id = FS.synonym_id
+  (SELECT 
+     feature_id, S.name AS array_id, L.library_id, L.name AS snp_array_name 
+   FROM synonym S
+   INNER JOIN feature_synonym FS ON FS.synonym_id = S.synonym_id
+   INNER JOIN library_synonym LS ON FS.synonym_id = LS.synonym_id
+   INNER JOIN library L ON L.library_id = LS.library_id
+   WHERE S.type_id =
+     (SELECT cvterm_id FROM cvterm WHERE name = 'SNP_chip' AND cv_id =
+        (SELECT cv_id FROM cv WHERE name = 'MAIN')
+      )
+  ) ARR ON ARR.feature_id = SNP.feature_id
 --- Get aliases
 LEFT JOIN
   (SELECT feature_id, string_agg(value, ':::') AS value FROM featureprop WHERE type_id =

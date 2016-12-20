@@ -73,6 +73,7 @@ function chado_search_marker_search_form ($form) {
       ->table('chado_search_marker_search')
       ->disable(array('Malus x domestica Whole Genome v1.0 Assembly & Annotation'))
       ->cache(TRUE)
+      ->labelWidth(120)
       ->newLine()
   );
   $form->addDynamicSelectFilter(
@@ -129,7 +130,20 @@ function chado_search_marker_search_form ($form) {
       Set::markup()
       ->id('linkage_group_unit')
       ->text("<strong>cM</strong>")
+      ->newLine()
   );
+  $form->addTextFilter(
+      Set::textFilter()
+      ->id('trait_name')
+      ->title('Trait Name')
+      ->labelWidth(120)
+      );
+  $form->addMarkup(
+      Set::markup()
+      ->id('trait_name_example')
+      ->text('(e.g. self-incompatibility, chilling requirement or fruit weight)')
+      ->newLine()
+      );
   $form->addSubmit();
   $form->addReset();
   $desc =
@@ -163,6 +177,7 @@ function chado_search_marker_search_form_submit ($form, &$form_state) {
   $where [8] = Sql::selectFilter('map_name', $form_state, 'map_name');
   $where [9] = Sql::selectFilter('linkage_group', $form_state, 'lg_uniquename');
   $where [10] = Sql::betweenFilter('start', 'stop', $form_state, 'start', 'start', TRUE);
+  $where [11] = Sql::textFilter('trait_name', $form_state, 'trait_name');
   Set::result()
     ->sql($sql)
     ->where($where)
