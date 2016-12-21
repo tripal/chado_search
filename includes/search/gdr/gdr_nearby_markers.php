@@ -11,7 +11,7 @@ function chado_search_nearby_markers_form ($form) {
   $form->addTabs(
       Set::tab()
       ->id('nearby_marker_tabs')
-      ->items(array('/search/markers' => 'Marker Search', '/search/nearby_markers' => 'Search Nearby Markers'))
+      ->items(array('/search/markers' => 'Marker Search', '/search/snp_markers' => 'SNP Marker Search', '/search/nearby_markers' => 'Search Nearby Markers'))
   );
   // Basic
   $form->addLabeledFilter(

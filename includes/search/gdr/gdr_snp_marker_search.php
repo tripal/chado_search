@@ -8,6 +8,11 @@ use ChadoSearch\Sql;
  */
 // Search form
 function chado_search_snp_marker_search_form ($form) {
+  $form->addTabs(
+      Set::tab()
+      ->id('nearby_marker_tabs')
+      ->items(array('/search/markers' => 'Marker Search', '/search/snp_markers' => 'SNP Marker Search', '/search/nearby_markers' => 'Search Nearby Markers'))
+  );
 
   // Search by Name
   $form->addTextFilter(
