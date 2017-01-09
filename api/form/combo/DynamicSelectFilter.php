@@ -10,10 +10,55 @@ class DynamicSelectFilter extends Filter {
   public $depend_on_id;
   public $callback;
   public $size;
+  public $cacheTable;
+  public $cacheColumns;
   
   public function setForm (&$form, &$form_state) {
     $search_name = $this->search_name;
     $id = $this->id;
+    
+    $tname = "chado_search_cache_" . $search_name . '_' . $id;
+    $tname = substr($tname, 0, 63);
+    // Create cache table if specified
+    if ($this->cacheTable && count($this->cacheColumns) > 0) {
+      $cols = '';
+      $counter = 0;
+      foreach ($this->cacheColumns AS $col) {
+        $cols .= $col;
+        if ($counter < count ($this->cacheColumns) - 1) {
+          $cols .= ', ';
+        }
+        $counter ++;
+      }
+      
+      if (!db_table_exists($tname)) { // If the cache table not exists, create it
+        chado_query("SELECT distinct $cols INTO $tname FROM {" . $this->cacheTable . "}");
+        $lastupdate = db_query(
+            "SELECT last_update FROM tripal_mviews WHERE mv_table = :mv_table",
+            array(':mv_table' => $this->cacheTable)
+            )->fetchField();
+            variable_set("chado_search_cache_last_update_" . $tname, $lastupdate);
+      } else { // If cache table exists, check if it's up-to-date. If it's not up-to-date, recreate the cache table
+        $lastupdate = db_query(
+            "SELECT last_update FROM tripal_mviews WHERE mv_table = :mv_table",
+            array(':mv_table' => $this->cacheTable)
+            )->fetchField();
+            if (variable_get("chado_search_cache_last_update_" . $tname, "") != $lastupdate) {
+              chado_query("DROP table $tname");
+              chado_query("SELECT distinct $column INTO $tname FROM {" . $this->cacheTable . "}");
+              variable_set("chado_search_cache_last_update_" . $tname, $lastupdate);
+            }
+      }
+      $sql = "SELECT DISTINCT $cols INTO $tname FROM $this->cacheTable";
+    }
+    // Remove the cache table if cache not specified
+    else {
+      if (db_table_exists($tname)) {
+        chado_query("DROP table $tname");
+        variable_del("chado_search_cache_last_update_" . $tname);
+      }
+    }
+    
 /*     $id_prefix = $id . '_prefix';
     $id_suffix = $id . '_suffix'; */
     $id_label = $id . '_label';

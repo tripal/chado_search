@@ -39,13 +39,56 @@ function chado_search_snp_genotype_search_form ($form) {
       ->column('stock_uniquename')
       ->table('chado_search_snp_genotype_search')
       ->cache(TRUE)
+  );
+  $form->addFile(
+      Set::file()
+      ->id('stock_name_file')
+      ->title('')
+      ->labelWidth(1)
       ->newLine()
   );
   $form->addTextFilter(
       Set::textFilter()
       ->id('feature_uniquename')
       ->title('SNP')
+      ->newLine()
   );
+  // Restricted by Location
+  $form->addSelectFilter(
+      Set::selectFilter()
+      ->id('genome')
+      ->title('Genome')
+      ->column('genome')
+      ->table('chado_search_snp_genotype_search')
+      ->disable(array('Malus x domestica Whole Genome v1.0 Assembly & Annotation'))
+      ->cache(TRUE)
+      ->labelWidth(140)
+      ->newLine()
+      );
+   $form->addDynamicSelectFilter(
+      Set::dynamicSelectFilter()
+      ->id('location')
+      ->title('Chr/Scaffold')
+      ->dependOnId('genome')
+      ->callback('chado_search_snp_genotype_search_ajax_location')
+      ->labelWidth(140)
+      ->cache('chado_search_snp_genotype_search', array('genome','landmark'))
+      ); 
+  $form->addBetweenFilter(
+      Set::betweenFilter()
+      ->id('fmin')
+      ->title("between")
+      ->id2('fmax')
+      ->title2("and")
+      ->labelWidth2(50)
+      ->size(10)
+      );
+  $form->addMarkup(
+      Set::markup()
+      ->id('location_unit')
+      ->text("<strong>bp</strong>")
+      ->newLine()
+      );
   $form->addSubmit();
   $form->addReset();
   $desc = "Search SNP Genotype is a page where users can search for the SNP genotyope 
@@ -71,10 +114,14 @@ function chado_search_snp_genotype_search_form_submit ($form, &$form_state) {
   $sql = chado_search_snp_genotype_search_base_query();
   
   // Add conditions
-  $where [0] = Sql::selectFilter('project_name', $form_state, 'project_name');
-  $where [1] = Sql::selectFilter('stock_uniquename', $form_state, 'stock_uniquename');
-  $where [2] = Sql::selectFilter('organism', $form_state, 'organism');
-  $where [3] = Sql::textFilter('feature_uniquename', $form_state, 'feature_uniquename');
+  $where [] = Sql::selectFilter('project_name', $form_state, 'project_name');
+  $where [] = Sql::selectFilter('stock_uniquename', $form_state, 'stock_uniquename');
+  $where [] = Sql::file('stock_name_file', 'stock_uniquename', TRUE);
+  $where [] = Sql::selectFilter('organism', $form_state, 'organism');
+  $where [] = Sql::textFilter('feature_uniquename', $form_state, 'feature_uniquename');
+  $where [] = Sql::selectFilter('genome', $form_state, 'genome');
+  $where [] = Sql::selectFilter('location', $form_state, 'landmark');
+  $where [] = Sql::betweenFilter('fmin', 'fmax', $form_state, 'fmin', 'fmax');
   Set::result()
     ->sql($sql)
     ->where($where)
@@ -88,7 +135,7 @@ function chado_search_snp_genotype_search_form_submit ($form, &$form_state) {
 // Define query for the base table. Do not include the WHERE clause
 function chado_search_snp_genotype_search_base_query() {
   //$query = "SELECT feature_id, feature_uniquename, project_name, filename FROM chado_search_snp_genotype_search CSDS";
-  $query = "SELECT DISTINCT project_id, project_name, filename, pub_id, citation FROM {chado_search_snp_genotype_search} CSDS";
+  $query = "SELECT * FROM {chado_search_snp_genotype_search} CSDS";
   return $query;
 }
 
@@ -98,10 +145,12 @@ function chado_search_snp_genotype_search_base_query() {
 // Define the result table
 function chado_search_snp_genotype_search_table_definition () {
   $headers = array(
-/*   'feature_uniquename:s:chado_search_snp_genotype_search_link_feature:feature_id' => 'SNP', */
-      'project_name:s:chado_search_ssr_genotype_search_link_project:project_id' => 'Dataset',
-      'filename:s:chado_search_snp_genotype_search_link_file:filename' => 'File',
-      'citation:s:chado_search_snp_genotype_search_link_pub:pub_id' => 'Publication'
+    'feature_name::chado_search_snp_genotype_search_link_feature:feature_id' => 'Marker',
+    'genotype' => 'Genotype',
+    'stock_uniquename::chado_search_snp_genotype_search_link_stock:stock_id' => 'Germplasm',
+    'project_name::chado_search_snp_genotype_search_link_project:project_id' => 'Dataset',
+    'citation::chado_search_snp_genotype_search_link_pub:pub_id' => 'Publication',
+    'filename::chado_search_snp_genotype_search_link_file:filename' => 'File'
   );
   return $headers;
 }
@@ -113,7 +162,7 @@ function chado_search_snp_genotype_search_link_feature ($feature_id) {
 }
 
 // Define call back to link the featuremap to its  node for result table
-function chado_search_ssr_genotype_search_link_project ($project_id) {
+function chado_search_snp_genotype_search_link_project ($project_id) {
   $nid = chado_get_nid_from_id('project', $project_id);
   return chado_search_link_node ($nid);
 }
@@ -126,4 +175,15 @@ function chado_search_snp_genotype_search_link_file ($filename) {
 function chado_search_snp_genotype_search_link_pub ($pub_id) {
   $nid = chado_get_nid_from_id('pub', $pub_id);
   return chado_search_link_node ($nid);
+}
+
+function chado_search_snp_genotype_search_link_stock ($stock_id) {
+  $nid = chado_get_nid_from_id('stock', $stock_id);
+  return chado_search_link_node ($nid);
+}
+
+// User defined: Populating the landmark for selected organism
+function chado_search_snp_genotype_search_ajax_location ($val) {
+  $sql = "SELECT distinct landmark FROM chado_search_cache_snp_genotype_search_location WHERE genome = :genome ORDER BY landmark";
+  return chado_search_bind_dynamic_select(array(':genome' => $val), 'landmark', $sql);
 }

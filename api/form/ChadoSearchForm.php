@@ -295,6 +295,8 @@ class ChadoSearchForm {
     $f->newline = $conf->getNewLine();
     $f->label_width = $conf->getLabelWidth();
     $f->newline = $conf->getNewLine();
+    $f->cacheTable = $conf->getCacheTable();
+    $f->cacheColumns = $conf->getCacheColumns();
     $f->attach($this->form, $this->form_state);
   }
   

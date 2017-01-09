@@ -8,6 +8,8 @@ class SetDynamicSelectFilter extends SetElement {
   private $callback = '';
   private $label_width = 0;
   private $size = 0;
+  private $cacheTable = '';
+  private $cacheColumns = array();
   
   /**
    * Setters
@@ -33,6 +35,12 @@ class SetDynamicSelectFilter extends SetElement {
     return $this;
   }
   
+  public function cache ($table, $columns = array()) {
+    $this->cacheTable = $table;
+    $this->cacheColumns = $columns;
+    return $this;
+  }
+  
   /**
    * Getters
    */
@@ -52,4 +60,11 @@ class SetDynamicSelectFilter extends SetElement {
     return $this->size;
   }
   
+  public function getCacheTable () {
+    return $this->cacheTable;
+  }
+  
+  public function getCacheColumns () {
+    return $this->cacheColumns;
+  }
 }
