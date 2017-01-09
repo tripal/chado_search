@@ -81,7 +81,7 @@ function chado_search_qtl_search_form ($form) {
   'Search QTLs and/or MTLs (Mendelian Trait Loci) by any combination of species, 
       trait category, trait name, published symbol or label. Please see <a href=\'/trait_abbreviations\'>
       this table </a>for the CSFL abbreviations for QTL traits.
-     <b>| ' . l('Short video tutorial', 'https://youtu.be/Cu42oH_PXvc', array('attributes' => array('target' => '_blank'))) . ' | ' . l('Text tutorial', '/UserManual') . ' | ' .
+     <b>| ' . l('Short video tutorial', 'https://youtu.be/_cvKFF6b2cg', array('attributes' => array('target' => '_blank'))) . ' | ' . l('Text tutorial', '/UserManual') . ' | ' .
        l('Email us with problems and suggestions', 'contact') . '</b>';
   $form->addFieldset(
       Set::fieldset()

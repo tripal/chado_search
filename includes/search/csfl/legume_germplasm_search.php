@@ -32,7 +32,7 @@ function chado_search_germplasm_search_form ($form) {
   $form->addReset();
   $desc =
   'Search germplasm by name or alias. Wild card (*) can be used to match any word.
-     <b>| ' . l('Short video tutorial', 'https://youtu.be/oqiuSI99mMg', array('attributes' => array('target' => '_blank'))) . ' | ' . l('Text tutorial', '/UserManual') . ' | ' .
+     <b>| ' . l('Short video tutorial', 'https://youtu.be/5aGA5VwlD7w', array('attributes' => array('target' => '_blank'))) . ' | ' . l('Text tutorial', '/UserManual') . ' | ' .
        l('Email us with problems and suggestions', 'contact') . '</b>';
   $form->addFieldset(
       Set::fieldset()

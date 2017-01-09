@@ -105,7 +105,7 @@ function chado_search_gene_search_form ($form) {
   $desc =
   'Search genes and transcripts by species, dataset, genome location, name and/or keyword.
       For keyword, enter any protein name of homologs, KEGG term/EC number, GO term, or InterPro term.
-     <b>| ' . l('Short video tutorial', 'https://youtu.be/P-Rw8i9Iz5E', array('attributes' => array('target' => '_blank'))) . ' | ' . l('Text tutorial', '/UserManual') . ' | ' .
+     <b>| ' . l('Short video tutorial', 'https://youtu.be/5AdxLilTz2g', array('attributes' => array('target' => '_blank'))) . ' | ' . l('Text tutorial', '/UserManual') . ' | ' .
        l('Email us with problems and suggestions', 'contact') . '</b>';
   $form->addFieldset(
       Set::fieldset()

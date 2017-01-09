@@ -97,7 +97,7 @@ function chado_search_marker_search_form ($form) {
   $desc =
   'Search for markers. Users can perform combinatorial queries using categories
 such as name, type, species, anchored position in genome and/or genetic map position.
-     <b>| ' . l('Short video tutorial', 'https://youtu.be/oqiuSI99mMg', array('attributes' => array('target' => '_blank'))) . ' | ' . l('Text tutorial', '/UserManual') . ' | ' .
+     <b>| ' . l('Short video tutorial', 'https://youtu.be/dSnCoMo2CLA', array('attributes' => array('target' => '_blank'))) . ' | ' . l('Text tutorial', '/UserManual') . ' | ' .
        l('Email us with problems and suggestions', 'contact') . '</b>';
      $form->addFieldset(
          Set::fieldset()
