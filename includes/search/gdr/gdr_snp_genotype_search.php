@@ -95,7 +95,7 @@ function chado_search_snp_genotype_search_form ($form) {
       to search for SSR Genotype. To search for SNP genotype data only for cultivars and 
       breeding selections please visit the <a href=\"/legacy/bt_search_genotype/by_variety\">
       'Search Genotyping Data'</a> page in the <a href=\"/legacy/breeders_toolbox\">Breeders Toolbox</a>. ".
-     " | <b>" . l('Short video tutorial', 'https://www.youtube.com/watch?v=ARZGxKz5mRo', array('attributes' => array('target' => '_blank'))) . ' | ' . l('Text tutorial', 'tutorial/search_diversity') . ' | ' .
+     " | <b>" ./* l('Short video tutorial', 'https://www.youtube.com/watch?v=ARZGxKz5mRo', array('attributes' => array('target' => '_blank'))) . ' | ' . */l('Text tutorial', 'tutorial/search_snp_genotype') . ' | ' .
        l('Email us with problems and suggestions', 'contact') . '</b>';
   $form->addFieldset(
       Set::fieldset()
