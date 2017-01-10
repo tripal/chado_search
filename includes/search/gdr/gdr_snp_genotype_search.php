@@ -201,7 +201,7 @@ function chado_search_snp_genotype_search_ajax_location ($val) {
 }
 
 function chado_search_snp_genotype_search_download_wide_form ($handle, $result, $sql, $total_items, $progress_var) {
-  set_time_limit(0);
+  set_time_limit(6000);
 /*   $sql = preg_replace('/(string_agg|count|first) ?\((.+?)\)/', '$2', $sql);
   $sql = str_replace(array(", '; '", 'distinct ', ' GROUP BY feature_uniquename,allele'), array('', '', ''), $sql); */
   $sql = "
