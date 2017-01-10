@@ -72,7 +72,9 @@ class Download extends Source {
   
   // Set up download
   public static function createDownload ($search_id, $path, $headers) {
-  
+    // Do not impose a time limit 
+    set_time_limit(0);
+
     // If header is not defined, return
     if (!$headers) {
       $headers = SessionVar::getSessionVar($search_id, 'default-headers');
