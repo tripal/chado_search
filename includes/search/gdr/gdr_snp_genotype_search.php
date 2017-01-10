@@ -137,6 +137,7 @@ function chado_search_snp_genotype_search_form_submit ($form, &$form_state) {
     ->sql($sql)
     ->where($where)
     ->tableDefinitionCallback('chado_search_snp_genotype_search_table_definition')
+    ->customDownload(array('chado_search_snp_genotype_search_download_wide_form' => 'Wide Form'))
     ->execute($form, $form_state);
 }
 
@@ -197,4 +198,72 @@ function chado_search_snp_genotype_search_link_stock ($stock_id) {
 function chado_search_snp_genotype_search_ajax_location ($val) {
   $sql = "SELECT distinct landmark FROM {chado_search_snp_genotype_location} WHERE genome = :genome ORDER BY landmark";
   return chado_search_bind_dynamic_select(array(':genome' => $val), 'landmark', $sql);
+}
+
+function chado_search_snp_genotype_search_download_wide_form ($handle, $result, $sql, $total_items, $progress_var) {
+  set_time_limit(0);
+/*   $sql = preg_replace('/(string_agg|count|first) ?\((.+?)\)/', '$2', $sql);
+  $sql = str_replace(array(", '; '", 'distinct ', ' GROUP BY feature_uniquename,allele'), array('', '', ''), $sql); */
+  $sql = "
+      SELECT
+        project_name,
+        first(stock_id) AS stock_id,
+        stock_uniquename,
+        first(feature_id) AS feature_id,
+        feature_uniquename,
+        CASE
+        WHEN count (genotype) > 1
+        THEN string_agg(genotype, '|')
+        ELSE first(genotype)
+        END AS genotype
+      FROM
+        (SELECT distinct project_name, stock_id, stock_uniquename, feature_id, feature_uniquename, genotype FROM (" . $sql . ") T
+               ORDER BY project_name, stock_uniquename, feature_uniquename, genotype) T2 GROUP BY project_name, stock_uniquename, feature_uniquename";
+  $result = chado_query($sql);
+  $header = "\"Dataset\",\"Germplasm\"";
+  fwrite($handle, $header);
+  $counter = 1;
+  $headings = array();
+  $data = array();
+  while ($row = $result->fetchObject()) {
+    $headings[$row->feature_id] = $row->feature_uniquename;
+    if (!key_exists($row->project_name . '---' . $row->stock_uniquename . '---' . $row->stock_id, $data)) {
+      $values = array();
+    } else {
+      $values = $data[$row->project_name . '---' . $row->stock_uniquename . '---' . $row->stock_id];
+    }
+    $values [$row->feature_uniquename] = $row->genotype;
+    $data[$row->project_name . '---' . $row->stock_uniquename . '---' . $row->stock_id] = $values;
+    $counter ++;
+  }
+  global $base_url;
+  // Print headings
+  foreach ($headings AS $feature_id => $val) {
+    $feature_nid = chado_get_nid_from_id('feature', $feature_id);
+    fwrite($handle, ",\"=HYPERLINK(\"\"$base_url/node/$feature_nid\"\", \"\"".$val . "\"\")\"");
+  }
+  fwrite($handle, "\n");
+  // Print data
+  $total_items = $counter;
+  $progress = 0;
+  $counter = 0;
+  foreach ($data AS $key => $value) {
+    $current = round ($counter / $total_items * 100);
+    if ($current != $progress) {
+      $progress = $current;
+      variable_set($progress_var, $progress);
+    }
+    $arr = explode("---", $key);
+    $project = $arr[0];
+    $stock = $arr[1];
+    $stock_id = $arr[2];
+    $stock_nid = chado_get_nid_from_id('stock', $stock_id);
+    fwrite($handle, "\"" . $project . "\",\"=HYPERLINK(\"\"$base_url/node/$stock_nid\"\", \"\"" . $stock . "\"\")\"");
+    foreach ($headings AS $h) {
+      $datum = key_exists($h, $value) ? $value[$h] : '';
+      fwrite($handle, ",\"" . $datum . "\"");
+    }
+    fwrite($handle, "\n");
+    $counter ++;
+  }
 }

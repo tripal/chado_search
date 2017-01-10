@@ -15,6 +15,7 @@ class CustomDownload extends Source {
     $div = "";
     // Custom Download(s)
     $counter_separator = 0;
+    $separator_off = 0;
     foreach ($customDownload AS $kd => $vd) {
       if ($kd == 'disable_default') {
         $separator_off = 1;
