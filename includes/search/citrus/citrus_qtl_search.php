@@ -97,7 +97,7 @@ function chado_search_qtl_search_form_submit ($form, &$form_state) {
   // Add conditions
   $where[0] = Sql::selectFilter('type', $form_state, 'type');
   $where[1] = Sql::selectFilter('species', $form_state, 'organism');
-  $where[2] = Sql::selectFilter('trait_category', $form_state, 'category');
+  //$where[2] = Sql::selectFilter('trait_category', $form_state, 'category');
   $where[3] = Sql::textFilter('trait_name', $form_state, 'trait');
   $where[4] = Sql::textFilter('published_symbol', $form_state, 'symbol');
   $where[5] = Sql::textFilter('qtl_label', $form_state, 'qtl');

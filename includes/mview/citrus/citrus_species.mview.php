@@ -101,6 +101,7 @@ SELECT
    FROM library L
    WHERE L.organism_id = O.organism_id) as num_libraries
 FROM organism O
+WHERE genus NOT IN ('Arabidopsis', 'Brassica', 'Buchloe', 'N/A', 'Prunus', 'Rutaceae', 'Uniprot')
 ORDER BY genus, species
   ";
   tripal_add_mview($view_name, 'chado_search', $schema, $sql, '');

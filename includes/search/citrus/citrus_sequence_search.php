@@ -42,7 +42,7 @@ function chado_search_sequence_search_form ($form) {
       ->column('analysis_name')
       ->table('chado_search_sequence_search')
       ->multiple(TRUE)
-      ->optGroupByPattern(array('NCBI Genes' => 'NCBI', 'Predicted Genes' => 'Genome|genome', 'Unigene' => 'Unigene|unigene', 'RefTrans' => 'RefTrans'))
+      ->optGroupByPattern(array('Genbank Genes' => 'NCBI', 'Predicted Genes' => 'Genome|genome', 'Unigene' => 'Unigene|unigene', 'RefTrans' => 'RefTrans'))
       ->cache(TRUE)
       ->newLine()
   );
