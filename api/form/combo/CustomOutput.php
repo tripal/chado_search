@@ -9,6 +9,7 @@ class CustomOutput extends Filter {
   public $title;
   public $desc;
   public $groupby_selection;
+  public $replace_star;
   
   public function setForm (&$form, &$form_state) {
     $search_name = $this->search_name;
@@ -42,5 +43,7 @@ class CustomOutput extends Filter {
     if ($this->groupby_selection) {
       $form['#custom_output-groupby_selection'] = $this->groupby_selection;
     }
+    
+    $form['#custom_output-replace_star_with_selection'] = $this->replace_star;
   }
 }

@@ -142,7 +142,7 @@ class ChadoSearch {
       }
       
       // Get parameters from $conf
-      $sql = $conf->getSql();
+      $sql = $conf->getSql() ? $conf->getSql() : $form_state['base_sql'];
       $where = $conf->getWhere();
       $table_definition_callback = $conf->getTableDefinitionCallback();
       $groupby = $conf->getGroupby();
@@ -177,7 +177,7 @@ class ChadoSearch {
       // Custom output: group by user selection    
       if (isset($form_state['#custom_output-groupby_selection'])) {
         $base_table = $form_state['#custom_output-groupby_selection'];
-        $groupby = rtrim($group_selection, ',') . ":" . $base_table;
+        $groupby = $group_selection ? rtrim($group_selection, ',') . ":" . $base_table : NULL;
       }
       
       // Prepare SQL
@@ -187,7 +187,37 @@ class ChadoSearch {
         ->addGroupBy($groupby)
         ->appendSQL($append);
       $sql = $result_query->getSQL();
-      //dpm($sql);
+      
+      // Call header definition callback if exists
+      $headers = array();
+      if (function_exists($table_definition_callback)) {
+        $headers = $table_definition_callback();
+      }
+      // Default header if header difinition does not exist
+      else {
+        $hsql = "SELECT * FROM ($sql LIMIT 1) T";
+        $fields = array_keys(db_query($hsql)->fetchAssoc());
+        foreach($fields AS $field) {
+          $headers[$field] = $field;
+        }
+        SessionVar::setSessionVar($search_id, 'default-headers', $headers);
+      }
+      
+      // Customize output with DISTINCT in statement for selected columns
+      if (isset($form_state['#custom_output-replace_star_with_selection']) && $form_state['#custom_output-replace_star_with_selection']) {
+        // $group_selection contains custimizable columns. add back the non-customizable columns to DISTINCT statement
+        foreach ($headers AS $h_key => $h_val) {
+          $col = array_shift(explode(':', $h_key));
+          if (!key_exists($col, $custom_output)) {
+            $group_selection .= $col . ',';
+          }
+        }
+        // Store original sql for FASTA download
+        SessionVar::setSessionVar($search_id, 'fasta_sql', $sql);
+        $sql = str_replace('*', 'DISTINCT ' . rtrim($group_selection, ','), $sql);
+        $result_query->setSQL($sql);
+      }
+      // dpm($sql);
       $total_items = $result_query->count();
       $total_pages =Pager::totalPages($total_items, $this->number_per_page);
   
@@ -246,19 +276,6 @@ class ChadoSearch {
         // Add Table
         $lsql = "$sql LIMIT $this->number_per_page;";
         $result = chado_query($lsql);
-        // Call header definition callback
-        if (function_exists($table_definition_callback)) {
-          $headers = $table_definition_callback();
-        }
-        // Default header if header difinition does not exist
-        else {
-          $hsql = "SELECT * FROM ($sql LIMIT 1) T";
-          $fields = array_keys(db_query($hsql)->fetchAssoc());
-          foreach($fields AS $field) {
-            $headers[$field] = $field;
-          }
-          SessionVar::setSessionVar($search_id, 'default-headers', $headers);
-        }
         $table = new Table($this->search_id, $result, 0, $this->number_per_page, $headers, NULL, $autoscroll);
         $div .= $table->getSrc();
   

@@ -126,6 +126,15 @@ class ResultQuery{
     return $this->sql;
   }
   
+  function setSQL ($sql, $dl_sql = NULL) {
+    $this->sql = $sql;
+    SessionVar::setSessionVar($this->search_id, 'sql', $sql);
+    if ($dl_sql) {
+      $this->dl_sql = $dl_sql;
+      SessionVar::setSessionVar($this->search_id, 'download', $dl_sql);
+    }
+  }
+  
   function getCountSQL () {
     $csql = "SELECT count (*) FROM ($this->sql) BASE";
     return $csql;

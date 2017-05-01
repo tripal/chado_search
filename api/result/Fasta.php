@@ -78,6 +78,10 @@ class Fasta extends Source {
     if (!$sql) {
       return array('path' => "/$path");
     }
+    $fasta_sql = SessionVar::getSessionVar($search_id, 'fasta_sql');
+    if ($fasta_sql) {
+      $sql = $fasta_sql;
+    }
     $customFasta = SessionVar::getSessionVar($search_id, 'custom-fasta-download');
     if ($customFasta) {
       $sql = $customFasta($sql);
@@ -101,7 +105,7 @@ class Fasta extends Source {
         FROM {feature} F
         WHERE feature_id IN (SELECT $column FROM ($sql) BASE)
         AND residues IS NOT NULL
-        AND residues != ''";    
+        AND residues != ''";
     $result = chado_query($fsql);
     $total_items = SessionVar::getSessionVar($search_id,'total-items');
     $progress_var = 'chado_search-'. session_id() . '-' . $search_id . '-download-progress';

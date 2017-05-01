@@ -7,7 +7,10 @@ use ChadoSearch\Sql;
  * Search form, form validation, and submit function
  */
 // Search form
-function chado_search_gene_search_form ($form) {  
+function chado_search_gene_search_form ($form) {
+  
+  $form->addBaseSQL("SELECT * FROM {chado_search_gene_search}");
+  
   $form->addSelectFilter(
       Set::selectFilter()
       ->id('genus')
@@ -86,18 +89,24 @@ function chado_search_gene_search_form ($form) {
       ->text('(eg. polygalacturonase, resistance, EC:1.4.1.3, cell cycle, ATP binding, zinc finger)')
       ->newLine()
   );
-/*   $customizables = array(
+   $customizables = array(
     'organism' => 'Organism',
     'feature_type' => 'Type',
     'analysis' => 'Source',
     'location' => 'Location',
+     'blast_value' => 'BLAST',
+     'interpro_value' => 'InterPro',
+     'kegg_value' => 'KEGG',
+     'go_term' => 'GO Term',
+     'gb_keyword' => 'GenBank'
   );
   $form->addCustomOutput (
       Set::customOutput()
       ->id('custom_output')
       ->options($customizables)
       ->defaults(array('organism', 'feature_type'))
-  ); */
+      ->replaceStarWithSelection()
+  );
   $form->addSubmit();
   $form->addReset();
   $desc = 
@@ -118,20 +127,17 @@ function chado_search_gene_search_form ($form) {
 
 // Submit the form
 function chado_search_gene_search_form_submit ($form, &$form_state) {
-  // Get base sql
-  $sql = "SELECT * FROM {chado_search_gene_search}";
   // Add conditions
-  $where [0] = Sql::textFilterOnMultipleColumns('feature_name', $form_state, array('uniquename', 'name'));
-  $where [1] = Sql::selectFilter('analysis', $form_state, 'analysis');
-  $where [2] = Sql::selectFilter('genus', $form_state, 'genus');
-  $where [3] = Sql::selectFilter('species', $form_state, 'organism');
-  $where [4] = Sql::fileOnMultipleColumns('feature_name_file_inline', array('uniquename', 'name'));
-  $where [5] = Sql::selectFilter('location', $form_state, 'landmark');
-  $where [6] = Sql::betweenFilter('fmin', 'fmax', $form_state, 'fmin', 'fmax');
-  $where [7] = Sql::textFilterOnMultipleColumns('keyword', $form_state, array('go_term', 'blast_value', 'kegg_value', 'interpro_value', 'gb_keyword'));
+  $where [] = Sql::textFilterOnMultipleColumns('feature_name', $form_state, array('uniquename', 'name'));
+  $where [] = Sql::selectFilter('analysis', $form_state, 'analysis');
+  $where [] = Sql::selectFilter('genus', $form_state, 'genus');
+  $where [] = Sql::selectFilter('species', $form_state, 'organism');
+  $where [] = Sql::fileOnMultipleColumns('feature_name_file_inline', array('uniquename', 'name'));
+  $where [] = Sql::selectFilter('location', $form_state, 'landmark');
+  $where [] = Sql::betweenFilter('fmin', 'fmax', $form_state, 'fmin', 'fmax');
+  $where [] = Sql::textFilterOnMultipleColumns('keyword', $form_state, array('go_term', 'blast_value', 'kegg_value', 'interpro_value', 'gb_keyword'));
 
   Set::result()
-    ->sql($sql)
     ->where($where)
     ->tableDefinitionCallback('chado_search_gene_search_table_definition')
     ->fastaDownload(TRUE)
@@ -144,19 +150,31 @@ function chado_search_gene_search_form_submit ($form, &$form_state) {
 // Define the result table
 function chado_search_gene_search_table_definition () {
   $headers = array(
-    'name:s:chado_search_gene_search_link_feature:feature_id' => 'Name',
+    'name:s:chado_search_gene_search_link_feature:feature_id,name' => 'Name',
     'organism:s' => 'Organism',
     'feature_type:s' => 'Type',
     'analysis:s' => 'Source',
     'location:s' => 'Location',
+    'blast_value:s' => 'BLAST',
+    'interpro_value:s' => 'InterPro',
+    'kegg_value:s' => 'KEGG',
+    'go_term:s' => 'GO',
+    'gb_keyword:s' => 'GenBank'
   );
   return $headers;
 }
 
 // Define call back to link the featuremap to its  node for result table
-function chado_search_gene_search_link_feature ($feature_id) {
-  $nid = chado_get_nid_from_id('feature', $feature_id);
-  return chado_search_link_node ($nid);
+function chado_search_gene_search_link_feature ($var) {
+  $feature_id = $var[0];
+  $name = $var[1];
+  if ($feature_id) {
+    $nid = chado_get_nid_from_id('feature', $feature_id);
+    return chado_search_link_node ($nid);
+  }
+  else {
+    return '/feature/' . $name;
+  }
 }
 
 /*************************************************************

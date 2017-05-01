@@ -195,6 +195,9 @@ function chado_search_wrapper_form ($form, &$form_state, $search_id, $url, $num_
   if (isset($final_form['#custom_output-groupby_selection'])) {
     $form_state['#custom_output-groupby_selection'] = $final_form['#custom_output-groupby_selection'];
   }
+  if (isset($final_form['#custom_output-replace_star_with_selection'])) {
+    $form_state['#custom_output-replace_star_with_selection'] = $final_form['#custom_output-replace_star_with_selection'];
+  }
   
   $allowed = chado_search_get_setting_by_id($search_id, 'summary_allowed');
   if (($show_result == 'summary' || $show_result == 'list') && $allowed) {

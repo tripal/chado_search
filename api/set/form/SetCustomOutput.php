@@ -8,6 +8,7 @@ class SetCustomOutput extends SetBase {
   private $title;
   private $desc;
   private $groupby_selection;
+  private $replace_star;
   
   /**
    * Setters
@@ -38,6 +39,11 @@ class SetCustomOutput extends SetBase {
     return $this;
   }
   
+  public function replaceStarWithSelection () {
+    $this->replace_star = TRUE;
+    return $this;
+  }
+  
   /**
    * Getters
    */
@@ -59,5 +65,9 @@ class SetCustomOutput extends SetBase {
   
   public function getGroupBySelection() {
     return $this->groupby_selection;
+  }
+  
+  public function getReplaceStarWithSelection() {
+    return $this->replace_star;
   }
 }

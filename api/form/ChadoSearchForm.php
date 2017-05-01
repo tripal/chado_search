@@ -34,16 +34,24 @@ class ChadoSearchForm {
   
   public $form;
   public $form_state, $search_name, $path;
+  public $base_sql;
   
   // Constructor
   public function __construct(&$form_state, $search_name, $path) {
-    $this->form_state = $form_state;
+    $this->form_state =& $form_state;
     $this->search_name = $search_name;
     $this->path = $path;
     $box = new WaitingBox($search_name);
     $this->form['wait'] = array (
       '#markup' => $box->getSrc(),
     );
+  }
+  
+  /**********************************************************
+   * Attached an SQL for the base table
+   */
+  public function addBaseSQL ($sql) {
+    $this->form_state['base_sql'] = $sql;
   }
   
   /**********************************************************
@@ -379,6 +387,7 @@ class ChadoSearchForm {
     $f->title = $conf->getTitle();
     $f->desc = $conf->getDescription();
     $f->groupby_selection = $conf->getGroupBySelection();
+    $f->replace_star = $conf->getReplaceStarWithSelection();
     $f->attach($this->form, $this->form_state);
     
   }
