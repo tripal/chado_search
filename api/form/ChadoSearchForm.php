@@ -386,7 +386,8 @@ class ChadoSearchForm {
     $f->defaults = $conf->getDefaults();
     $f->title = $conf->getTitle();
     $f->desc = $conf->getDescription();
-    $f->groupby_selection = $conf->getGroupBySelection();
+    $f->collapsible = $conf->getCollapsible();
+    $f->collapsed = $conf->getCollapsed();
     $f->replace_star = $conf->getReplaceStarWithSelection();
     $f->attach($this->form, $this->form_state);
     

@@ -199,6 +199,10 @@
 	width: 100%;
 }
 
+.chado_search-custom_output-widget fieldset legend {
+  width: auto !important;	
+}
+
 /* Progress bar */
 .chado_search-waiting-box-progress {
   text-align: center;

@@ -7,7 +7,8 @@ class SetCustomOutput extends SetBase {
   private $defaults;
   private $title;
   private $desc;
-  private $groupby_selection;
+  private $collapsible;
+  private $collapsed;
   private $replace_star;
   
   /**
@@ -34,8 +35,13 @@ class SetCustomOutput extends SetBase {
     return $this;
   }
   
-  public function groupBySelection ($base_table) {
-    $this->groupby_selection = $base_table;
+  public function collapsible($sollapsible) {
+    $this->collapsible = $sollapsible;
+    return $this;
+  }
+  
+  public function collapsed($collapsed) {
+    $this->collapsed= $collapsed;
     return $this;
   }
   
@@ -59,12 +65,16 @@ class SetCustomOutput extends SetBase {
     return $this->title;
   }
   
-  public function getDescription() {
-    return $this->desc;
+  public function getCollapsible() {
+    return $this->collapsible;
   }
   
-  public function getGroupBySelection() {
-    return $this->groupby_selection;
+  public function getcollapsed() {
+    return $this->collapsed;
+  }
+  
+  public function getDescription() {
+    return $this->desc;
   }
   
   public function getReplaceStarWithSelection() {

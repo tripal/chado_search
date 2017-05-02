@@ -174,11 +174,6 @@ class ChadoSearch {
           }
         }
       }
-      // Custom output: group by user selection    
-      if (isset($form_state['#custom_output-groupby_selection'])) {
-        $base_table = $form_state['#custom_output-groupby_selection'];
-        $groupby = $group_selection ? rtrim($group_selection, ',') . ":" . $base_table : NULL;
-      }
       
       // Prepare SQL
       $result_query = new ResultQuery($search_id, $sql);

@@ -8,7 +8,8 @@ class CustomOutput extends Filter {
   public $defaults;
   public $title;
   public $desc;
-  public $groupby_selection;
+  public $collapsible;
+  public $collapsed;
   public $replace_star;
   
   public function setForm (&$form, &$form_state) {
@@ -27,8 +28,8 @@ class CustomOutput extends Filter {
     $defaults = is_array($this->defaults) ? array_merge($defaults, $this->defaults) : array_merge($defaults, array_keys($columns));
     $form[$id] = array(
       '#type' => 'fieldset',
-      '#collapsible' => TRUE,
-      '#collapsed' => TRUE,
+      '#collapsible' => isset($this->collapsible) ? $this->collapsible : TRUE,
+      '#collapsed' => isset($this->collapsed) ? $this->collapsed : TRUE,
       '#title' => $title,
       '#description' => $desc,
       '#prefix' => "<div id=\"chado_search-$search_name-$id-widget\" class=\"chado_search-custom_output-widget chado_search-widget\">",
@@ -39,10 +40,6 @@ class CustomOutput extends Filter {
       '#options' => $columns,
       '#default_value' => $defaults,
     );
-    
-    if ($this->groupby_selection) {
-      $form['#custom_output-groupby_selection'] = $this->groupby_selection;
-    }
     
     $form['#custom_output-replace_star_with_selection'] = $this->replace_star;
   }
