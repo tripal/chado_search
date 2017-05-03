@@ -202,7 +202,8 @@ class ChadoSearch {
       if (isset($form_state['#custom_output-replace_star_with_selection']) && $form_state['#custom_output-replace_star_with_selection']) {
         // $group_selection contains custimizable columns. add back the non-customizable columns to DISTINCT statement
         foreach ($headers AS $h_key => $h_val) {
-          $col = array_shift(explode(':', $h_key));
+          $cols = explode(':', $h_key);
+          $col = $cols[0];
           if (!key_exists($col, $custom_output)) {
             $group_selection .= $col . ',';
           }
