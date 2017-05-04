@@ -145,15 +145,15 @@ function chado_search_marker_search_form_submit ($form, &$form_state) {
   // Get base sql
   $sql = "SELECT * FROM {chado_search_marker_search}";
   // Add conditions
-  $where [0] = Sql::textFilterOnMultipleColumns('marker_uniquename', $form_state, array('marker_uniquename', 'alias'));
-  $where [1] = Sql::file('marker_uniquename_file', 'marker_uniquename');
-  $where [2] = Sql::selectFilter('marker_type', $form_state, 'marker_type');
-  $where [3] = Sql::selectFilter('organism', $form_state, 'organism');
-  $where [4] = Sql::selectFilter('map_genome', $form_state, 'map_genome');
-  $where [5] = Sql::selectFilter('location', $form_state, 'landmark');
-  $where [6] = Sql::betweenFilter('fmin', 'fmax', $form_state, 'fmin', 'fmax');
-  $where [7] = Sql::selectFilter('map_name', $form_state, 'map_name');
-  $where [8] = Sql::selectFilter('chr_number', $form_state, 'chr_number');
+  $where [] = Sql::textFilterOnMultipleColumns('marker_uniquename', $form_state, array('marker_uniquename', 'alias'));
+  $where [] = Sql::file('marker_uniquename_file', 'marker_uniquename');
+  $where [] = Sql::selectFilter('marker_type', $form_state, 'marker_type');
+  $where [] = Sql::selectFilter('organism', $form_state, 'organism');
+  $where [] = Sql::selectFilter('map_genome', $form_state, 'map_genome');
+  $where [] = Sql::selectFilter('location', $form_state, 'landmark');
+  $where [] = Sql::betweenFilter('fmin', 'fmax', $form_state, 'fmin', 'fmax');
+  $where [] = Sql::selectFilter('map_name', $form_state, 'map_name');
+  $where [] = Sql::selectFilter('chr_number', $form_state, 'chr_number');
   Set::result()
     ->sql($sql)
     ->where($where)
@@ -199,20 +199,17 @@ function chado_search_marker_search_rewrite_organism ($value) {
 
 // Define call back to link the featuremap to its  node for result table
 function chado_search_marker_search_link_feature ($feature_id) {
-  $nid = chado_get_nid_from_id('feature', $feature_id);
-  return chado_search_link_node ($nid);
+  return chado_search_link_entity('feature', $feature_id);
 }
 
 // Define call back to link the organism to its  node for result table
 function chado_search_marker_search_link_organism ($organism_id) {
-  $nid = chado_get_nid_from_id('organism', $organism_id);
-  return chado_search_link_node ($nid);
+  return chado_search_link_entity('organism', $organism_id);
 }
 
 // Define call back to link the featuremap to its  node for result table
 function chado_search_marker_search_link_featuremap ($featuremap_id) {
-  $nid = chado_get_nid_from_id('featuremap', $featuremap_id);
-  return chado_search_link_node ($nid);
+  return chado_search_link_entity('featuremap', $featuremap_id);
 }
 
 // Define call back to link the sequence_feature to its  node for result table

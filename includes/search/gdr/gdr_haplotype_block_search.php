@@ -76,11 +76,11 @@ function chado_search_haplotype_block_search_form ($form) {
 // Submit the form
 function chado_search_haplotype_block_search_form_submit ($form, &$form_state) {
   // Add conditions
-  $where [0] = Sql::selectFilter('organism', $form_state, 'organism');
-  $where [1] = Sql::textFilter ('hb_uniquename', $form_state, 'haplotype_block');
-  $where [2] = Sql::selectFilter('genome', $form_state, 'genome');
-  $where [3] = Sql::selectFilter('location', $form_state, 'landmark');
-  $where [4] = Sql::betweenFilter('fmin', 'fmax', $form_state, 'fmin', 'fmax');
+  $where [] = Sql::selectFilter('organism', $form_state, 'organism');
+  $where [] = Sql::textFilter ('hb_uniquename', $form_state, 'haplotype_block');
+  $where [] = Sql::selectFilter('genome', $form_state, 'genome');
+  $where [] = Sql::selectFilter('location', $form_state, 'landmark');
+  $where [] = Sql::betweenFilter('fmin', 'fmax', $form_state, 'fmin', 'fmax');
   
   $sql = "SELECT hb_feature_id, haplotype_block, landmark || ':' || fmin || '..' || fmax AS location FROM {chado_search_haplotype_block_search}";
   Set::result()
@@ -105,8 +105,7 @@ function chado_search_haplotype_block_search_table_definition () {
 
 // Define call back to link the featuremap to its  node for result table
 function chado_search_haplotype_block_search_link_feature ($feature_id) {
-  $nid = chado_get_nid_from_id('feature', $feature_id);
-  return chado_search_link_node ($nid);
+  return chado_search_link_entity('feature', $feature_id);
 }
 
 

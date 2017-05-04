@@ -44,12 +44,10 @@ function chado_search_nd_geolocation_table_definition () {
 
 // Define call back to link the nd_geolocation to its  node for the result table
 function chado_search_nd_geolocation_link_nd_geolocation ($nd_geolocation_id) {
-  $nid = chado_get_nid_from_id('nd_geolocation', $nd_geolocation_id);
-  return chado_search_link_node ($nid);
+  return chado_search_link_entity('nd_geolocation', $nd_geolocation_id);
 }
 
 // Define call back to link the project to its  node for the result table
 function chado_search_nd_geolocation_link_project ($project_id) {
-  $nid = chado_get_nid_from_id('project', $project_id);
-  return chado_search_link_node ($nid);
+  return chado_search_link_entity('project', $project_id);
 }

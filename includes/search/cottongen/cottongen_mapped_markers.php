@@ -46,9 +46,9 @@ function chado_search_mapped_markers_form_submit ($form, &$form_state) {
   // Get base sql
   $sql = "SELECT * FROM {chado_search_mapped_markers}";
   // Add conditions
-  $where [0] = Sql::textareaFilter('marker_uniquename', $form_state, 'marker_uniquename');
-  $where [1] = Sql::file('marker_uniquename_file', 'marker_uniquename');
-  $where [2] = Sql::selectFilter('marker_type', $form_state, 'marker_type');
+  $where [] = Sql::textareaFilter('marker_uniquename', $form_state, 'marker_uniquename');
+  $where [] = Sql::file('marker_uniquename_file', 'marker_uniquename');
+  $where [] = Sql::selectFilter('marker_type', $form_state, 'marker_type');
   Set::result()
     ->sql($sql)
     ->where($where)
@@ -76,14 +76,12 @@ function chado_search_mapped_markers_table_definition () {
 
 // Define call back to link the feature to its  node for the result table
 function chado_search_mapped_markers_link_feature ($feature_id) {
-  $nid = chado_get_nid_from_id('feature', $feature_id);
-  return chado_search_link_node ($nid);
+  return chado_search_link_entity('feature', $feature_id);
 }
 
 // Define call back to link the featuremap to its  node for the result table
 function chado_search_mapped_markers_link_featuremap ($featuremap_id) {
-  $nid = chado_get_nid_from_id('featuremap', $featuremap_id);
-  return chado_search_link_node ($nid);
+  return chado_search_link_entity('featuremap', $featuremap_id);
 }
 
 // Downloading Definition if different from the Table Definition

@@ -115,13 +115,11 @@ function chado_search_sequence_search_table_definition () {
 }
 // Define call back to link the sequence to its node for result table
 function chado_search_sequence_search_link_analysis ($analysis_id) {
-  $nid = chado_get_nid_from_id('analysis', $analysis_id);
-  return chado_search_link_node ($nid);
+  return chado_search_link_entity('analysis', $analysis_id);
 }
 // Define call back to link the featuremap to its  node for result table
 function chado_search_sequence_search_link_feature ($feature_id) {
-  $nid = chado_get_nid_from_id('feature', $feature_id);
-  return chado_search_link_node ($nid);
+  return chado_search_link_entity('feature', $feature_id);
 }
 
 /*************************************************************

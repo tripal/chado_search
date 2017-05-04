@@ -171,8 +171,8 @@ function chado_search_gene_search_link_feature ($var) {
   $feature_id = $var[0];
   $name = $var[1];
   if ($feature_id) {
-    $nid = chado_get_nid_from_id('feature', $feature_id);
-    return chado_search_link_node ($nid);
+    return chado_search_link_entity('feature', $feature_id);
+  
   }
   else {
     return '/feature/' . $name;

@@ -33,7 +33,7 @@ function chado_search_mapped_sequence_by_chromosome_form_submit ($form, &$form_s
   // Get base sql
   $sql = "SELECT * FROM {chado_search_mapped_sequence}";
   // Add conditions
-  $where [0] = Sql::selectFilter('chr_number', $form_state, 'chr_number');
+  $where [] = Sql::selectFilter('chr_number', $form_state, 'chr_number');
   //$groupby = 'marker_feature_id:chado_search_mapped_sequence_by_chromosome';
   Set::result()
     ->sql($sql)
@@ -62,14 +62,12 @@ function chado_search_mapped_sequence_by_chromosome_table_definition () {
 
 // Define call back to link the feature to its  node for the result table
 function chado_search_mapped_sequence_by_chromosome_link_feature ($feature_id) {
-  $nid = chado_get_nid_from_id('feature', $feature_id);
-  return chado_search_link_node ($nid);
+  return chado_search_link_entity('feature', $feature_id);
 }
 
 // Define call back to link the featuremap to its  node for the result table
 function chado_search_mapped_sequence_by_chromosome_link_featuremap ($featuremap_id) {
-  $nid = chado_get_nid_from_id('featuremap', $featuremap_id);
-  return chado_search_link_node ($nid);
+  return chado_search_link_entity('featuremap', $featuremap_id);
 }
 
 /*************************************************************

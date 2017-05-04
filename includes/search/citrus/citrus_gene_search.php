@@ -121,14 +121,14 @@ function chado_search_gene_search_form_submit ($form, &$form_state) {
   // Get base sql
   $sql = "SELECT * FROM {chado_search_gene_search}";
   // Add conditions
-  $where [0] = Sql::textFilterOnMultipleColumns('feature_name', $form_state, array('uniquename', 'name'));
-  $where [1] = Sql::selectFilter('analysis', $form_state, 'analysis');
-  $where [2] = Sql::selectFilter('genus', $form_state, 'genus');
-  $where [3] = Sql::selectFilter('species', $form_state, 'organism');
-  $where [4] = Sql::fileOnMultipleColumns('feature_name_file_inline', array('uniquename', 'name'));
-  $where [5] = Sql::selectFilter('location', $form_state, 'landmark');
-  $where [6] = Sql::betweenFilter('fmin', 'fmax', $form_state, 'fmin', 'fmax');
-  $where [7] = Sql::textFilterOnMultipleColumns('keyword', $form_state, array('go_term', 'blast_value', 'kegg_value', 'interpro_value', 'gb_keyword'));
+  $where [] = Sql::textFilterOnMultipleColumns('feature_name', $form_state, array('uniquename', 'name'));
+  $where [] = Sql::selectFilter('analysis', $form_state, 'analysis');
+  $where [] = Sql::selectFilter('genus', $form_state, 'genus');
+  $where [] = Sql::selectFilter('species', $form_state, 'organism');
+  $where [] = Sql::fileOnMultipleColumns('feature_name_file_inline', array('uniquename', 'name'));
+  $where [] = Sql::selectFilter('location', $form_state, 'landmark');
+  $where [] = Sql::betweenFilter('fmin', 'fmax', $form_state, 'fmin', 'fmax');
+  $where [] = Sql::textFilterOnMultipleColumns('keyword', $form_state, array('go_term', 'blast_value', 'kegg_value', 'interpro_value', 'gb_keyword'));
 
   Set::result()
     ->sql($sql)
@@ -148,61 +148,14 @@ function chado_search_gene_search_table_definition () {
     'organism:s' => 'Organism',
     'feature_type:s' => 'Type',
     'analysis:s' => 'Source',
-    'location:s:chado_search_gene_search_link_gbrowse:srcfeature_id,location,analysis' => 'Location',
+    'location:s' => 'Location',
   );
   return $headers;
 }
 
 // Define call back to link the featuremap to its  node for result table
 function chado_search_gene_search_link_feature ($feature_id) {
-  $nid = chado_get_nid_from_id('feature', $feature_id);
-  return chado_search_link_node ($nid);
-}
-
-// Define call back to link the location to GDR GBrowse
-function chado_search_gene_search_link_gbrowse ($paras) {
-  $srcfeature_id = $paras [0];
-  $loc = preg_replace("/ +/", "", $paras [1]);
-  $ncbi = preg_match('/NCBI /', $paras[2]);
-  $sql = 
-    "SELECT A.name
-    FROM {feature} F
-    INNER JOIN {analysisfeature} AF ON F.feature_id = AF.feature_id
-    INNER JOIN {analysis} A ON A.analysis_id = AF.analysis_id
-    INNER JOIN {analysisprop} AP ON AP.analysis_id = A.analysis_id
-    INNER JOIN {cvterm} V ON V.cvterm_id = AP.type_id
-    WHERE
-    V.name = 'Analysis Type' AND
-    AP.value = 'whole_genome' AND
-    F.feature_id = :srcfeature_id";
-  $genome = chado_query($sql, array('srcfeature_id' => $srcfeature_id))->fetchField();
-  $url = "";
-  if($genome == 'Fragaria vesca Whole Genome v1.0 (build 8) Assembly & Annotation') {
-    $ver = $ncbi ? 'v1.1' : 'v1.0';
-    $url = "http://www.rosaceae.org/gb/gbrowse/fragaria_vesca_$ver-lg?name=$loc&enable=NCBI%20Sequence%20Alignments";
-  }
-  else if ($genome == 'Fragaria vesca Whole Genome v1.1 Assembly & Annotation') {
-    $url = "http://www.rosaceae.org/gb/gbrowse/fragaria_vesca_v1.1-lg?name=$loc&enable=NCBI%20Sequence%20Alignments";
-  }
-  else if ($genome == 'Prunus persica Whole Genome v1.0 Assembly & Annotation') {
-    $url = "http://www.rosaceae.org/gb/gbrowse/prunus_persica?name=$loc&enable=NCBI%20Sequence%20Alignments";
-  }
-  else if ($genome == 'Prunus persica Whole Genome Assembly v2.0 & Annotation v2.1 (v2.0.a1)') {
-    $url = "http://www.rosaceae.org/gb/gbrowse/prunus_persica_v2.0.a1?name=$loc&enable=NCBI%20Sequence%20Alignments";  
-  }
-  else if ($genome == 'Malus x domestica Whole Genome v1.0p Assembly & Annotation') {
-      $url = "http://www.rosaceae.org/gb/gbrowse/malus_x_domestica_v1.0-primary?name=$loc&enable=NCBI%20Sequence%20Alignments";
-  }
-  else if($genome == 'Malus x domestica Whole Genome v1.0 Assembly & Annotation') {
-      $url = "http://www.rosaceae.org/gb/gbrowse/malus_x_domestica?name=$loc&enable=NCBI%20Sequence%20Alignments";
-  }
-  else if ($genome == 'Pyrus communis Genome v1.0 Draft Assembly & Annotation') {
-    $url = "http://www.rosaceae.org/gb/gbrowse/pyrus_communis_v1.0?name=$loc&enable=NCBI%20Sequence%20Alignments";
-  }
-  else if ($genome == 'Rubus occidentalis Whole Genome Assembly v1.0 & Annotation v1') {
-    $url = "http://www.rosaceae.org/gb/gbrowse/rubus_occidentalis_v1.0.a1?name=$loc&enable=NCBI%20Sequence%20Alignments";
-  }
-  return chado_search_link_url ($url);
+  return chado_search_link_entity('feature', $feature_id);
 }
 
 /*************************************************************

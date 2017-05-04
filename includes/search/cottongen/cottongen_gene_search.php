@@ -112,13 +112,13 @@ function chado_search_gene_search_form_submit ($form, &$form_state) {
   // Get base sql
   $sql = "SELECT * FROM {chado_search_gene_search}";
   // Add conditions
-  $where [0] = Sql::textFilterOnMultipleColumns('feature_name', $form_state, array('uniquename', 'name'));
-  $where [1] = Sql::selectFilter('analysis', $form_state, 'analysis');
-  $where [2] = Sql::selectFilter('organism', $form_state, 'organism');
-  $where [3] = Sql::fileOnMultipleColumns('feature_name_file_inline', array('uniquename', 'name'));
-  $where [4] = Sql::selectFilter('location', $form_state, 'landmark');
-  $where [5] = Sql::betweenFilter('fmin', 'fmax', $form_state, 'fmin', 'fmax');
-  $where [6] = Sql::textFilterOnMultipleColumns('keyword', $form_state, array('go_term', 'blast_value', 'kegg_value', 'interpro_value', 'gb_keyword'));
+  $where [] = Sql::textFilterOnMultipleColumns('feature_name', $form_state, array('uniquename', 'name'));
+  $where [] = Sql::selectFilter('analysis', $form_state, 'analysis');
+  $where [] = Sql::selectFilter('organism', $form_state, 'organism');
+  $where [] = Sql::fileOnMultipleColumns('feature_name_file_inline', array('uniquename', 'name'));
+  $where [] = Sql::selectFilter('location', $form_state, 'landmark');
+  $where [] = Sql::betweenFilter('fmin', 'fmax', $form_state, 'fmin', 'fmax');
+  $where [] = Sql::textFilterOnMultipleColumns('keyword', $form_state, array('go_term', 'blast_value', 'kegg_value', 'interpro_value', 'gb_keyword'));
 
   Set::result()
     ->sql($sql)
@@ -145,8 +145,7 @@ function chado_search_gene_search_table_definition () {
 
 // Define call back to link the featuremap to its  node for result table
 function chado_search_gene_search_link_feature ($feature_id) {
-  $nid = chado_get_nid_from_id('feature', $feature_id);
-  return chado_search_link_node ($nid);
+  return chado_search_link_entity('feature', $feature_id);
 }
 
 // Define call back to link the location to GDR GBrowse

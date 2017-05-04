@@ -95,12 +95,12 @@ function chado_search_qtl_search_form_submit ($form, &$form_state) {
   // Get base sql
   $sql = chado_search_qtl_search_base_query();
   // Add conditions
-  $where[0] = Sql::selectFilter('type', $form_state, 'type');
-  $where[1] = Sql::selectFilter('species', $form_state, 'organism');
-  $where[2] = Sql::selectFilter('trait_category', $form_state, 'category');
-  $where[3] = Sql::textFilter('trait_name', $form_state, 'trait');
-  $where[4] = Sql::textFilter('published_symbol', $form_state, 'symbol');
-  $where[5] = Sql::textFilter('qtl_label', $form_state, 'qtl');
+  $where[] = Sql::selectFilter('type', $form_state, 'type');
+  $where[] = Sql::selectFilter('species', $form_state, 'organism');
+  $where[] = Sql::selectFilter('trait_category', $form_state, 'category');
+  $where[] = Sql::textFilter('trait_name', $form_state, 'trait');
+  $where[] = Sql::textFilter('published_symbol', $form_state, 'symbol');
+  $where[] = Sql::textFilter('qtl_label', $form_state, 'qtl');
   Set::result()
     ->sql($sql)
     ->where($where)
@@ -156,16 +156,13 @@ function chado_search_qtl_search_download_definition () {
 }
 // Define call back to link feature
 function chado_search_qtl_search_link_qtl ($feature_id) {
-  $nid = chado_get_nid_from_id('feature', $feature_id);
-  return chado_search_link_node ($nid);
+  return chado_search_link_entity('feature', $feature_id);
 }
 // Define call back to link organism
 function chado_search_qtl_search_link_organism ($organism_id) {
-  $nid = chado_get_nid_from_id('organism', $organism_id);
-  return chado_search_link_node ($nid);
+  return chado_search_link_entity('organism', $organism_id);
 }
 // Define call back to link featuremap
 function chado_search_qtl_search_link_map ($featuremap_id) {
-  $nid = chado_get_nid_from_id('featuremap', $featuremap_id);
-  return chado_search_link_node ($nid);
+  return chado_search_link_entity('featuremap', $featuremap_id);
 }

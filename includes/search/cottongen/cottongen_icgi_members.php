@@ -39,9 +39,9 @@ function chado_search_icgi_members_form ($form) {
 // Submit the form
 function chado_search_icgi_members_form_submit ($form, &$form_state) {
     $where = array();
-    $where [0] = Sql::textFilter('lname', $form_state, 'lname');
-    $where [1] = Sql::textFilter('organization', $form_state, 'organization');
-    $where [2] = Sql::selectFilter('country', $form_state, 'country');
+    $where [] = Sql::textFilter('lname', $form_state, 'lname');
+    $where [] = Sql::textFilter('organization', $form_state, 'organization');
+    $where [] = Sql::selectFilter('country', $form_state, 'country');
   // Get base sql
   $sql = chado_search_icgi_members_base_query();
   Set::result()
@@ -110,12 +110,10 @@ function chado_search_icgi_members_table_definition () {
 
 // Define call back to link the icgi_members to its  node for the result table
 function chado_search_icgi_members_link_icgi_members ($icgi_members_id) {
-  $nid = chado_get_nid_from_id('icgi_members', $icgi_members_id);
-  return chado_search_link_node ($nid);
+  return chado_search_link_entity('icgi_members', $icgi_members_id);
 }
 
 // Define call back to link the project to its  node for the result table
 function chado_search_icgi_members_link_parent ($stock_id) {
-  $nid = chado_get_nid_from_id('stock', $stock_id);
-  return chado_search_link_node ($nid);
+  return chado_search_link_entity('stock', $stock_id);
 }

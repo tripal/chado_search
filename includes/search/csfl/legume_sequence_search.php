@@ -92,13 +92,13 @@ function chado_search_sequence_search_form_submit ($form, &$form_state) {
   // Get base sql
   $sql = "SELECT * FROM {chado_search_sequence_search}";
   // Add conditions
-  $where [0] = Sql::textFilterOnMultipleColumns('feature_name', $form_state, array('uniquename', 'name'));
-  $where [1] = Sql::selectFilter('feature_type', $form_state, 'feature_type');
-  $where [2] = Sql::selectFilter('analysis', $form_state, 'analysis_name');
-  $where [3] = Sql::fileOnMultipleColumns('feature_name_file', array('uniquename', 'name'));
-  $where [4] = Sql::selectFilter('organism', $form_state, 'organism');
-  $where [5] = Sql::selectFilter('location', $form_state, 'landmark');
-  $where [6] = Sql::betweenFilter('fmin', 'fmax', $form_state, 'fmin', 'fmax');
+  $where [] = Sql::textFilterOnMultipleColumns('feature_name', $form_state, array('uniquename', 'name'));
+  $where [] = Sql::selectFilter('feature_type', $form_state, 'feature_type');
+  $where [] = Sql::selectFilter('analysis', $form_state, 'analysis_name');
+  $where [] = Sql::fileOnMultipleColumns('feature_name_file', array('uniquename', 'name'));
+  $where [] = Sql::selectFilter('organism', $form_state, 'organism');
+  $where [] = Sql::selectFilter('location', $form_state, 'landmark');
+  $where [] = Sql::betweenFilter('fmin', 'fmax', $form_state, 'fmin', 'fmax');
   Set::result()
     ->sql($sql)
     ->where($where)
@@ -124,13 +124,11 @@ function chado_search_sequence_search_table_definition () {
 }
 // Define call back to link the sequence to its node for result table
 function chado_search_sequence_search_link_analysis ($analysis_id) {
-  $nid = chado_get_nid_from_id('analysis', $analysis_id);
-  return chado_search_link_node ($nid);
+  return chado_search_link_entity('analysis', $analysis_id);
 }
 // Define call back to link the featuremap to its  node for result table
 function chado_search_sequence_search_link_feature ($feature_id) {
-  $nid = chado_get_nid_from_id('feature', $feature_id);
-  return chado_search_link_node ($nid);
+  return chado_search_link_entity('feature', $feature_id);
 }
 // Define call back to link the location to GBrowse
 function chado_search_legume_sequence_search_link_jbrowse ($paras) {

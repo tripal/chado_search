@@ -350,6 +350,23 @@ function chado_search_link_node ($nid) {
   }
 }
 
+function chado_search_link_entity ($base_table, $record_id) {
+  $link = NULL;
+  // tripal v2 link (node)
+  $nid = chado_get_nid_from_id ($base_table, $record_id);
+  if ($nid) {
+    $link = "/node/$nid";
+  }
+  // tripal v3 link (entity)
+  if (function_exists('tripal_get_chado_entity_id')) {
+    $entity_id = tripal_get_chado_entity_id ($base_table, $record_id);
+    if ($entity_id) {
+      $link = "/bio_data/$entity_id";
+    }
+  }
+  return $link;
+}
+
 // Link to node by nid. If nid is unavailable return NULL
 function chado_search_link_url ($url) {
   if ($url) {

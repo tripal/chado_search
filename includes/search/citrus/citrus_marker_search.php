@@ -63,42 +63,7 @@ function chado_search_marker_search_form ($form) {
       ->cache(TRUE)
       ->labelWidth(260)
       ->newLine()
-  );  
-  // Restricted by Location
-/*   $form->addSelectFilter(
-      Set::selectFilter()
-      ->id('genome')
-      ->title('Genome')
-      ->column('genome')
-      ->table('chado_search_marker_search')
-      ->disable(array('Malus x domestica Whole Genome v1.0 Assembly & Annotation'))
-      ->cache(TRUE)
-      ->labelWidth(120)
-      ->newLine()
   );
-  $form->addDynamicSelectFilter(
-      Set::dynamicSelectFilter()
-      ->id('location')
-      ->title('Chr/Scaffold')
-      ->dependOnId('genome')
-      ->callback('chado_search_marker_search_ajax_location')
-      ->labelWidth(120)
-  );
-  $form->addBetweenFilter(
-      Set::betweenFilter()
-      ->id('fmin')
-      ->title("between")
-      ->id2('fmax')
-      ->title2("and")
-      ->labelWidth2(50)
-      ->size(10)
-  );
-  $form->addMarkup(
-      Set::markup()
-      ->id('location_unit')
-      ->text("<strong>bp</strong>")
-      ->newLine()
-  ); */
   $form->addSelectFilter(
       Set::selectFilter()
       ->id('map_name')
@@ -166,23 +131,20 @@ function chado_search_marker_search_form_submit ($form, &$form_state) {
   // Get base sql
   $sql = chado_search_marker_search_base_query();
   // Add conditions
-  $where [0] = Sql::textFilterOnMultipleColumns('marker_uniquename', $form_state, array('marker_uniquename', 'marker_name', 'alias', 'synonym'));
-  $where [1] = Sql::fileOnMultipleColumns('feature_name_file_inline', array('marker_uniquename', 'marker_name', 'alias', 'synonym'));
-  $where [2] = Sql::selectFilter('marker_type', $form_state, 'marker_type');
-  $where [3] = Sql::selectFilter('organism', $form_state, 'organism');
-  $where [4] = Sql::selectFilter('mapped_organism', $form_state, 'mapped_organism');
-  $where [5] = Sql::selectFilter('genome', $form_state, 'genome');
-  $where [6] = Sql::selectFilter('location', $form_state, 'landmark');
-  $where [7] = Sql::betweenFilter('fmin', 'fmax', $form_state, 'fmin', 'fmax');
-  $where [8] = Sql::selectFilter('map_name', $form_state, 'map_name');
-  $where [9] = Sql::selectFilter('linkage_group', $form_state, 'lg_uniquename');
-  $where [10] = Sql::betweenFilter('start', 'stop', $form_state, 'start', 'start', TRUE);
-  $where [11] = Sql::textFilter('trait_name', $form_state, 'trait_name');
+  $where [] = Sql::textFilterOnMultipleColumns('marker_uniquename', $form_state, array('marker_uniquename', 'marker_name', 'alias', 'synonym'));
+  $where [] = Sql::fileOnMultipleColumns('feature_name_file_inline', array('marker_uniquename', 'marker_name', 'alias', 'synonym'));
+  $where [] = Sql::selectFilter('marker_type', $form_state, 'marker_type');
+  $where [] = Sql::selectFilter('organism', $form_state, 'organism');
+  $where [] = Sql::selectFilter('mapped_organism', $form_state, 'mapped_organism');
+  $where [] = Sql::selectFilter('map_name', $form_state, 'map_name');
+  $where [] = Sql::selectFilter('linkage_group', $form_state, 'lg_uniquename');
+  $where [] = Sql::betweenFilter('start', 'stop', $form_state, 'start', 'start', TRUE);
+  $where [] = Sql::textFilter('trait_name', $form_state, 'trait_name');
   Set::result()
     ->sql($sql)
     ->where($where)
     ->tableDefinitionCallback('chado_search_marker_search_table_definition')
-    ->customDownload(array('disable_default' => TRUE, 'chado_search_marker_search_gdr_download' => 'Table'))
+    ->customDownload(array('disable_default' => TRUE, 'chado_search_marker_search_citrus_download' => 'Table'))
     ->execute($form, $form_state);
 }
 
@@ -209,59 +171,21 @@ function chado_search_marker_search_table_definition () {
       'lg_uniquename:s' => 'Linkage Group',
       'start:s' => 'Start',
       'stop:s' => 'Stop',
-      'location:s:chado_search_marker_search_link_gbrowse:genome,location' => 'Location'
+      'location:s' => 'Location'
   );
   return $headers;
 }
 
 // Define call back to link the featuremap to its  node for result table
 function chado_search_marker_search_link_feature ($feature_id) {
-  $nid = chado_get_nid_from_id('feature', $feature_id);
-  return chado_search_link_node ($nid);
+  return chado_search_link_entity('feature', $feature_id);
 }
 
 // Define call back to link the featuremap to its  node for result table
 function chado_search_marker_search_link_featuremap ($featuremap_id) {
-  $nid = chado_get_nid_from_id('featuremap', $featuremap_id);
-  return chado_search_link_node ($nid);
+  return chado_search_link_entity('featuremap', $featuremap_id);
 }
 
-// Define call back to link the location to GDR GBrowse
-function chado_search_marker_search_link_gbrowse ($paras) {
-  $genome = $paras[0];
-  $loc = preg_replace("/ +/", "", $paras [1]);
-  $url = "";
-  if($genome == 'Fragaria vesca Whole Genome v1.0 (build 8) Assembly & Annotation') {
-    $url = "http://www.rosaceae.org/gb/gbrowse/fragaria_vesca_v1.0-lg?name=$loc&enable=NCBI%20Sequence%20Alignments";
-  }
-  else if ($genome == 'Fragaria vesca Whole Genome v1.1 Assembly & Annotation') {
-    $url = "http://www.rosaceae.org/gb/gbrowse/fragaria_vesca_v1.1-lg?name=$loc&enable=NCBI%20Sequence%20Alignments";
-  }
-  else if ($genome == 'Fragaria vesca Whole Genome v2.0.a1 Assembly & Annotation') {
-    //$url = "http://www.rosaceae.org/gb/gbrowse/fragaria_vesca_v2.0.a1/?name=$loc";
-    $url = "https://www.rosaceae.org/jbrowse/index.html?data=data/fragaria/fvesca_v2.0.a1&loc=$loc&tracks=DNA,genes,strawberry_90k_snp";
-  }
-  else if ($genome == 'Prunus persica Whole Genome v1.0 Assembly & Annotation') {
-    $url = "http://www.rosaceae.org/gb/gbrowse/prunus_persica?name=$loc&enable=IRSC_6K_cherry_SNP_array&enable=IRSC_9K_peach_SNP_array";
-  }
-  else if ($genome == 'Prunus persica Whole Genome Assembly v2.0 & Annotation v2.1 (v2.0.a1)') {
-    //$url = "http://www.rosaceae.org/gb/gbrowse/prunus_persica_v2.0.a1?name=$loc&enable=NCBI%20Sequence%20Alignments";
-    $url = "https://www.rosaceae.org/jbrowse/index.html?data=data/prunus/ppersica_v2.0.a1&loc=$loc&tracks=DNA,genes,irsc_cherry_6k_snp,irsc_peach_9k_snp";
-  }
-  else if ($genome == 'Malus x domestica Whole Genome v1.0p Assembly & Annotation') {
-    $url = "http://www.rosaceae.org/gb/gbrowse/malus_x_domestica_v1.0-primary?name=$loc&enable=NCBI%20Sequence%20Alignments";
-  }
-  else if($genome == 'Malus x domestica Whole Genome v1.0 Assembly & Annotation') {
-    $url = "http://www.rosaceae.org/gb/gbrowse/malus_x_domestica?name=$loc&enable=NCBI%20Sequence%20Alignments";
-  }
-  else if ($genome == 'Pyrus communis Genome v1.0 Draft Assembly & Annotation') {
-    $url = "http://www.rosaceae.org/gb/gbrowse/pyrus_communis_v1.0?name=$loc&enable=NCBI%20Sequence%20Alignments";
-  }
-  else if ($genome == 'Rubus occidentalis Whole Genome Assembly v1.0 & Annotation v1') {
-    $url = "http://www.rosaceae.org/gb/gbrowse/rubus_occidentalis_v1.0.a1?name=$loc&enable=NCBI%20Sequence%20Alignments";
-  }
-  return chado_search_link_url ($url);
-}
 /*************************************************************
  * AJAX callbacks
 */
@@ -297,7 +221,7 @@ function chado_search_marker_search_download_definition () {
   return $headers;
 }
 // Custom download for GDR
-function chado_search_marker_search_gdr_download ($handle, $result, $sql, $total_items, $progress_var) {
+function chado_search_marker_search_citrus_download ($handle, $result, $sql, $total_items, $progress_var) {
   global $base_url;
   // Get max no of primers
   $primer_count = "

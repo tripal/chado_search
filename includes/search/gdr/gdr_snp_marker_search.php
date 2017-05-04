@@ -107,12 +107,12 @@ function chado_search_snp_marker_search_form_submit ($form, &$form_state) {
   // Get base sql
   $sql = chado_search_snp_marker_search_base_query();
   // Add conditions
-  $where [0] = Sql::textFilterOnMultipleColumns('snp_uniquename', $form_state, array('snp_uniquename', 'alias'));
-  $where [1] = Sql::fileOnMultipleColumns('feature_name_file_inline', array('snp_uniquename', 'alias'));
-  $where [2] = Sql::selectFilter('array_name', $form_state, 'array_name');
-  $where [5] = Sql::selectFilter('genome', $form_state, 'genome');
-  $where [6] = Sql::selectFilter('location', $form_state, 'landmark');
-  $where [7] = Sql::betweenFilter('fmin', 'fmax', $form_state, 'fmin', 'fmax');
+  $where [] = Sql::textFilterOnMultipleColumns('snp_uniquename', $form_state, array('snp_uniquename', 'alias'));
+  $where [] = Sql::fileOnMultipleColumns('feature_name_file_inline', array('snp_uniquename', 'alias'));
+  $where [] = Sql::selectFilter('array_name', $form_state, 'array_name');
+  $where [] = Sql::selectFilter('genome', $form_state, 'genome');
+  $where [] = Sql::selectFilter('location', $form_state, 'landmark');
+  $where [] = Sql::betweenFilter('fmin', 'fmax', $form_state, 'fmin', 'fmax');
   Set::result()
     ->sql($sql)
     ->where($where)
@@ -149,8 +149,7 @@ function chado_search_snp_marker_search_table_definition () {
 
 // Define call back to link the featuremap to its  node for result table
 function chado_search_snp_marker_search_link_feature ($feature_id) {
-  $nid = chado_get_nid_from_id('feature', $feature_id);
-  return chado_search_link_node ($nid);
+  return chado_search_link_entity('feature', $feature_id);
 }
 
 // Define call back to link the location to GDR GBrowse

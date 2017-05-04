@@ -125,12 +125,11 @@ function chado_search_nearby_markers_table_definition () {
 function chado_search_nearby_markers_link_feature ($feature_id) {
   // Convert the feature_id of marker_locus to genetic_marker
   $fid = chado_query("SELECT object_id FROM {feature_relationship} FR WHERE subject_id = $feature_id AND type_id = (SELECT cvterm_id FROM {cvterm} WHERE name = 'instance_of' AND cv_id = (SELECT cv_id FROM {cv} WHERE name = 'relationship'))")->fetchField();
-  $nid = chado_get_nid_from_id('feature', $fid);
-  return chado_search_link_node ($nid);
+  return chado_search_link_entity('feature', $fid);
+
 }
 
 // Define call back to link the featuremap to its  node for the result table
 function chado_search_nearby_markers_link_featuremap ($featuremap_id) {
-  $nid = chado_get_nid_from_id('featuremap', $featuremap_id);
-  return chado_search_link_node ($nid);
+  return chado_search_link_entity('featuremap', $featuremap_id);
 }

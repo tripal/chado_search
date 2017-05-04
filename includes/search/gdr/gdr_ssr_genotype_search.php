@@ -76,10 +76,10 @@ function chado_search_ssr_genotype_search_form_submit ($form, &$form_state) {
   $sql = chado_search_ssr_genotype_search_base_query();
   
   // Add conditions
-  $where [0] = Sql::selectFilter('project_name', $form_state, 'project_name');
-  $where [1] = Sql::textFilter('marker_uniquename', $form_state, 'marker_uniquename');
-  $where [2] = Sql::selectFilter('stock_uniquename', $form_state, 'stock_uniquename');
-  $where [3] = Sql::selectFilter('organism', $form_state, 'organism');
+  $where [] = Sql::selectFilter('project_name', $form_state, 'project_name');
+  $where [] = Sql::textFilter('marker_uniquename', $form_state, 'marker_uniquename');
+  $where [] = Sql::selectFilter('stock_uniquename', $form_state, 'stock_uniquename');
+  $where [] = Sql::selectFilter('organism', $form_state, 'organism');
   $group_by = "marker_uniquename,allele:chado_search_ssr_genotype_search:</br>";
   Set::result()
     ->sql($sql)
@@ -179,9 +179,9 @@ function chado_search_ssr_genotype_search_download_long_form ($handle, $result, 
       $progress = $current;
       variable_set($progress_var, $progress);
     }
-    $stock_nid = chado_get_nid_from_id('stock', $row->stock_id);
-    $feature_nid = chado_get_nid_from_id('feature', $row->feature_id);
-    fwrite($handle, "\"$row->project_name\",\"=HYPERLINK(\"\"$base_url/node/$stock_nid\"\", \"\"$row->stock_uniquename\"\")\",\"=HYPERLINK(\"\"$base_url/node/$feature_nid\"\", \"\"$row->marker_uniquename\"\")\",\"$row->genotype\"\n");
+    $stock_nid = chado_search_link_entity('stock', $row->stock_id);
+    $feature_nid = chado_search_link_entity('feature', $row->feature_id);
+    fwrite($handle, "\"$row->project_name\",\"=HYPERLINK(\"\"$base_url$stock_nid\"\", \"\"$row->stock_uniquename\"\")\",\"=HYPERLINK(\"\"$base_url$feature_nid\"\", \"\"$row->marker_uniquename\"\")\",\"$row->genotype\"\n");
     $counter ++;
   }
 }
@@ -224,8 +224,8 @@ function chado_search_ssr_genotype_search_download_wide_form ($handle, $result, 
   global $base_url;
   // Print headings
   foreach ($headings AS $feature_id => $val) {
-    $feature_nid = chado_get_nid_from_id('feature', $feature_id);
-    fwrite($handle, ",\"=HYPERLINK(\"\"$base_url/node/$feature_nid\"\", \"\"".$val . "\"\")\"");
+    $feature_nid = chado_search_link_entity('feature', $feature_id);
+    fwrite($handle, ",\"=HYPERLINK(\"\"$base_url$feature_nid\"\", \"\"".$val . "\"\")\"");
   }
   fwrite($handle, "\n");
   // Print data
@@ -242,8 +242,8 @@ function chado_search_ssr_genotype_search_download_wide_form ($handle, $result, 
     $project = $arr[0];
     $stock = $arr[1];
     $stock_id = $arr[2];
-    $stock_nid = chado_get_nid_from_id('stock', $stock_id);
-    fwrite($handle, "\"" . $project . "\",\"=HYPERLINK(\"\"$base_url/node/$stock_nid\"\", \"\"" . $stock . "\"\")\"");
+    $stock_nid = chado_search_link_entity('stock', $stock_id);
+    fwrite($handle, "\"" . $project . "\",\"=HYPERLINK(\"\"$base_url$stock_nid\"\", \"\"" . $stock . "\"\")\"");
     foreach ($headings AS $h) {
       $datum = key_exists($h, $value) ? $value[$h] : '';
       fwrite($handle, ",\"" . $datum . "\"");
@@ -255,20 +255,17 @@ function chado_search_ssr_genotype_search_download_wide_form ($handle, $result, 
 
 // Define call back to link the featuremap to its  node for result table
 function chado_search_ssr_genotype_search_link_feature ($feature_id) {
-  $nid = chado_get_nid_from_id('feature', $feature_id);
-  return chado_search_link_node ($nid);
+  return chado_search_link_entity('feature', $feature_id);
 }
 
 // Define call back to link the featuremap to its  node for result table
 function chado_search_ssr_genotype_search_link_project ($project_id) {
-  $nid = chado_get_nid_from_id('project', $project_id);
-  return chado_search_link_node ($nid);
+  return chado_search_link_entity('project', $project_id);
 }
 
 // Define call back to link the featuremap to its  node for result table
 function chado_search_ssr_genotype_search_link_pub ($pub_id) {
-  $nid = chado_get_nid_from_id('pub', $pub_id);
-  return chado_search_link_node ($nid);
+  return chado_search_link_entity('pub', $pub_id);
 }
 
 // Define call back to link the marker_allele to the Allele page

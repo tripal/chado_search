@@ -67,8 +67,7 @@ function chado_search_species_table_definition () {
 
 // Define call back to link the species to its  node for the result table
 function chado_search_species_link_organism ($organism_id) {
-  $nid = chado_get_nid_from_id('organism', $organism_id);
-  return chado_search_link_node ($nid);
+  return chado_search_link_entity('organism', $organism_id);
 }
 
 // Define call back to link the species to its  node for the result table

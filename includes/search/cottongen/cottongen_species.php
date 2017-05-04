@@ -38,8 +38,8 @@ function chado_search_species_form ($form) {
 function chado_search_species_form_submit ($form, &$form_state) {
   // Get base sql
   $sql = "SELECT * FROM {chado_search_species}";
-  $where [0] = Sql::selectFilter('genome', $form_state, 'genome');
-  $where [1] = Sql::selectFilter('species', $form_state, 'organism');
+  $where [] = Sql::selectFilter('genome', $form_state, 'genome');
+  $where [] = Sql::selectFilter('species', $form_state, 'organism');
   Set::result()
     ->sql($sql)
     ->where($where)
@@ -66,6 +66,5 @@ function chado_search_species_table_definition () {
 
 // Define call back to link the species to its  node for the result table
 function chado_search_species_link_organism ($organism_id) {
-  $nid = chado_get_nid_from_id('organism', $organism_id);
-  return chado_search_link_node ($nid);
+  return chado_search_link_entity('organism', $organism_id);
 }

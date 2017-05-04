@@ -59,10 +59,10 @@ function chado_search_marker_source_form_submit ($form, &$form_state) {
   // Get base sql
   $sql = "SELECT * FROM {chado_search_marker_source}";
   // Add conditions
-  $where [0] = Sql::textFilter('src_uniquename', $form_state, 'src_uniquename');
-  $where [1] = Sql::selectFilter('src_type', $form_state, 'src_type');
-  $where [2] = Sql::selectFilter('src_germplasm', $form_state, 'stock_uniquename');
-  $where [3] = Sql::selectFilter('marker_type', $form_state, 'marker_type');
+  $where [] = Sql::textFilter('src_uniquename', $form_state, 'src_uniquename');
+  $where [] = Sql::selectFilter('src_type', $form_state, 'src_type');
+  $where [] = Sql::selectFilter('src_germplasm', $form_state, 'stock_uniquename');
+  $where [] = Sql::selectFilter('marker_type', $form_state, 'marker_type');
   Set::result()
     ->sql($sql)
     ->where($where)
@@ -93,24 +93,20 @@ function chado_search_marker_source_table_definition () {
 
 // Define call back to link the featuremap to its  node for result table
 function chado_search_marker_source_link_feature ($feature_id) {
-  $nid = chado_get_nid_from_id('feature', $feature_id);
-  return chado_search_link_node ($nid);
+  return chado_search_link_entity('feature', $feature_id);
 }
 
 // Define call back to link the organism to its  node for result table
 function chado_search_marker_source_link_organism ($organism_id) {
-  $nid = chado_get_nid_from_id('organism', $organism_id);
-  return chado_search_link_node ($nid);
+  return chado_search_link_entity('organism', $organism_id);
 }
 
 // Define call back to link the featuremap to its  node for result table
 function chado_search_marker_source_link_library ($library_id) {
-  $nid = chado_get_nid_from_id('library', $library_id);
-  return chado_search_link_node ($nid);
+  return chado_search_link_entity('library', $library_id);
 }
 
 // Define call back to link the organism to its  node for result table
 function chado_search_marker_source_link_stock ($stock_id) {
-  $nid = chado_get_nid_from_id('stock', $stock_id);
-  return chado_search_link_node ($nid);
+  return chado_search_link_entity('stock', $stock_id);
 }

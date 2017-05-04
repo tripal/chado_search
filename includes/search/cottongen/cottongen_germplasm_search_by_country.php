@@ -38,7 +38,7 @@ function chado_search_germplasm_search_by_country_form_submit ($form, &$form_sta
   // Get base sql
   $sql = "SELECT * FROM {chado_search_germplasm_search_by_country}";
   // Add conditions
-  $where [0] = Sql::selectFilter('country', $form_state, 'country');
+  $where [] = Sql::selectFilter('country', $form_state, 'country');
 
   Set::result()
     ->sql($sql)
@@ -63,11 +63,9 @@ function chado_search_germplasm_search_by_country_table_definition () {
 }
 // Define call back to link the stoc
 function chado_search_germplasm_search_by_country_link_stock ($stock_id) {
-  $nid = chado_get_nid_from_id('stock', $stock_id);
-  return chado_search_link_node ($nid);
+  return chado_search_link_entity('stock', $stock_id);
 }
 // Define call back to link organism
 function chado_search_germplasm_search_by_country_link_organism ($organism_id) {
-  $nid = chado_get_nid_from_id('organism', $organism_id);
-  return chado_search_link_node ($nid);
+  return chado_search_link_entity('organism', $organism_id);
 }

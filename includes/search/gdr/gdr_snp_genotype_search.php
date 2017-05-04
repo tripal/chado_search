@@ -169,14 +169,12 @@ function chado_search_snp_genotype_search_table_definition () {
 
 // Define call back to link the featuremap to its  node for result table
 function chado_search_snp_genotype_search_link_feature ($feature_id) {
-  $nid = chado_get_nid_from_id('feature', $feature_id);
-  return chado_search_link_node ($nid);
+  return chado_search_link_entity('feature', $feature_id);
 }
 
 // Define call back to link the featuremap to its  node for result table
 function chado_search_snp_genotype_search_link_project ($project_id) {
-  $nid = chado_get_nid_from_id('project', $project_id);
-  return chado_search_link_node ($nid);
+  return chado_search_link_entity('project', $project_id);
 }
 
 function chado_search_snp_genotype_search_link_file ($filename) {
@@ -185,13 +183,12 @@ function chado_search_snp_genotype_search_link_file ($filename) {
 
 // Define call back to link the featuremap to its  node for result table
 function chado_search_snp_genotype_search_link_pub ($pub_id) {
-  $nid = chado_get_nid_from_id('pub', $pub_id);
-  return chado_search_link_node ($nid);
+  return chado_search_link_entity('pub', $pub_id);
+
 }
 
 function chado_search_snp_genotype_search_link_stock ($stock_id) {
-  $nid = chado_get_nid_from_id('stock', $stock_id);
-  return chado_search_link_node ($nid);
+  return chado_search_link_entity('stock', $stock_id);
 }
 
 // User defined: Populating the landmark for selected organism
@@ -239,8 +236,8 @@ function chado_search_snp_genotype_search_download_wide_form ($handle, $result, 
   global $base_url;
   // Print headings
   foreach ($headings AS $feature_id => $val) {
-    $feature_nid = chado_get_nid_from_id('feature', $feature_id);
-    fwrite($handle, ",\"=HYPERLINK(\"\"$base_url/node/$feature_nid\"\", \"\"".$val . "\"\")\"");
+    $feature_nid = chado_search_link_entity('feature', $feature_id);
+    fwrite($handle, ",\"=HYPERLINK(\"\"$base_url$feature_nid\"\", \"\"".$val . "\"\")\"");
   }
   fwrite($handle, "\n");
   // Print data
@@ -257,8 +254,8 @@ function chado_search_snp_genotype_search_download_wide_form ($handle, $result, 
     $project = $arr[0];
     $stock = $arr[1];
     $stock_id = $arr[2];
-    $stock_nid = chado_get_nid_from_id('stock', $stock_id);
-    fwrite($handle, "\"" . $project . "\",\"=HYPERLINK(\"\"$base_url/node/$stock_nid\"\", \"\"" . $stock . "\"\")\"");
+    $stock_nid = chado_search_link_entity('stock', $stock_id);
+    fwrite($handle, "\"" . $project . "\",\"=HYPERLINK(\"\"$base_url$stock_nid\"\", \"\"" . $stock . "\"\")\"");
     foreach ($headings AS $h) {
       $datum = key_exists($h, $value) ? $value[$h] : '';
       fwrite($handle, ",\"" . $datum . "\"");

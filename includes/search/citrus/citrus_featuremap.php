@@ -68,18 +68,15 @@ function chado_search_featuremap_table_definition () {
 
 // Define call back to link the featuremap to its  node for the result table
 function chado_search_featuremap_link_featuremap ($featuremap_id) {
-  $nid = chado_get_nid_from_id('featuremap', $featuremap_id);
-  return chado_search_link_node ($nid);
+  return chado_search_link_entity('featuremap', $featuremap_id);
 }
 
 // Define call back to link the project to its  node for the result table
 function chado_search_featuremap_link_parent ($stock_id) {
-  $nid = chado_get_nid_from_id('stock', $stock_id);
-  return chado_search_link_node ($nid);
+  return chado_search_link_entity('stock', $stock_id);
 }
 
 // Define call back to link the featuremap to its  node for the result table
 function chado_search_featuremap_link_organism ($organism_id) {
-  $nid = chado_get_nid_from_id('organism', $organism_id);
-  return chado_search_link_node ($nid);
+  return chado_search_link_entity('organism', $organism_id);
 }

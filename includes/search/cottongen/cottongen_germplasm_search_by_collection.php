@@ -44,8 +44,8 @@ function chado_search_germplasm_search_by_collection_form_submit ($form, &$form_
   // Get base sql
   $sql = "SELECT * FROM {chado_search_germplasm_search_by_collection}";
   // Add conditions
-  $where [0] = Sql::selectFilter('collection', $form_state, 'collection');
-  $where [1] = Sql::textFilter('accession', $form_state, 'version');
+  $where [] = Sql::selectFilter('collection', $form_state, 'collection');
+  $where [] = Sql::textFilter('accession', $form_state, 'version');
   Set::result()
     ->sql($sql)
     ->where($where)
@@ -70,13 +70,11 @@ function chado_search_germplasm_search_by_collection_table_definition () {
 }
 // Define call back to link the stoc
 function chado_search_germplasm_search_by_collection_link_stock ($stock_id) {
-  $nid = chado_get_nid_from_id('stock', $stock_id);
-  return chado_search_link_node ($nid);
+  return chado_search_link_entity('stock', $stock_id);
 }
 // Define call back to link organism
 function chado_search_germplasm_search_by_collection_link_organism ($organism_id) {
-  $nid = chado_get_nid_from_id('organism', $organism_id);
-  return chado_search_link_node ($nid);
+  return chado_search_link_entity('organism', $organism_id);
 }
 // Define call back to link the accession
 function chado_search_germplasm_search_by_collection_link_accession ($params = NULL) {

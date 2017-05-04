@@ -156,16 +156,13 @@ function chado_search_qtl_search_download_definition () {
 }
 // Define call back to link feature
 function chado_search_qtl_search_link_qtl ($feature_id) {
-  $nid = chado_get_nid_from_id('feature', $feature_id);
-  return chado_search_link_node ($nid);
+  return chado_search_link_entity('feature', $feature_id);
 }
 // Define call back to link organism
 function chado_search_qtl_search_link_organism ($organism_id) {
-  $nid = chado_get_nid_from_id('organism', $organism_id);
-  return chado_search_link_node ($nid);
+  return chado_search_link_entity('organism', $organism_id);
 }
 // Define call back to link featuremap
 function chado_search_qtl_search_link_map ($featuremap_id) {
-  $nid = chado_get_nid_from_id('featuremap', $featuremap_id);
-  return chado_search_link_node ($nid);
+  return chado_search_link_entity('featuremap', $featuremap_id);
 }

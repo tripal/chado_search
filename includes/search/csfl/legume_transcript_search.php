@@ -103,13 +103,13 @@ function chado_search_transcript_search_form_submit ($form, &$form_state) {
   // Get base sql
   $sql = "SELECT * FROM {chado_search_transcript_search}";
   // Add conditions
-  $where [0] = Sql::textFilterOnMultipleColumns('feature_name', $form_state, array('uniquename', 'name'));
-  $where [1] = Sql::selectFilter('analysis', $form_state, 'analysis');
-  $where [2] = Sql::selectFilter('organism', $form_state, 'organism');
-  $where [3] = Sql::textFilter('go_term', $form_state, 'go_term');
-  $where [4] = Sql::textFilter('homology', $form_state, 'blast_value');
-  $where [5] = Sql::textFilter('kegg', $form_state, 'kegg_value');
-  $where [6] = Sql::textFilter('interpro', $form_state, 'interpro_value');
+  $where [] = Sql::textFilterOnMultipleColumns('feature_name', $form_state, array('uniquename', 'name'));
+  $where [] = Sql::selectFilter('analysis', $form_state, 'analysis');
+  $where [] = Sql::selectFilter('organism', $form_state, 'organism');
+  $where [] = Sql::textFilter('go_term', $form_state, 'go_term');
+  $where [] = Sql::textFilter('homology', $form_state, 'blast_value');
+  $where [] = Sql::textFilter('kegg', $form_state, 'kegg_value');
+  $where [] = Sql::textFilter('interpro', $form_state, 'interpro_value');
   Set::result()
     ->sql($sql)
     ->where($where)
@@ -138,7 +138,6 @@ function chado_search_transcript_search_table_definition () {
 
 // Define call back to link the featuremap to its  node for result table
 function chado_search_transcript_search_link_feature ($feature_id) {
-  $nid = chado_get_nid_from_id('feature', $feature_id);
-  return chado_search_link_node ($nid);
+  return chado_search_link_entity('feature', $feature_id);
 }
 

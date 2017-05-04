@@ -166,18 +166,18 @@ function chado_search_marker_search_form_submit ($form, &$form_state) {
   // Get base sql
   $sql = chado_search_marker_search_base_query();
   // Add conditions
-  $where [0] = Sql::textFilterOnMultipleColumns('marker_uniquename', $form_state, array('marker_uniquename', 'marker_name', 'alias', 'synonym'));
-  $where [1] = Sql::fileOnMultipleColumns('feature_name_file_inline', array('marker_uniquename', 'marker_name', 'alias', 'synonym'));
-  $where [2] = Sql::selectFilter('marker_type', $form_state, 'marker_type');
-  $where [3] = Sql::selectFilter('organism', $form_state, 'organism');
-  $where [4] = Sql::selectFilter('mapped_organism', $form_state, 'mapped_organism');
-  $where [5] = Sql::selectFilter('genome', $form_state, 'genome');
-  $where [6] = Sql::selectFilter('location', $form_state, 'landmark');
-  $where [7] = Sql::betweenFilter('fmin', 'fmax', $form_state, 'fmin', 'fmax');
-  $where [8] = Sql::selectFilter('map_name', $form_state, 'map_name');
-  $where [9] = Sql::selectFilter('linkage_group', $form_state, 'lg_uniquename');
-  $where [10] = Sql::betweenFilter('start', 'stop', $form_state, 'start', 'start', TRUE);
-  $where [11] = Sql::textFilter('trait_name', $form_state, 'trait_name');
+  $where [] = Sql::textFilterOnMultipleColumns('marker_uniquename', $form_state, array('marker_uniquename', 'marker_name', 'alias', 'synonym'));
+  $where [] = Sql::fileOnMultipleColumns('feature_name_file_inline', array('marker_uniquename', 'marker_name', 'alias', 'synonym'));
+  $where [] = Sql::selectFilter('marker_type', $form_state, 'marker_type');
+  $where [] = Sql::selectFilter('organism', $form_state, 'organism');
+  $where [] = Sql::selectFilter('mapped_organism', $form_state, 'mapped_organism');
+  $where [] = Sql::selectFilter('genome', $form_state, 'genome');
+  $where [] = Sql::selectFilter('location', $form_state, 'landmark');
+  $where [] = Sql::betweenFilter('fmin', 'fmax', $form_state, 'fmin', 'fmax');
+  $where [] = Sql::selectFilter('map_name', $form_state, 'map_name');
+  $where [] = Sql::selectFilter('linkage_group', $form_state, 'lg_uniquename');
+  $where [] = Sql::betweenFilter('start', 'stop', $form_state, 'start', 'start', TRUE);
+  $where [] = Sql::textFilter('trait_name', $form_state, 'trait_name');
   Set::result()
     ->sql($sql)
     ->where($where)
@@ -216,14 +216,12 @@ function chado_search_marker_search_table_definition () {
 
 // Define call back to link the featuremap to its  node for result table
 function chado_search_marker_search_link_feature ($feature_id) {
-  $nid = chado_get_nid_from_id('feature', $feature_id);
-  return chado_search_link_node ($nid);
+  return chado_search_link_entity('feature', $feature_id);
 }
 
 // Define call back to link the featuremap to its  node for result table
 function chado_search_marker_search_link_featuremap ($featuremap_id) {
-  $nid = chado_get_nid_from_id('featuremap', $featuremap_id);
-  return chado_search_link_node ($nid);
+  return chado_search_link_entity('featuremap', $featuremap_id);
 }
 
 // Define call back to link the location to GDR GBrowse
