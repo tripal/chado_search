@@ -65,6 +65,7 @@ function chado_search_icgi_members_base_query () {
       *
       FROM (
       SELECT 
+         U.uid,
         (select value from profile_value where uid = U.uid and fid = (select fid from profile_field where name = 'profile_last_name')) AS lname,
         (select value from profile_value where uid = U.uid and fid = (select fid from profile_field where name = 'profile_first_name')) AS fname,
         (select value from profile_value where uid = U.uid and fid = (select fid from profile_field where name = 'profile_position')) AS position,
@@ -94,8 +95,8 @@ function chado_search_icgi_members_table_definition () {
   global $user;
   if(in_array('icgi member', $user->roles)) {
   $headers = array(
-      'name:s' => 'Name',
-    'affiliation:s' => 'Affiliation',
+      'name:s:chado_search_icgi_members_link_icgi_members:uid' => 'Name',
+      'affiliation:s' => 'Affiliation',
       'address:s' => 'Address',
       'email:s' => 'Email'
   );
@@ -109,8 +110,8 @@ function chado_search_icgi_members_table_definition () {
 }
 
 // Define call back to link the icgi_members to its  node for the result table
-function chado_search_icgi_members_link_icgi_members ($icgi_members_id) {
-  return chado_search_link_entity('icgi_members', $icgi_members_id);
+function chado_search_icgi_members_link_icgi_members ($uid) {
+  return "/icgi/member/$uid/profile";
 }
 
 // Define call back to link the project to its  node for the result table
