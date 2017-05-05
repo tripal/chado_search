@@ -156,11 +156,11 @@ function chado_search_gene_search_table_definition () {
     'feature_type:s' => 'Type',
     'analysis:s' => 'Source',
     'location:s:chado_search_gene_search_link_gbrowse:srcfeature_id,location,analysis' => 'Location',
-    'blast_value:s' => 'BLAST',
+/*     'blast_value:s' => 'BLAST',
     'interpro_value:s' => 'InterPro',
     'kegg_value:s' => 'KEGG',
     'go_term:s' => 'GO',
-    'gb_keyword:s' => 'GenBank'
+    'gb_keyword:s' => 'GenBank' */
   );
   return $headers;
 }
