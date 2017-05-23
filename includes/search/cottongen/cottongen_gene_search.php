@@ -192,7 +192,7 @@ function chado_search_gene_search_link_gbrowse ($paras) {
  * AJAX callbacks
  */
 function chado_search_gene_search_ajax_location ($val) {
-  $sql = "SELECT distinct landmark FROM {chado_search_gene_search} WHERE analysis = :analysis ORDER BY landmark";
+  $sql = "SELECT distinct landmark FROM {chado_search_gene_search} WHERE analysis IN (:analysis) ORDER BY landmark";
   return chado_search_bind_dynamic_select(array(':analysis' => $val), 'landmark', $sql);
 }
 
