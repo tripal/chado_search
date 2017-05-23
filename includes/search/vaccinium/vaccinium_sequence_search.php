@@ -144,7 +144,7 @@ function chado_search_sequence_search_link_feature ($feature_id) {
 */
 // User defined: Populating the landmark for selected organism
 function chado_search_sequence_search_ajax_location ($value) {
-  $sql = "SELECT distinct landmark FROM {chado_search_sequence_search} WHERE analysis_name = :analysis ORDER BY landmark";
+  $sql = "SELECT distinct landmark FROM {chado_search_sequence_search} WHERE analysis_name IN (:analysis) ORDER BY landmark";
   return chado_search_bind_dynamic_select(array(':analysis' => $value), 'landmark', $sql);
 }
 
