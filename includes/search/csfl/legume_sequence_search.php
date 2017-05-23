@@ -148,6 +148,6 @@ function chado_search_legume_sequence_search_link_jbrowse ($paras) {
 */
 // User defined: Populating the landmark for selected organism
 function chado_search_sequence_search_ajax_location ($val) {
-  $sql = "SELECT distinct landmark, char_length(landmark) AS length FROM {chado_search_sequence_search} WHERE analysis_name = :analysis ORDER BY length, landmark";
+  $sql = "SELECT distinct landmark, char_length(landmark) AS length FROM {chado_search_sequence_search} WHERE analysis_name IN (:analysis) ORDER BY length, landmark";
   return chado_search_bind_dynamic_select(array(':analysis' => $val), 'landmark', $sql);
 }

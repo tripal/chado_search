@@ -97,6 +97,12 @@ class ChadoSearch {
         }
       }
     }
+    $items['chado_search_ajax_callback'] = array(
+      'page callback' => 'chado_search_ajax_form_callback',
+      'delivery callback' => 'ajax_deliver',
+      'access arguments' => array('access content'),
+      'type' => MENU_CALLBACK
+    );
     return $items;
   }
 

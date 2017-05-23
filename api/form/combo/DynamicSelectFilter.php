@@ -73,7 +73,8 @@ class DynamicSelectFilter extends Filter {
     // Add Ajax to the depending element
     $selected = isset($form_state['values'][$depend_on_id]) ? $form_state['values'][$depend_on_id] : 0;
     $form[$depend_on_id]['#ajax'] = array(
-      'callback' => 'chado_search_ajax_form_update',
+      //'callback' => 'chado_search_ajax_form_update', // deprecated. drupal won't allow multiple selection when a file upload exists
+      'path' => 'chado_search_ajax_callback',
       'wrapper' => "chado_search-filter-$search_name-$id-field",
       'effect' => 'fade'
     );
@@ -92,8 +93,8 @@ class DynamicSelectFilter extends Filter {
     // Add Select
     $callback = $this->callback;
     if (function_exists($callback)) {
-      $selected_value = is_array($selected) ? array_shift($selected) : $selected;
-      $this->csform->addSelect(Set::select()->id($id)->options($callback($selected_value))->size($size));
+      //$selected_value = is_array($selected) ? array_shift($selected) : $selected; //deprecated. this only allows one selection
+      $this->csform->addSelect(Set::select()->id($id)->options($callback($selected))->size($size));
       $form[$id]['#prefix'] =
         "<div id=\"chado_search-filter-$search_name-$id-field\" class=\"chado_search-filter-field chado_search-widget\">";
       $form[$id]['#suffix'] =

@@ -398,11 +398,14 @@ function chado_search_bind_dynamic_textfields($value, $column, $sql) {
 // This function is usually called by an AJAX function to populate the values in a select box
 function chado_search_bind_dynamic_select($value, $column, $sql) {
   try {
-    $result = chado_query($sql, $value);
     $data = array(0 => 'Any');
-    while ($obj = $result->fetchObject()) {
-      if ($obj->$column) {
-        $data[$obj->$column] = $obj->$column;
+    $key = array_shift(array_keys($value));
+    if (count($value[$key]) > 0) {
+    $result = chado_query($sql, $value);
+      while ($obj = $result->fetchObject()) {
+        if ($obj->$column) {
+          $data[$obj->$column] = $obj->$column;
+        }
       }
     }
     return $data;
@@ -416,3 +419,31 @@ function chado_search_get_class($obj = NULL) {
   $class = $namespace[count($namespace) - 1];
   return $class;
 }
+
+/**
+ * This function fixes a Drupal 7 bug when a form contains multi-select and a file upload,
+ * the values were concatenated during an AJAX call which results in an illegal choice in the
+ * select box
+ * 
+ * @return string[]|array[]|unknown
+ */
+function chado_search_ajax_form_callback() {
+  $select = $_POST['_triggering_element_name'];
+  $select_1 = explode(",", $_POST[$select][0]);
+  if ( count($select_1) > 1) {
+    unset($_POST[$select]);
+    $_POST[$select] = $select_1;
+  }
+  
+  list($form, $form_state) = ajax_get_form();
+  drupal_process_form($form['#form_id'], $form, $form_state);
+  
+  if (!empty($form_state['triggering_element'])) {
+    $path = $form_state['triggering_element']['#ajax']['path'];
+  }
+  if (!empty($path)) {
+    return chado_search_ajax_form_update($form, $form_state); // call to generate the second dropdown
+  }
+}
+
+
