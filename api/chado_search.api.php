@@ -399,7 +399,8 @@ function chado_search_bind_dynamic_textfields($value, $column, $sql) {
 function chado_search_bind_dynamic_select($value, $column, $sql) {
   try {
     $data = array(0 => 'Any');
-    $key = array_shift(array_keys($value));
+    reset ($value);
+    $key = key($value);
     if (count($value[$key]) > 0) {
     $result = chado_query($sql, $value);
       while ($obj = $result->fetchObject()) {
