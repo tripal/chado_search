@@ -79,7 +79,7 @@ summary_allowed=1
 
 [Germplasm Search]
 id=germplasm_search
-path=find/germplasms
+path=search/germplasm
 file=includes/search/vaccinium/vaccinium_germplasm_search.php
 mview_name=chado_search_germplasm_search
 mview_file=includes/mview/vaccinium/vaccinium_germplasm_search.mview.php
