@@ -100,7 +100,7 @@ SELECT
    AND Fpos.featuremap_id = FM.featuremap_id
    ) AS num_of_lg,
   (SELECT count (F.uniquename) FROM featurepos FPos INNER JOIN feature F ON F.feature_id = FPos.feature_id 
-   WHERE F.type_id = (SELECT cvterm_id FROM cvterm WHERE name = 'marker_locus')
+   WHERE F.type_id = (SELECT cvterm_id FROM cvterm WHERE name = 'marker_locus' AND cv_id = (SELECT cv_id FROM cv WHERE name = 'sequence'))
    AND  Fpos.featuremap_id = FM.featuremap_id
    ) AS num_of_loci 
 FROM featuremap FM
