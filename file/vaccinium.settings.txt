@@ -80,8 +80,8 @@ summary_allowed=1
 [Germplasm Search]
 id=germplasm_search
 path=find/germplasms
-file=includes/search/csfl/vaccinium_germplasm_search.php
+file=includes/search/vaccinium/vaccinium_germplasm_search.php
 mview_name=chado_search_germplasm_search
-mview_file=includes/mview/csfl/vaccinium_germplasm_search.mview.php
+mview_file=includes/mview/vaccinium/vaccinium_germplasm_search.mview.php
 mview_callback=chado_search_create_germplasm_search_mview
 enabled=1
