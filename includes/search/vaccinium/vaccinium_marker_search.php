@@ -63,6 +63,7 @@ function chado_search_marker_search_form ($form) {
       ->cache(TRUE)
       ->labelWidth(260)
       ->newLine()
+      ->disable(array('N/A N/A'))
   );  
   // Restricted by Location
 /*   $form->addSelectFilter(
