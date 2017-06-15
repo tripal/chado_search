@@ -221,7 +221,7 @@ class ChadoSearch {
         $select_cols = rtrim($select_cols, ',');
         // Store original sql for FASTA download
         SessionVar::setSessionVar($search_id, 'fasta_sql', $sql);
-        $sql = "SELECT $max_cols $select_cols FROM ($sql) SQL GROUP BY $select_cols";dpm($sql);
+        $sql = "SELECT $max_cols $select_cols FROM ($sql) SQL GROUP BY $select_cols";
         $result_query->setSQL($sql);
       }
       // dpm($sql);
