@@ -166,7 +166,7 @@ class ChadoSearch {
       $search_id = $this->search_id;
       
       // Get custom outputs setting if it exists
-      $group_selection = '';
+      $select_cols = '';
       if (key_exists('custom_output_options', $form_state['values'])) {
         $custom_output = $form_state['values']['custom_output_options'];
         foreach ($custom_output AS $k => $v) {
@@ -175,7 +175,7 @@ class ChadoSearch {
           }
           else {
             if ($k != 'row-counter') {
-              $group_selection .= "$k,";
+              $select_cols .= "$k,";
             }
           }
         }
@@ -205,18 +205,23 @@ class ChadoSearch {
       }
       
       // Customize output with DISTINCT in statement for selected columns
-      if (isset($form_state['#custom_output-replace_star_with_selection']) && $form_state['#custom_output-replace_star_with_selection']) {
+      if (isset($form_state['#custom_output-group_selection']) && $form_state['#custom_output-group_selection']) {
+        $max_cols = '';
+        if (isset($form_state['#custom_output-max_columns'])) {
+          $max_cols = $form_state['#custom_output-max_columns'];
+        }
         // $group_selection contains custimizable columns. add back the non-customizable columns to DISTINCT statement
         foreach ($headers AS $h_key => $h_val) {
           $cols = explode(':', $h_key);
           $col = $cols[0];
           if (!key_exists($col, $custom_output)) {
-            $group_selection .= $col . ',';
+            $select_cols .= $col . ',';
           }
         }
+        $select_cols = rtrim($select_cols, ',');
         // Store original sql for FASTA download
         SessionVar::setSessionVar($search_id, 'fasta_sql', $sql);
-        $sql = str_replace('*', 'DISTINCT ' . rtrim($group_selection, ','), $sql);
+        $sql = "SELECT $max_cols $select_cols FROM ($sql) SQL GROUP BY $select_cols";dpm($sql);
         $result_query->setSQL($sql);
       }
       // dpm($sql);

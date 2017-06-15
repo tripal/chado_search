@@ -388,7 +388,8 @@ class ChadoSearchForm {
     $f->desc = $conf->getDescription();
     $f->collapsible = $conf->getCollapsible();
     $f->collapsed = $conf->getCollapsed();
-    $f->replace_star = $conf->getReplaceStarWithSelection();
+    $f->group_selection= $conf->getGroupSelection();
+    $f->max_columns = $conf->getMaxColumns();
     $f->attach($this->form, $this->form_state);
     
   }

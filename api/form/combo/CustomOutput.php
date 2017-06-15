@@ -10,7 +10,8 @@ class CustomOutput extends Filter {
   public $desc;
   public $collapsible;
   public $collapsed;
-  public $replace_star;
+  public $group_selection;
+  public $max_columns;
   
   public function setForm (&$form, &$form_state) {
     $search_name = $this->search_name;
@@ -41,6 +42,13 @@ class CustomOutput extends Filter {
       '#default_value' => $defaults,
     );
     
-    $form['#custom_output-replace_star_with_selection'] = $this->replace_star;
+    $form['#custom_output-group_selection'] = $this->group_selection;
+    if ($this->max_columns) {
+      $prefix = '';
+      foreach ($this->max_columns AS $col) {
+        $prefix .= "max($col) AS $col,";
+      }
+      $form['#custom_output-max_columns'] = $prefix;
+    }
   }
 }

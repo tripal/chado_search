@@ -193,8 +193,12 @@ function chado_search_wrapper_form ($form, &$form_state, $search_id, $url, $num_
   $final_form['#search_url'] = $url;
   $final_form['#number_per_page'] = $num_per_page;
 
-  if (isset($final_form['#custom_output-replace_star_with_selection'])) {
-    $form_state['#custom_output-replace_star_with_selection'] = $final_form['#custom_output-replace_star_with_selection'];
+  if (isset($final_form['#custom_output-group_selection'])) {
+    $form_state['#custom_output-group_selection'] = $final_form['#custom_output-group_selection'];
+  }
+  
+  if (isset($final_form['#custom_output-max_columns'])) {
+    $form_state['#custom_output-max_columns'] = $final_form['#custom_output-max_columns'];
   }
   
   $allowed = chado_search_get_setting_by_id($search_id, 'summary_allowed');

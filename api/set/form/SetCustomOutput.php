@@ -9,7 +9,8 @@ class SetCustomOutput extends SetBase {
   private $desc;
   private $collapsible;
   private $collapsed;
-  private $replace_star;
+  private $group_selection;
+  private $max_columns;
   
   /**
    * Setters
@@ -45,11 +46,15 @@ class SetCustomOutput extends SetBase {
     return $this;
   }
   
-  public function replaceStarWithSelection () {
-    $this->replace_star = TRUE;
+  public function groupSelection () {
+    $this->group_selection = TRUE;
     return $this;
   }
   
+  public function maxColumns ($max_columns) {
+    $this->max_columns = $max_columns;
+    return $this;
+  }
   /**
    * Getters
    */
@@ -77,7 +82,11 @@ class SetCustomOutput extends SetBase {
     return $this->desc;
   }
   
-  public function getReplaceStarWithSelection() {
-    return $this->replace_star;
+  public function getGroupSelection() {
+    return $this->group_selection;
+  }
+  
+  public function getMaxColumns() {
+    return $this->max_columns;
   }
 }
