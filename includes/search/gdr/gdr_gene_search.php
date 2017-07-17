@@ -228,6 +228,9 @@ function chado_search_gene_search_link_gbrowse ($paras) {
   else if ($genome == 'Rubus occidentalis Whole Genome Assembly v1.0 & Annotation v1') {
     $url = "http://www.rosaceae.org/gb/gbrowse/rubus_occidentalis_v1.0.a1?name=$loc&enable=NCBI%20Sequence%20Alignments";
   }
+  else if ($genome == 'Prunus avium Whole Genome Assembly v1.0 & Annotation v1 (v1.0.a1)') {
+    $url = "http://www.rosaceae.org/jbrowse/index.html?data=data/prunus/pavium_v1.0.a1&loc=$loc";
+  }
   return chado_search_link_url ($url);
 }
 
