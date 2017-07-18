@@ -148,7 +148,7 @@ function chado_search_gene_search_table_definition () {
     'organism:s' => 'Organism',
     'feature_type:s' => 'Type',
     'analysis:s' => 'Source',
-    'location:s' => 'Location',
+    'location:s:chado_search_gene_search_link_gbrowse:srcfeature_id,location,analysis' => 'Location',
   );
   return $headers;
 }
@@ -156,6 +156,39 @@ function chado_search_gene_search_table_definition () {
 // Define call back to link the featuremap to its  node for result table
 function chado_search_gene_search_link_feature ($feature_id) {
   return chado_search_link_entity('feature', $feature_id);
+}
+
+// Define call back to link the location to GDR GBrowse
+function chado_search_gene_search_link_gbrowse ($paras) {
+  $srcfeature_id = $paras [0];
+  $loc = preg_replace("/ +/", "", $paras [1]);
+  if (!$srcfeature_id) {
+    $srcfeature = explode(':', $loc);
+    $srcfeature_id =
+    chado_query(
+        "SELECT feature_id FROM {feature} WHERE uniquename = :uniquename OR name = :uniquename",
+        array(':uniquename' =>$srcfeature[0]))
+        ->fetchField();
+  }
+  $ncbi = preg_match('/NCBI /', $paras[2]);
+  $sql =
+  "SELECT A.name
+    FROM {feature} F
+    INNER JOIN {analysisfeature} AF ON F.feature_id = AF.feature_id
+    INNER JOIN {analysis} A ON A.analysis_id = AF.analysis_id
+    INNER JOIN {analysisprop} AP ON AP.analysis_id = A.analysis_id
+    INNER JOIN {cvterm} V ON V.cvterm_id = AP.type_id
+    WHERE
+    V.name = 'Analysis Type' AND
+    AP.value = 'whole_genome' AND
+    F.feature_id = :srcfeature_id";
+  $genome = $srcfeature_id ? chado_query($sql, array('srcfeature_id' => $srcfeature_id))->fetchField() : NULL;
+  $url = "";
+  if ($genome == 'Citrus sinensis genome v2.0 (HZAU)') {
+    $location = str_replace('_Hzau_Valencia_v2.0', '', $loc);
+    $url = "http://www.citrusgenomedb.org/jbrowse/index.html?data=data/Csinensis_Hzau_v2.0&loc=$location";
+  }
+  return chado_search_link_url ($url);
 }
 
 /*************************************************************
