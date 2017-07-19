@@ -148,7 +148,7 @@ function chado_search_gene_search_table_definition () {
     'organism:s' => 'Organism',
     'feature_type:s' => 'Type',
     'analysis:s' => 'Source',
-    'location:s:chado_search_gene_search_link_gbrowse:srcfeature_id,location,analysis' => 'Location',
+    'location:s:chado_search_gene_search_link_jbrowse:srcfeature_id,location,analysis' => 'Location',
   );
   return $headers;
 }
@@ -159,7 +159,7 @@ function chado_search_gene_search_link_feature ($feature_id) {
 }
 
 // Define call back to link the location to GDR GBrowse
-function chado_search_gene_search_link_gbrowse ($paras) {
+function chado_search_gene_search_link_jbrowse ($paras) {
   $srcfeature_id = $paras [0];
   $loc = preg_replace("/ +/", "", $paras [1]);
   if (!$srcfeature_id) {
@@ -172,7 +172,7 @@ function chado_search_gene_search_link_gbrowse ($paras) {
   }
   $ncbi = preg_match('/NCBI /', $paras[2]);
   $sql =
-  "SELECT A.name
+  "SELECT A.analysis_id
     FROM {feature} F
     INNER JOIN {analysisfeature} AF ON F.feature_id = AF.feature_id
     INNER JOIN {analysis} A ON A.analysis_id = AF.analysis_id
@@ -182,11 +182,32 @@ function chado_search_gene_search_link_gbrowse ($paras) {
     V.name = 'Analysis Type' AND
     AP.value = 'whole_genome' AND
     F.feature_id = :srcfeature_id";
-  $genome = $srcfeature_id ? chado_query($sql, array('srcfeature_id' => $srcfeature_id))->fetchField() : NULL;
   $url = "";
-  if ($genome == 'Citrus sinensis genome v2.0 (HZAU)') {
-    $location = str_replace('_Hzau_Valencia_v2.0', '', $loc);
-    $url = "http://www.citrusgenomedb.org/jbrowse/index.html?data=data/Csinensis_Hzau_v2.0&loc=$location";
+  // Get analysis_id from srcfeature_id
+  $analysis_id = $srcfeature_id ? chado_query($sql, array('srcfeature_id' => $srcfeature_id))->fetchField() : NULL;
+  // If srcfeature_id is not properly loaded, try getting analysis_id from analysis name
+  if (!$analysis_id) {
+    $sql = "SELECT analysis_id FROM {analysis} WHERE name = :name";
+    $analysis_id = chado_query($sql, array(':name' => $paras[2]))->fetchField();
+  }
+  if ($analysis_id && db_table_exists('field_data_field_resource_links')) {
+    $sql = 
+    "SELECT field_resource_links_value from field_data_field_resource_links 
+     WHERE entity_id = (SELECT nid FROM chado_analysis WHERE analysis_id = :analysis_id)";
+    $results = db_query($sql, array(':analysis_id' => $analysis_id));
+    // Get rid of improper srcfeature name as $location
+    $location = 
+      str_replace(
+        array('_Hzau_Valencia_v2.0','_Csinensis_154_v1.1'), 
+        array('', ''),
+        $loc);
+    // Get JBrowse URL from drupal resource links
+    foreach ($results AS $result) {
+      if (preg_match('/^JBrowse/i', $result->field_resource_links_value)) {
+        $token = explode('|', $result->field_resource_links_value);
+        $url = $token[1] . "&loc=$location";
+      }
+    }
   }
   return chado_search_link_url ($url);
 }
