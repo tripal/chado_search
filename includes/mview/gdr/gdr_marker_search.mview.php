@@ -89,7 +89,7 @@ function chado_search_create_marker_search_mview() {
     ) 
   );
   $sql = 
-     "SELECT 
+     "SELECT DISTINCT
         MARKER.feature_id AS marker_feature_id,
         MARKER.uniquename AS marker_uniquename,
         MARKER.name AS marker_name,
