@@ -33,7 +33,9 @@ class DynamicTextFields extends Filter {
           'value' => $value,
           'wrapper' => $wrapper
         );
-        $form[$id]['#prefix'] = $form[$id]['#prefix'] ."<div id=$wrapper class=\"chado_search-dynamic-text-fields-wrapper\">";
+        // Add a style to make sure space won't get added to the textfield
+        $pre = str_replace('class=', 'style="margin-left:0px" class=', $form[$id]['#prefix']);
+        $form[$id]['#prefix'] = $pre ."<div id=$wrapper class=\"chado_search-dynamic-text-fields-wrapper\">";
         $form[$id]['#suffix'] = "</div>" . $form[$id]['#suffix'];
       }
       $form[$select_id]['#attribute'] = array ('update' => $updates);
