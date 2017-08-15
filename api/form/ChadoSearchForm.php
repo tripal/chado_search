@@ -305,6 +305,7 @@ class ChadoSearchForm {
     $f->newline = $conf->getNewLine();
     $f->cacheTable = $conf->getCacheTable();
     $f->cacheColumns = $conf->getCacheColumns();
+    $f->reset_on_change_id = $conf->getResetOnChange();
     $f->attach($this->form, $this->form_state);
   }
   
@@ -318,6 +319,7 @@ class ChadoSearchForm {
     $f->target_ids = $conf->getTargetIds();
     $f->callback = $conf->getCallback();
     $f->newline = $conf->getNewLine();
+    $f->reset_on_change_id = $conf->getResetOnChange();
     $f->attach($this->form, $this->form_state);
   }
   

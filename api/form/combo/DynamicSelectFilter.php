@@ -12,6 +12,7 @@ class DynamicSelectFilter extends Filter {
   public $size;
   public $cacheTable;
   public $cacheColumns;
+  public $reset_on_change_id;
   
   public function setForm (&$form, &$form_state) {
     $search_name = $this->search_name;
@@ -78,8 +79,30 @@ class DynamicSelectFilter extends Filter {
       'wrapper' => "chado_search-filter-$search_name-$id-field",
       'effect' => 'fade'
     );
-    $form[$depend_on_id]['#attribute'] = array ('update' => $id);
-
+    if(isset($form[$depend_on_id]['#attribute']['update'])) {
+      $updates = $form[$depend_on_id]['#attribute']['update'];
+      if (!is_array($updates)) {
+        $updates = array($updates => array('wrapper' => "chado_search-filter-$search_name-$updates-field"));
+      }
+      $updates[$id] = array('wrapper' => "chado_search-filter-$search_name-$id-field");
+      $form[$depend_on_id]['#attribute'] = array ('update' => $updates);
+    }
+    else {
+      $form[$depend_on_id]['#attribute'] = array ('update' => $id);
+    }
+    
+    // Add Ajax to reset values on change of another element
+    $reset_on_change_id = $this->reset_on_change_id;
+    if ($reset_on_change_id) {
+      unset($form_state['values'][$id]);
+      $updates = $form[$reset_on_change_id]['#attribute']['update'];
+      if (!is_array($updates)) {
+        $updates = array($updates => array('wrapper' => "chado_search-filter-$search_name-$updates-field"));
+      }
+      $updates[$id] = array('wrapper' => "chado_search-filter-$search_name-$id-field");
+      $form[$reset_on_change_id]['#attribute'] = array ('update' => $updates);
+    }
+    
     // Wrap the widget around a <div> tag
 /*     $form[$id_prefix] = array (
       '#markup' => "<div id=\"chado_search-filter-$search_name-$id\" class=\"chado_search-filter chado_search-widget\">"
@@ -92,9 +115,13 @@ class DynamicSelectFilter extends Filter {
       "</div>";
     // Add Select
     $callback = $this->callback;
+    $opt = $callback($selected);
+    if (!$opt) {
+      $opt = array (0 => 'Any');
+    }
     if (function_exists($callback)) {
       //$selected_value = is_array($selected) ? array_shift($selected) : $selected; //deprecated. this only allows one selection
-      $this->csform->addSelect(Set::select()->id($id)->options($callback($selected))->size($size));
+      $this->csform->addSelect(Set::select()->id($id)->options($opt)->size($size));
       $form[$id]['#prefix'] =
         "<div id=\"chado_search-filter-$search_name-$id-field\" class=\"chado_search-filter-field chado_search-widget\">";
       $form[$id]['#suffix'] =

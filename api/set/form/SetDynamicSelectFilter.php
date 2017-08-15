@@ -10,6 +10,7 @@ class SetDynamicSelectFilter extends SetElement {
   private $size = 0;
   private $cacheTable = '';
   private $cacheColumns = array();
+  private $reset_on_change_id;
   
   /**
    * Setters
@@ -41,6 +42,11 @@ class SetDynamicSelectFilter extends SetElement {
     return $this;
   }
   
+  public function resetOnChagne($id) {
+    $this->reset_on_change_id = $id;
+    return $this;
+  }
+  
   /**
    * Getters
    */
@@ -66,5 +72,9 @@ class SetDynamicSelectFilter extends SetElement {
   
   public function getCacheColumns () {
     return $this->cacheColumns;
+  }
+  
+  public function getResetOnChange() {
+    return $this->reset_on_change_id;
   }
 }

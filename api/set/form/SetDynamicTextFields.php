@@ -6,6 +6,7 @@ class SetDynamicTextFields extends SetBase{
   
   private $target_ids = array();
   private $callback = '';
+  private $reset_on_change_id;
   
   /**
    * Setters
@@ -22,6 +23,11 @@ class SetDynamicTextFields extends SetBase{
     return $this;
   }
   
+  public function resetOnChagne($id) {
+    $this->reset_on_change_id = $id;
+    return $this;
+  }
+  
   /**
    * Getters
    */ 
@@ -33,4 +39,7 @@ class SetDynamicTextFields extends SetBase{
     return $this->callback;
   }
   
+  public function getResetOnChange() {
+    return $this->reset_on_change_id;
+  }
 }
