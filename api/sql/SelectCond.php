@@ -15,6 +15,7 @@ class SelectCond extends Statement {
       $this->statement = "(";
       $counter = 0;
       foreach ($value AS $v) {
+        $v = str_replace("'", "''", $v); // escape the single quote
         $this->statement .= "$column = '$v'";
         if ($counter < count($value) - 1) {
           $this->statement .= " OR ";
@@ -27,6 +28,7 @@ class SelectCond extends Statement {
       }
     } else {
       if ($value) {
+        $value = str_replace("'", "''", $value); // escape the single quote
         $this->statement = "";
         $this->statement .= "$column = '$value'";
       }
