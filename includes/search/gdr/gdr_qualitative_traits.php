@@ -13,11 +13,16 @@ function chado_search_qualitative_traits_form ($form) {
       ->id('trait_search_tabs')
       ->items(array('/search/qualitative_traits' => 'Qualitative Trait', '/search/quantitative_traits' => 'Quantitative Trait'))
   );
+  $results = db_query("SELECT table_name FROM INFORMATION_SCHEMA.TABLES WHERE table_name LIKE 'chado_search_qualitative_traits_%'");
+  $opts = array();
+  while ($value = $results->fetchField()) {
+    $opts[] = str_replace(array('chado_search_qualitative_traits_', '_crs'), array('', ''), $value);
+  }
   $form->addSelectOptionFilter(
       Set::selectOptionFilter()
       ->id('organism')
       ->title('Species')
-      ->options(array('apple', 'peach'))
+      ->options($opts)
       ->newline()
   );
   $form->addDynamicSelectFilter(
