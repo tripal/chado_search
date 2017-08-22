@@ -211,3 +211,14 @@ path=find/icgi/members
 file=includes/search/cottongen/cottongen_icgi_members.php
 enabled=1
 summary_allowed=1
+
+[Contact Search]
+id=contac_search
+path=find/contact
+file=includes/search/cottongen/cottongen_contact_search.php
+mview_name=chado_search_contact_search
+num_per_page=100
+mview_file=includes/mview/cottongen/cottongen_contact_search.mview.php
+mview_callback=chado_search_create_contact_search_mview
+enabled=1
+summary_allowed=1
