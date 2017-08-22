@@ -213,7 +213,7 @@ enabled=1
 summary_allowed=1
 
 [Contact Search]
-id=contac_search
+id=contact_search
 path=find/contact
 file=includes/search/cottongen/cottongen_contact_search.php
 mview_name=chado_search_contact_search

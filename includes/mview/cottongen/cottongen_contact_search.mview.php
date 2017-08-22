@@ -1,6 +1,6 @@
 <?php
 // Create 'germplasm_search' MView
-function chado_search_create_species_mview() {
+function chado_search_create_contact_search_mview() {
   $view_name = 'chado_search_contact_search';
   chado_search_drop_mview($view_name);
   $schema = array(
