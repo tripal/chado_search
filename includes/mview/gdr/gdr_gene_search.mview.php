@@ -184,7 +184,7 @@ INNER JOIN analysis A ON A.analysis_id = AF.analysis_id
                 WHERE (SELECT type_id FROM feature F WHERE F.feature_id = LMATLOC.feature_id) = (SELECT cvterm_id FROM cvterm WHERE name = 'match' AND cv_id = (SELECT cv_id FROM cv WHERE name = 'sequence'))
                 AND CHR.type_id IN (SELECT cvterm_id FROM cvterm WHERE name IN ('chromosome', 'supercontig') AND cv_id = (SELECT cv_id FROM cv WHERE name = 'sequence'))
                 ) LMARK ON LMARK.feature_id = GMATLOC.feature_id
-                WHERE GENE.type_id = (SELECT cvterm_id FROM cvterm WHERE name = 'gene' AND cv_id = (SELECT cv_id FROM cv WHERE name = 'sequence'))) 
+                WHERE GENE.type_id IN (SELECT cvterm_id FROM cvterm WHERE name IN ('gene', 'mRNA', 'contig') AND cv_id = (SELECT cv_id FROM cv WHERE name = 'sequence'))) 
           UNION
               (SELECT FL.feature_id, srcfeature_id, fmin, fmax, F.name FROM featureloc FL
                 INNER JOIN feature F ON F.feature_id = FL.srcfeature_id

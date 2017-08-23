@@ -231,6 +231,9 @@ function chado_search_gene_search_link_gbrowse ($paras) {
   else if ($genome == 'Prunus avium Whole Genome Assembly v1.0 & Annotation v1 (v1.0.a1)') {
     $url = "http://www.rosaceae.org/jbrowse/index.html?data=data/prunus/pavium_v1.0.a1&loc=$loc";
   }
+  else if($genome == 'Malus x domestica GDDH13 v1.1  Whole Genome Assembly & Annotation') {
+    $url = "http://www.rosaceae.org/jbrowse/index.html?data=data/malus/mdomestica_gddh13_v1.1&loc=$loc";
+  }
   return chado_search_link_url ($url);
 }
 
