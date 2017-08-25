@@ -128,7 +128,7 @@ function chado_search_qualitative_traits_form_submit ($form, &$form_state) {
     $changeHeaders = "";
     foreach ($conditions AS $index => $c) {
        if ($first_con) {
-         $sql = "SELECT * FROM (SELECT stock_id, variety_name, organism_id, organism, trait_descriptor AS trait$index, trait_value AS value$index FROM {chado_search_qualitative_traits_" . $org . "_crs}";
+         $sql = "SELECT * FROM (SELECT stock_id, variety_name, organism_id, organism, trait_descriptor AS trait$index, trait_value AS value$index, project_name FROM {chado_search_qualitative_traits_" . $org . "_crs}";
          $append .= "WHERE $c) T$index";
          $first_con = false;
          $first_table = $index;
@@ -150,7 +150,7 @@ function chado_search_qualitative_traits_form_submit ($form, &$form_state) {
     // If there is no $condition, use a different SQL to group stocks
     if (!$conditions) {
       $disabledCols = "value0;value1;value2";
-      $sql = "SELECT first(stock_id) AS stock_id, variety_name, first(organism_id) AS organism_id, first(organism) AS organism, string_agg(trait_descriptor || ' = ' || trait_value, '; ') AS all_traits FROM {chado_search_qualitative_traits_" . $org . "_crs} GROUP BY variety_name";
+      $sql = "SELECT first(stock_id) AS stock_id, variety_name, first(organism_id) AS organism_id, first(organism) AS organism, string_agg(trait_descriptor || ' = ' || trait_value, '; ') AS all_traits, string_agg(DISTINCT project_name, ', ') AS project_name FROM {chado_search_qualitative_traits_" . $org . "_crs} GROUP BY variety_name";
     } else { // If there is $condition, dynamically determine which columns to show
       $disabledCols = "all_traits";
       foreach ($t AS $idx => $enabled) {
@@ -184,6 +184,7 @@ function chado_search_qualitative_traits_table_definition () {
       'value0:s' => 'Trait1',
       'value1:s' => 'Trait2',
       'value2:s' => 'Trait3',
+      'project_name:s' => 'Dataset'
   );
   return $headers;
 }
