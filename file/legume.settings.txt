@@ -63,3 +63,13 @@ mview_name=chado_search_qtl_search
 mview_file=includes/mview/csfl/legume_qtl_search.mview.php
 mview_callback=chado_search_create_qtl_search_mview
 enabled=1
+
+[Search Maps]
+id=featuremap
+path=search/featuremap
+file=includes/search/csfl/legume_featuremap.php
+mview_name=chado_search_featuremap
+mview_file=includes/mview/csfl/legume_featuremap.mview.php
+mview_callback=chado_search_create_featuremap_mview
+enabled=1
+summary_allowed=1
