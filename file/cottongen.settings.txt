@@ -212,9 +212,9 @@ file=includes/search/cottongen/cottongen_icgi_members.php
 enabled=1
 summary_allowed=1
 
-[Contact Search]
+[Colleague Search]
 id=contact_search
-path=find/contact
+path=find/colleague
 file=includes/search/cottongen/cottongen_contact_search.php
 mview_name=chado_search_contact_search
 num_per_page=100

@@ -12,14 +12,21 @@ function chado_search_contact_search_form ($form) {
       Set::textFilter()
       ->id('lname')
       ->title('Last Name')
-      ->labelWidth(90)
+      ->labelWidth(130)
       ->newline()
   );
   $form->addTextFilter(
       Set::textFilter()
+      ->id('fname')
+      ->title('First Name')
+      ->labelWidth(130)
+      ->newline()
+      );
+  $form->addTextFilter(
+      Set::textFilter()
       ->id('institution')
       ->title('Institution')
-      ->labelWidth(90)
+      ->labelWidth(130)
       ->newline()
   );
   $form->addSelectFilter(
@@ -28,9 +35,16 @@ function chado_search_contact_search_form ($form) {
       ->title('Country')
       ->table('chado_search_contact_search')
       ->column('country')
-      ->labelWidth(90)
+      ->labelWidth(130)
       ->newline()
   );
+  $form->addTextFilter(
+      Set::textFilter()
+      ->id('keywords')
+      ->title('Research Interests')
+      ->labelWidth(130)
+      ->newline()
+      );
   $form->addSubmit();
   $form->addReset();  
   $form->addFieldset(
@@ -46,8 +60,10 @@ function chado_search_contact_search_form ($form) {
 function chado_search_contact_search_form_submit ($form, &$form_state) {
     $where = array();
     $where [] = Sql::textFilter('lname', $form_state, 'lname');
+    $where [] = Sql::textFilter('fname', $form_state, 'fname');
     $where [] = Sql::textFilter('institution', $form_state, 'institution');
     $where [] = Sql::selectFilter('country', $form_state, 'country');
+    $where [] = Sql::textFilter('keywords', $form_state, 'keywords');
   // Get base sql
   $sql = chado_search_contact_search_base_query();
   Set::result()
@@ -70,7 +86,8 @@ function chado_search_contact_search_table_definition () {
       'name:s:chado_search_contact_search_link_contact:contact_id' => 'Name',
       'institution:s' => 'Institution',
       'address:s' => 'Address',
-      'email:s' => 'Email'
+      'email:s' => 'Email',
+      'keywords:s' => 'Research Interests'
   );
   return $headers;
 }
