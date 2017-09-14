@@ -14,6 +14,7 @@ function chado_search_gene_search_form ($form) {
       ->title('Genus')
       ->column('genus')
       ->table('chado_search_gene_search')
+      ->disable(array('cybrid'))
       ->cache(TRUE)
       ->labelWidth(163)
   );

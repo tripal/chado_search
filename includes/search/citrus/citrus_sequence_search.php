@@ -13,6 +13,7 @@ function chado_search_sequence_search_form ($form) {
       ->id('genus')
       ->title('Genus')
       ->column('genus')
+      ->disable(array('cybrid'))
       ->table('chado_search_sequence_search')
       ->cache(TRUE)
   );
