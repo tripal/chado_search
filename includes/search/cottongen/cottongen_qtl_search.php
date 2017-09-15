@@ -17,7 +17,7 @@ function chado_search_qtl_search_form ($form) {
   $form->addMarkup(
       Set::markup()
       ->id('trait_name_example')
-      ->text('(e.g. Seed_index, Boll_weight or Trichome_density)')
+      ->text('(e.g. seed index, trichome density)')
       ->newLine()
   );
   $form->addTextFilter(
@@ -29,7 +29,7 @@ function chado_search_qtl_search_form ($form) {
   $form->addMarkup(
       Set::markup()
       ->id('published_symbol_example')
-      ->text('(e.g. qSI-D9-1.env2 or 2.5%Lf-chr18)')
+      ->text('(e.g. FM, 2.5%Lf)')
       ->newLine()
   );
   $form->addTextFilter(
@@ -41,7 +41,7 @@ function chado_search_qtl_search_form ($form) {
   $form->addMarkup(
       Set::markup()
       ->id('qtl_label_example')
-      ->text('(e.g. qSL2.5.T3-ch18.1, or qTDYL.PE-ch7)')
+      ->text('(e.g.  qSL2.5, qFEL)')
   );
   $form->addSubmit();
   $form->addReset();
