@@ -213,6 +213,4 @@
 /* A fix to the new boostrap theme for the SelectFilter */
 .chado_search-filter-field span.input-group-addon {
 	display: block;
-	position: relative;
-	left: 3px;'
 }
