@@ -50,7 +50,7 @@ function chado_search_qtl_search_form ($form) {
       ->id('qtl_search')
       ->startWidget('trait_name')
       ->endWidget('reset')
-      ->description("Search QTLs and/or MTLs (Mendelian Trait Loci) by any combination of species, trait category, trait name, published symbol or label.")
+      ->description("Search QTLs by any combination of species, trait category, trait name, published symbol or label.")
   );
   return $form;
 }
