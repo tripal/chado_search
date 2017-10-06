@@ -18,7 +18,7 @@
 [Search Sequence]
 id=sequence_search
 path=find/features
-file=includes/search/sequence_search.php
+file=includes/search/cottongen/cottongen_sequence_search.php
 mview_name=chado_search_sequence_search
 mview_file=includes/mview/cottongen/cottongen_sequence_search.mview.php
 mview_callback=chado_search_create_sequence_search_mview
