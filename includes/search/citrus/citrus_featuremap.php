@@ -47,6 +47,7 @@ function chado_search_featuremap_form_submit ($form, &$form_state) {
     ->where($where)
     ->tableDefinitionCallback('chado_search_featuremap_table_definition')
     ->groupby($groupby)
+    ->rewriteCols('featuremap=chado_search_featuremap_rewrite_featuremap')
     ->execute($form, $form_state);
 }
 
@@ -79,4 +80,8 @@ function chado_search_featuremap_link_parent ($stock_id) {
 // Define call back to link the featuremap to its  node for the result table
 function chado_search_featuremap_link_organism ($organism_id) {
   return chado_search_link_entity('organism', $organism_id);
+}
+
+function chado_search_featuremap_rewrite_featuremap($value) {
+  return str_replace('/', " / ", $value);
 }

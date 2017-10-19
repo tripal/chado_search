@@ -93,14 +93,15 @@ class Table extends Source {
     if ($show_counter) {
         $table .= "<th>#</th>";
     }
+    $idx_header = 1;
     foreach ($headers AS $k => $v) {
       $key = explode(":", $k);
       if (key_exists(1, $key) && ($key[1] == 's' || $key[1] == 'sortable')) {
-        $table .= "<th><a href=\"javascript:void(0)\" onClick=\"$js_function('$key[0]');return false;\">$v</a></th>";
+        $table .= "<th id=\"chado_search-$search_id-header-$idx_header\"><a href=\"javascript:void(0)\" onClick=\"$js_function('$key[0]');return false;\">$v</a></th>";
       } else {
-        $table .= "<th>$v</th>";
+        $table .= "<th id=\"chado_search-$search_id-header-$idx_header\">$v</th>";
       }
-    }
+    }$idx_header ++;
     $table .= "</tr>";
     // Prepare table rows
     $offset = $num_per_page * $page;
