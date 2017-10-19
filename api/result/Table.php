@@ -101,7 +101,8 @@ class Table extends Source {
       } else {
         $table .= "<th id=\"chado_search-$search_id-header-$idx_header\">$v</th>";
       }
-    }$idx_header ++;
+      $idx_header ++;
+    }
     $table .= "</tr>";
     // Prepare table rows
     $offset = $num_per_page * $page;
