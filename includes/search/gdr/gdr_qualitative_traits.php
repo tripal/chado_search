@@ -6,6 +6,25 @@ use ChadoSearch\Sql;
 /*************************************************************
  * Search form, form validation, and submit function
  */
+
+// GDR created MViews manually so we unforunately need to hard code the mviews to use. 
+function chado_search_qualitative_traits_mviews () {
+  $mviews = array(
+    'Apple (RosBREED)' => 'chado_search_qualitative_traits_apple_crs',
+    'Apple (WA Apple Breeding)' => 'chado_search_qualitative_traits_apple_ke',
+    'Sweet Cherry (RosBREED)' => 'chado_search_qualitative_traits_sweet_cherry_crs',
+    'Tart Cherry (RosBREED)' => 'chado_search_qualitative_traits_tart_cherry_crs',
+    'Strawberry (RosBREED)' => 'chado_search_qualitative_traits_strawberry_crs',
+    'Peach (RosBREED)' => 'chado_search_qualitative_traits_peach_crs'
+  );
+  return $mviews;
+}
+
+function chado_search_qualitative_traits_get_mview ($key) {
+  $mviews = chado_search_qualitative_traits_mviews();
+  return $mviews[$key];
+}
+
 // Search form
 function chado_search_qualitative_traits_form ($form) {
   $form->addTabs(
@@ -13,11 +32,7 @@ function chado_search_qualitative_traits_form ($form) {
       ->id('trait_search_tabs')
       ->items(array('/search/qualitative_traits' => 'Qualitative Trait', '/search/quantitative_traits' => 'Quantitative Trait'))
   );
-  $results = db_query("SELECT table_name FROM INFORMATION_SCHEMA.TABLES WHERE table_name LIKE 'chado_search_qualitative_traits_%'");
-  $opts = array();
-  while ($value = $results->fetchField()) {
-    $opts[] = str_replace(array('chado_search_qualitative_traits_', '_crs'), array('', ''), $value);
-  }
+  $opts = array_keys(chado_search_qualitative_traits_mviews());
   $form->addSelectOptionFilter(
       Set::selectOptionFilter()
       ->id('organism')
@@ -112,6 +127,7 @@ function chado_search_qualitative_traits_form_validate ($form, &$form_state) {
 // Submit the form
 function chado_search_qualitative_traits_form_submit ($form, &$form_state) {
   $org = $form_state['values']['organism'];
+  $mview = chado_search_qualitative_traits_get_mview($org);
   $t[0] = Sql::selectFilter('trait1', $form_state, 'trait_descriptor'); 
   $v[0] = Sql::selectFilter('value1', $form_state, 'trait_value');
   $t[1] = Sql::selectFilter('trait2', $form_state, 'trait_descriptor');
@@ -128,16 +144,16 @@ function chado_search_qualitative_traits_form_submit ($form, &$form_state) {
     $changeHeaders = "";
     foreach ($conditions AS $index => $c) {
        if ($first_con) {
-         $sql = "SELECT * FROM (SELECT stock_id, variety_name, organism_id, organism, trait_descriptor AS trait$index, trait_value AS value$index, project_name FROM {chado_search_qualitative_traits_" . $org . "_crs}";
+         $sql = "SELECT * FROM (SELECT stock_id, variety_name, organism_id, organism, trait_descriptor AS trait$index, trait_value AS value$index, project_name FROM {" . $mview . "}";
          $append .= "WHERE $c) T$index";
          $first_con = false;
          $first_table = $index;
        } else {
          if ($op[$index] == 'OR') {
-           $append .= " FULL OUTER JOIN (SELECT  stock_id, variety_name, organism_id, organism, trait_descriptor AS trait$index, trait_value AS value$index FROM {chado_search_qualitative_traits_" . $org . "_crs} WHERE $c) T$index USING(stock_id, variety_name, organism_id, organism)";
+           $append .= " FULL OUTER JOIN (SELECT  stock_id, variety_name, organism_id, organism, trait_descriptor AS trait$index, trait_value AS value$index FROM {" . $mview . "} WHERE $c) T$index USING(stock_id, variety_name, organism_id, organism)";
          }
          else {
-           $append .= " INNER JOIN (SELECT variety_name AS variety_name$index, trait_descriptor AS trait$index, trait_value AS value$index FROM {chado_search_qualitative_traits_" . $org . "_crs} WHERE $c) T$index ON (variety_name$index = T$first_table.variety_name";
+           $append .= " INNER JOIN (SELECT variety_name AS variety_name$index, trait_descriptor AS trait$index, trait_value AS value$index FROM {" . $mview . "} WHERE $c) T$index ON (variety_name$index = T$first_table.variety_name";
            if ($op[1] == 'OR' && $index = 2) {
              $append .= " OR T1.variety_name = T$index.variety_name$index)";
            }
@@ -150,7 +166,7 @@ function chado_search_qualitative_traits_form_submit ($form, &$form_state) {
     // If there is no $condition, use a different SQL to group stocks
     if (!$conditions) {
       $disabledCols = "value0;value1;value2";
-      $sql = "SELECT first(stock_id) AS stock_id, variety_name, first(organism_id) AS organism_id, first(organism) AS organism, string_agg(trait_descriptor || ' = ' || trait_value, '; ') AS all_traits, string_agg(DISTINCT project_name, ', ') AS project_name FROM {chado_search_qualitative_traits_" . $org . "_crs} GROUP BY variety_name";
+      $sql = "SELECT first(stock_id) AS stock_id, variety_name, first(organism_id) AS organism_id, first(organism) AS organism, string_agg(trait_descriptor || ' = ' || trait_value, '; ') AS all_traits, string_agg(DISTINCT project_name, ', ') AS project_name FROM {" . $mview . "} GROUP BY variety_name";
     } else { // If there is $condition, dynamically determine which columns to show
       $disabledCols = "all_traits";
       foreach ($t AS $idx => $enabled) {
@@ -205,14 +221,16 @@ function chado_search_qualitative_traits_link_organism ($organism_id) {
 function chado_search_qualitative_traits_ajax_values ($val) {
   $org = isset($_POST['organism']) ? $_POST['organism'] : NULL;
   if ($org) {
-  $sql = "SELECT distinct trait_value FROM {chado_search_qualitative_traits_" . $org . "_crs} WHERE trait_descriptor = :descriptor ORDER BY trait_value";
-  return chado_search_bind_dynamic_select(array(':descriptor' => $val), 'trait_value', $sql);
+    $mview = chado_search_qualitative_traits_get_mview($org);
+    $sql = "SELECT distinct trait_value FROM {" . $mview . "} WHERE trait_descriptor = :descriptor ORDER BY trait_value";
+    return chado_search_bind_dynamic_select(array(':descriptor' => $val), 'trait_value', $sql);
   }
 }
 
 function chado_search_qualitative_traits_ajax_dynamic_trait ($value) {
   if ($value) {
-    $sql = "SELECT DISTINCT trait_descriptor FROM {chado_search_qualitative_traits_" . $value . "_crs}";
+    $mview = chado_search_qualitative_traits_get_mview($value);
+    $sql = "SELECT DISTINCT trait_descriptor FROM {" . $mview . "}";
     return chado_search_bind_dynamic_select(array($value), 'trait_descriptor', $sql);
   }
 }
