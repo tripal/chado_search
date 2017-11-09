@@ -185,6 +185,10 @@ function chado_search_gene_search_link_gbrowse ($paras) {
   else if($genome == 'Gossypium raimondii (D5) genome JGI assembly v2.0 (annot v2.1)') {
     $url = "https://www.cottongen.org/jbrowse/index.html?data=data%2FGr_JGI_221&loc=$loc&tracks=DNA%2CTranscripts%2Cgene";
   }
+  else if($genome == 'Gossypium hirsutum (AD1) Genome - Texas Interim release Tx-JGI v1.1') {
+    $loc = str_replace('Tx_JGIv1.1_', '', $loc);
+    $url = "https://www.cottongen.org/jbrowse/index.html?data=data%2FGh_Tx_JGIv1.1&loc=$loc&tracks=DNA%2CTranscripts%2Cgene";
+  }
   return chado_search_link_url ($url);
 }
 
