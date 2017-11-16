@@ -43,18 +43,17 @@ function chado_search_qualitative_traits_form ($form) {
   $form->addDynamicSelectFilter(
       Set::dynamicSelectFilter()
       ->id('trait1')
-      ->title('Trait1')
+      ->title('Trait 1')
       ->dependOnId('organism')
       ->callback('chado_search_qualitative_traits_ajax_dynamic_trait')
   );
   $form->addDynamicSelectFilter(
       Set::dynamicSelectFilter()
       ->id('value1')
-      ->title('Value1')
+      ->title('Value 1')
       ->dependOnId('trait1')
       ->resetOnChagne('organism')
       ->callback('chado_search_qualitative_traits_ajax_values')
-      ->newLine()
   );
   $form->addSelectOptionFilter(
       Set::selectOptionFilter()
@@ -67,18 +66,17 @@ function chado_search_qualitative_traits_form ($form) {
   $form->addDynamicSelectFilter(
       Set::dynamicSelectFilter()
       ->id('trait2')
-      ->title('Trait2')
+      ->title('Trait 2')
       ->dependOnId('organism')
       ->callback('chado_search_qualitative_traits_ajax_dynamic_trait')
   );
   $form->addDynamicSelectFilter(
       Set::dynamicSelectFilter()
       ->id('value2')
-      ->title('Value2')
+      ->title('Value 2')
       ->dependOnId('trait2')
       ->resetOnChagne('organism')
       ->callback('chado_search_qualitative_traits_ajax_values')
-      ->newLine()
   );
   $form->addSelectOptionFilter(
       Set::selectOptionFilter()
@@ -91,14 +89,14 @@ function chado_search_qualitative_traits_form ($form) {
   $form->addDynamicSelectFilter(
       Set::dynamicSelectFilter()
       ->id('trait3')
-      ->title('Trait3')
+      ->title('Trait 3')
       ->dependOnId('organism')
       ->callback('chado_search_qualitative_traits_ajax_dynamic_trait')
   );
   $form->addDynamicSelectFilter(
       Set::dynamicSelectFilter()
       ->id('value3')
-      ->title('Value3')
+      ->title('Value 3')
       ->dependOnId('trait3')
       ->resetOnChagne('organism')
       ->callback('chado_search_qualitative_traits_ajax_values')

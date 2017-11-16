@@ -43,7 +43,7 @@ function chado_search_quantitative_traits_form ($form) {
   $form->addDynamicSelectFilter(
       Set::dynamicSelectFilter()
       ->id('trait1')
-      ->title('Trait1')
+      ->title('Trait 1')
       ->dependOnId('organism')
       ->callback('chado_search_quantitative_traits_ajax_dynamic_trait')
   );
@@ -53,7 +53,6 @@ function chado_search_quantitative_traits_form ($form) {
       ->title('between')
       ->id2('value1b')
       ->title2( 'and')
-      ->newLine()
   );
   $form->addDynamicTextFields(
       Set::dynamicTextFields()
@@ -73,7 +72,7 @@ function chado_search_quantitative_traits_form ($form) {
   $form->addDynamicSelectFilter(
       Set::dynamicSelectFilter()
       ->id('trait2')
-      ->title('Trait2')
+      ->title('Trait 2')
       ->dependOnId('organism')
       ->callback('chado_search_quantitative_traits_ajax_dynamic_trait')
       );
@@ -83,7 +82,6 @@ function chado_search_quantitative_traits_form ($form) {
       ->title('between')
       ->id2('value2b')
       ->title2('and')
-      ->newLine()
   );
   $form->addDynamicTextFields(
       Set::dynamicTextFields()
@@ -103,7 +101,7 @@ function chado_search_quantitative_traits_form ($form) {
   $form->addDynamicSelectFilter(
       Set::dynamicSelectFilter()
       ->id('trait3')
-      ->title('Trait3')
+      ->title('Trait 3')
       ->dependOnId('organism')
       ->callback('chado_search_quantitative_traits_ajax_dynamic_trait')
       );

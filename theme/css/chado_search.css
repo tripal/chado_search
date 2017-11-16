@@ -214,3 +214,19 @@
 .chado_search-filter-field span.input-group-addon {
 	display: block;
 }
+
+#chado_search-filter-qualitative_traits-op1-field {
+	margin-left: 40px;
+}
+
+#chado_search-filter-qualitative_traits-op2-field {
+	margin-left: 40px;
+}
+
+#chado_search-filter-quantitative_traits-op1-field {
+	margin-left: 40px;
+}
+
+#chado_search-filter-quantitative_traits-op2-field {
+	margin-left: 40px;
+}
