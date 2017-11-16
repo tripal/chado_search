@@ -16,7 +16,7 @@ function chado_search_quantitative_traits_form ($form) {
   $form->addSelectFilter(
       Set::selectFilter()
       ->id('trait1')
-      ->title('Trait1')
+      ->title('Trait 1')
       ->column('trait_descriptor')
       ->table('chado_search_quantitative_traits')
   );
@@ -26,7 +26,6 @@ function chado_search_quantitative_traits_form ($form) {
       ->title('between')
       ->id2('value1b')
       ->title2( 'and')
-      ->newLine()
   );
   $form->addDynamicTextFields(
       Set::dynamicTextFields()
@@ -45,7 +44,7 @@ function chado_search_quantitative_traits_form ($form) {
   $form->addSelectFilter(
       Set::selectFilter()
       ->id('trait2')
-      ->title('Trait2')
+      ->title('Trait 2')
       ->column('trait_descriptor')
       ->table('chado_search_quantitative_traits')
   );
@@ -54,8 +53,7 @@ function chado_search_quantitative_traits_form ($form) {
       ->id('value2a')
       ->title('between')
       ->id2('value2b')
-      ->title2('and')
-      ->newLine()
+      ->title2('and') 
   );
   $form->addDynamicTextFields(
       Set::dynamicTextFields()
@@ -74,7 +72,7 @@ function chado_search_quantitative_traits_form ($form) {
   $form->addSelectFilter(
       Set::selectFilter()
       ->id('trait3')
-      ->title('Trait3')
+      ->title('Trait 3')
       ->column('trait_descriptor')
       ->table('chado_search_quantitative_traits')
   );
