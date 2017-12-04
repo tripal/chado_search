@@ -222,3 +222,12 @@ mview_file=includes/mview/cottongen/cottongen_contact_search.mview.php
 mview_callback=chado_search_create_contact_search_mview
 enabled=1
 summary_allowed=1
+
+[SNP Marker Search]
+id=snp_marker_search
+path=find/snp_markers
+file=includes/search/cottongen/cottongen_snp_marker_search.php
+mview_name=chado_search_snp_marker_search
+mview_file=includes/mview/cottongen/cottongen_snp_marker_search.mview.php
+mview_callback=chado_search_create_snp_marker_search_mview
+enabled=1
