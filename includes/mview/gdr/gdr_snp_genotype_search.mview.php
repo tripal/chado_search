@@ -87,7 +87,7 @@ function chado_search_create_snp_genotype_search_mview() {
   --- Get permission
     INNER JOIN (SELECT * FROM projectprop PP WHERE type_id = (SELECT cvterm_id FROM cvterm WHERE name = 'permission' AND cv_id = (SELECT cv_id FROM cv WHERE name = 'MAIN'))) PERM ON PERM.project_id = P.project_id
   --- Get filename
-    INNER JOIN (SELECT * FROM projectprop PP WHERE type_id = (SELECT cvterm_id FROM cvterm WHERE name = 'filename' AND cv_id = (SELECT cv_id FROM cv WHERE name = 'MAIN'))) FL ON FL.project_id = P.project_id 
+    LEFT JOIN (SELECT * FROM projectprop PP WHERE type_id = (SELECT cvterm_id FROM cvterm WHERE name = 'filename' AND cv_id = (SELECT cv_id FROM cv WHERE name = 'MAIN'))) FL ON FL.project_id = P.project_id 
  --- Restrict to SNP genotyping public projects
     WHERE 
       PTYPE.value = 'genotyping'
