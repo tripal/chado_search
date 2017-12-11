@@ -36,9 +36,10 @@ function chado_search_qualitative_traits_form ($form) {
   $form->addSelectOptionFilter(
       Set::selectOptionFilter()
       ->id('organism')
-      ->title('Species')
+      ->title('Crop dataset')
       ->options($opts)
       ->newline()
+      ->labelWidth(90)
   );
   $form->addDynamicSelectFilter(
       Set::dynamicSelectFilter()
@@ -46,6 +47,7 @@ function chado_search_qualitative_traits_form ($form) {
       ->title('Trait 1')
       ->dependOnId('organism')
       ->callback('chado_search_qualitative_traits_ajax_dynamic_trait')
+      ->labelWidth(90)
   );
   $form->addDynamicSelectFilter(
       Set::dynamicSelectFilter()
@@ -69,6 +71,7 @@ function chado_search_qualitative_traits_form ($form) {
       ->title('Trait 2')
       ->dependOnId('organism')
       ->callback('chado_search_qualitative_traits_ajax_dynamic_trait')
+      ->labelWidth(90)
   );
   $form->addDynamicSelectFilter(
       Set::dynamicSelectFilter()
@@ -92,6 +95,7 @@ function chado_search_qualitative_traits_form ($form) {
       ->title('Trait 3')
       ->dependOnId('organism')
       ->callback('chado_search_qualitative_traits_ajax_dynamic_trait')
+      ->labelWidth(90)
   );
   $form->addDynamicSelectFilter(
       Set::dynamicSelectFilter()
@@ -101,11 +105,13 @@ function chado_search_qualitative_traits_form ($form) {
       ->resetOnChagne('organism')
       ->callback('chado_search_qualitative_traits_ajax_values')
   );
+  $desc = "Search trait evaluation data is a page where users can search publicly available trait evaluation data by crop dataset name, trait descriptor and trait values. View details of the trait descriptor sets of each crop dataset below. <a href=\"/apple_trait_RB\">Apple RosBREED</a> | <a href=\"/apple_trait_WA\">Apple WA Breeding</a> | <a href=\"/sweet_cherry_trait_RB\">Sweet Cherry RosBREED</a> | <a href=\"/tart_cherry_trait_RB\">Tart Cherry RosBREED</a> | <a href=\"/peach_trait_RB\">Peach RosBREED</a> | <a href=\"/strawberry_trait_RB\">Strawberry RosBREED</a>";
   $form->addFieldset(
       Set::fieldset()
       ->id('topLevel')
       ->startWidget('organism')
       ->endWidget('value3')
+      ->description($desc)
   );
 
   $form->addSubmit();
