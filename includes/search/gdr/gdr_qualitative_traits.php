@@ -204,9 +204,14 @@ function chado_search_qualitative_traits_table_definition () {
       'value0:s' => 'Trait1',
       'value1:s' => 'Trait2',
       'value2:s' => 'Trait3',
-      'project_name:s' => 'Dataset'
+      'project_name:s:chado_search_qualitative_traits_link_project:project_id' => 'Dataset'
   );
   return $headers;
+}
+
+// Define call back to link the featuremap to its  node for result table
+function chado_search_qualitative_traits_link_project ($project_id) {
+    return chado_search_link_entity('project', $project_id);
 }
 
 // Define call back to link the stock to its  node for the result table
