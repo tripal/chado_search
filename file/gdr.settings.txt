@@ -9,7 +9,7 @@
 # mview_file (optional) The file contains the mview_callback to create the materialized view.
 # mview_callback (optional) The function to create the search materilized view.
 # summary_allowed (optional) allow listing all results when you visit the URL: <path>/summary or /list
-# all_results_title (optional) the title to show for the all result page when you visit the URL: <path>/results
+# summary_title (optional) the title to show for the all result page when you visit the URL: <path>/summary or /list
 # enabled (optional) The search is only enabled if there is a 'enabled=1' entry.
 # !!IMPORTANT: PHP doesn't allow two functions to have the same name. The 'search_id' you provided below MUST be unique for all enabled searches.
 
@@ -122,6 +122,8 @@ mview_name=chado_search_ssr_genotype_search
 mview_file=includes/mview/gdr/gdr_ssr_genotype_search.mview.php
 mview_callback=chado_search_create_ssr_genotype_search_mview
 enabled=1
+summary_allowed=1
+summary_title= Genotype Data
 
 [SNP Genotype Search]
 id=snp_genotype_search
@@ -131,6 +133,8 @@ mview_name=chado_search_snp_genotype_search
 mview_file=includes/mview/gdr/gdr_snp_genotype_search.mview.php
 mview_callback=chado_search_create_snp_genotype_search_mview
 enabled=1
+summary_allowed=1
+summary_title= Genotype Data
 
 [Search Trait Evaluation]
 id=qualitative_traits
