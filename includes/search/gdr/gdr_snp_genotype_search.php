@@ -161,8 +161,6 @@ function chado_search_snp_genotype_search_table_definition () {
     'stock_uniquename:s:chado_search_snp_genotype_search_link_stock:stock_id' => 'Germplasm',
     'feature_name:s:chado_search_snp_genotype_search_link_feature:feature_id' => 'Marker',
     'genotype:s' => 'Genotype',
-/*     'citation::chado_search_snp_genotype_search_link_pub:pub_id' => 'Publication',
-    'filename::chado_search_snp_genotype_search_link_file:filename' => 'File' */
   );
   return $headers;
 }
