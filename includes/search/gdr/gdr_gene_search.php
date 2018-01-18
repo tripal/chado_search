@@ -87,7 +87,7 @@ function chado_search_gene_search_form ($form) {
       ->text('(eg. polygalacturonase, resistance, EC:1.4.1.3, cell cycle, ATP binding, zinc finger)')
       ->newLine()
   );
-/*   $customizables = array(
+   $customizables = array(
     'organism' => 'Organism',
     'feature_type' => 'Type',
     'analysis' => 'Source',
@@ -102,9 +102,9 @@ function chado_search_gene_search_form ($form) {
       Set::customOutput()
       ->id('custom_output')
       ->options($customizables)
-      ->defaults(array('organism', 'feature_type'))
-      ->replaceStarWithSelection()
-  ); */
+      ->defaults(array('organism', 'feature_type', 'analysis', 'location'))
+      ->maxColumns(array('feature_id'))
+  );
   $form->addSubmit();
   $form->addReset();
   $desc = 
@@ -150,17 +150,17 @@ function chado_search_gene_search_form_submit ($form, &$form_state) {
 */
 // Define the result table
 function chado_search_gene_search_table_definition () {
-  $headers = array(      
+  $headers = array(
     'name:s:chado_search_gene_search_link_feature:feature_id,name' => 'Name',
     'organism:s' => 'Organism',
     'feature_type:s' => 'Type',
     'analysis:s' => 'Source',
     'location:s:chado_search_gene_search_link_gbrowse:srcfeature_id,location,analysis' => 'Location',
-/*     'blast_value:s' => 'BLAST',
+    'blast_value:s' => 'BLAST',
     'interpro_value:s' => 'InterPro',
     'kegg_value:s' => 'KEGG',
     'go_term:s' => 'GO',
-    'gb_keyword:s' => 'GenBank' */
+    'gb_keyword:s' => 'GenBank'
   );
   return $headers;
 }
