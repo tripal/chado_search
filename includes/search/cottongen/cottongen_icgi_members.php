@@ -60,7 +60,7 @@ function chado_search_icgi_members_base_query () {
         then position || '<br>' || organization 
         else position || '<br>' || '<a href=' || org_website ||'>' || organization || '</a>'
         end AS affiliation,
-      address1 || address2 || city || country AS address,
+      address1 || ' ' || address2 || '<br>' || city || ', ' || country AS address,
       '<a href=mailto:' || mail || '>' || mail || '</a>' AS email,
       *
       FROM (

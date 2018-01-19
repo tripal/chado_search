@@ -9,6 +9,7 @@ use ChadoSearch\Sql;
 // Search form
 function chado_search_featuremap_form ($form) {
   $form->addSubmit();
+  $form->addReset();
   return $form;
 }
 
