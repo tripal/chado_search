@@ -91,6 +91,7 @@ file=includes/search/gdr/gdr_qtl_search.php
 mview_name=chado_search_qtl_search
 mview_file=includes/mview/gdr/gdr_qtl_search.mview.php
 mview_callback=chado_search_create_qtl_search_mview
+summary_allowed=1
 enabled=1
 
 [Search Maps]
