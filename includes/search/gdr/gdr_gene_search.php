@@ -210,6 +210,9 @@ function chado_search_gene_search_link_gbrowse ($paras) {
   else if ($genome == 'Fragaria vesca Whole Genome v1.1 Assembly & Annotation') {
     $url = "https://www.rosaceae.org/gb/gbrowse/fragaria_vesca_v1.1-lg?name=$loc&enable=NCBI%20Sequence%20Alignments";
   }
+  else if ($genome == 'Fragaria vesca Whole Genome v4.0.a1 Assembly & Annotation') {
+      $url = "https://www.rosaceae.org/jbrowse/index.html?data=data/fragaria/fvesca_v4.0.a1&loc=$loc";
+  }
   else if ($genome == 'Prunus persica Whole Genome v1.0 Assembly & Annotation') {
     $url = "https://www.rosaceae.org/gb/gbrowse/prunus_persica?name=$loc&enable=NCBI%20Sequence%20Alignments";
   }
