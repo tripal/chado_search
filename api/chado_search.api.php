@@ -362,7 +362,7 @@ function chado_search_link_entity ($base_table, $record_id) {
     $link = "/node/$nid";
   }
   // tripal v3 link (entity)
-  if (function_exists('chado_get_record_entity_by_table')) {
+  if (function_exists('chado_get_record_entity_by_table') && $record_id) {
       $entity_id = chado_get_record_entity_by_table ($base_table, $record_id);
     if ($entity_id) {
       $link = "/bio_data/$entity_id";
