@@ -126,7 +126,7 @@ function chado_search_sequence_search_table_definition () {
       'feature_type:s' => 'Type',
       'organism:s' => 'Organism',
       'analysis_name:s:chado_search_sequence_search_link_analysis:analysis_id' => 'Source',
-      'location:s' => 'Location',
+      'location:s:chado_search_sequence_search_link_jbrowse:srcfeature_id,location,analysis' => 'Location',
   );
   return $headers;
 }
@@ -137,6 +137,28 @@ function chado_search_sequence_search_link_analysis ($analysis_id) {
 // Define call back to link the featuremap to its  node for result table
 function chado_search_sequence_search_link_feature ($feature_id) {
   return chado_search_link_entity('feature', $feature_id);
+}
+
+function chado_search_sequence_search_link_jbrowse ($paras) {
+    $srcfeature_id = $paras [0];
+    $loc = $paras[1];
+    $sql =
+    "SELECT value
+    FROM {feature} F
+    INNER JOIN {analysisfeature} AF ON F.feature_id = AF.feature_id
+    INNER JOIN {analysis} A ON A.analysis_id = AF.analysis_id
+    INNER JOIN {analysisprop} AP ON AP.analysis_id = A.analysis_id
+    INNER JOIN {cvterm} V ON V.cvterm_id = AP.type_id
+    WHERE
+    V.name = 'JBrowse URL' AND
+    F.feature_id = :srcfeature_id";
+    $jbrowse = $srcfeature_id ? chado_query($sql, array('srcfeature_id' => $srcfeature_id))->fetchField() : NULL;
+    if ($jbrowse) {
+        return chado_search_link_url ($jbrowse . $loc);
+    }
+    else {
+        return NULL;
+    }
 }
 
 /*************************************************************
