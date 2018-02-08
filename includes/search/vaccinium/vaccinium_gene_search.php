@@ -106,7 +106,7 @@ function chado_search_gene_search_form ($form) {
       ->options($customizables)
       ->defaults(array('organism', 'feature_type'))
       ->groupSelection()
-      ->maxColumns(array('feature_id'))
+      ->maxColumns(array('feature_id', 'srcfeature_id'))
   );
   $form->addSubmit();
   $form->addReset();
@@ -155,7 +155,7 @@ function chado_search_gene_search_table_definition () {
     'organism:s' => 'Organism',
     'feature_type:s' => 'Type',
     'analysis:s' => 'Source',
-    'location:s' => 'Location',
+    'location:s:chado_search_gene_search_link_jbrowse:srcfeature_id,location,analysis' => 'Location',
     'blast_value:s' => 'BLAST',
     'interpro_value:s' => 'InterPro',
     'kegg_value:s' => 'KEGG',
@@ -176,6 +176,28 @@ function chado_search_gene_search_link_feature ($var) {
   else {
     return '/feature/' . $name;
   }
+}
+
+function chado_search_gene_search_link_jbrowse ($paras) {
+    $srcfeature_id = $paras [0];
+    $loc = $paras[1];
+    $sql =
+    "SELECT value
+    FROM {feature} F
+    INNER JOIN {analysisfeature} AF ON F.feature_id = AF.feature_id
+    INNER JOIN {analysis} A ON A.analysis_id = AF.analysis_id
+    INNER JOIN {analysisprop} AP ON AP.analysis_id = A.analysis_id
+    INNER JOIN {cvterm} V ON V.cvterm_id = AP.type_id
+    WHERE
+    V.name = 'JBrowse URL' AND
+    F.feature_id = :srcfeature_id";
+    $jbrowse = $srcfeature_id ? chado_query($sql, array('srcfeature_id' => $srcfeature_id))->fetchField() : NULL;
+    if ($jbrowse) {
+      return chado_search_link_url ($jbrowse . $loc);
+    }
+    else {
+      return NULL;
+    }
 }
 
 /*************************************************************
