@@ -104,9 +104,7 @@ function chado_search_gene_search_form ($form) {
       Set::customOutput()
       ->id('custom_output')
       ->options($customizables)
-      ->defaults(array('organism', 'feature_type'))
-      ->groupSelection()
-      ->maxColumns(array('feature_id', 'srcfeature_id'))
+      ->defaults(array('organism', 'feature_type', 'analysis', 'location'))
   );
   $form->addSubmit();
   $form->addReset();

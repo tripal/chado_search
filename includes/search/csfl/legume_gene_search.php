@@ -88,24 +88,23 @@ function chado_search_gene_search_form ($form) {
       ->text('(eg. polygalacturonase, resistance, EC:1.4.1.3, cell cycle, ATP binding, zinc finger)')
       ->newLine()
   );
-  /* $customizables = array(
-    'organism' => 'Organism',
-    'feature_type' => 'Type',
-    'analysis' => 'Source',
-    'location' => 'Location',
-    'blast_value' => 'BLAST',
-    'interpro_value' => 'InterPro',
-    'kegg_value' => 'KEGG',
-    'go_term' => 'GO Term',
-    'gb_keyword' => 'GenBank'
+  $customizables = array(
+      'organism' => 'Organism',
+      'feature_type' => 'Type',
+      'analysis' => 'Source',
+      'location' => 'Location',
+      'blast_value' => 'BLAST',
+      'interpro_value' => 'InterPro',
+      'kegg_value' => 'KEGG',
+      'go_term' => 'GO Term',
+      'gb_keyword' => 'GenBank'
   );
   $form->addCustomOutput (
       Set::customOutput()
       ->id('custom_output')
       ->options($customizables)
-      ->defaults(array('organism', 'feature_type'))
-      ->replaceStarWithSelection()
-  ); */
+      ->defaults(array('organism', 'feature_type', 'analysis', 'location'))
+  );
   $form->addSubmit();
   $form->addReset();
   $desc =
@@ -156,12 +155,12 @@ function chado_search_gene_search_table_definition () {
     'organism:s' => 'Organism',
     'feature_type:s' => 'Type',
     'analysis:s' => 'Source',
-    'location:s:chado_search_gene_search_link_gbrowse:srcfeature_id,location,analysis' => 'Location',
-/*     'blast_value:s' => 'BLAST',
+    'location:s:chado_search_gene_search_link_jbrowse:srcfeature_id,location,analysis' => 'Location',
+    'blast_value:s' => 'BLAST',
     'interpro_value:s' => 'InterPro',
     'kegg_value:s' => 'KEGG',
     'go_term:s' => 'GO',
-    'gb_keyword:s' => 'GenBank' */
+    'gb_keyword:s' => 'GenBank'
   );
   return $headers;
 }
@@ -180,36 +179,26 @@ function chado_search_gene_search_link_feature ($var) {
 }
 
 // Define call back to link the location to GDR GBrowse
-function chado_search_gene_search_link_gbrowse ($paras) {
-  $srcfeature_id = $paras [0];
-  $loc = preg_replace("/ +/", "", $paras [1]);
-  if (!$srcfeature_id) {
-    $srcfeature = explode(':', $loc);
-    $srcfeature_id =
-    chado_query(
-        "SELECT feature_id FROM {feature} WHERE uniquename = :uniquename OR name = :uniquename",
-        array(':uniquename' =>$srcfeature[0]))
-    ->fetchField();
-  }
-  $ncbi = preg_match('/NCBI /', $paras[2]);
-  $sql = 
-    "SELECT A.name
+function chado_search_gene_search_link_jbrowse ($paras) {
+    $srcfeature_id = $paras [0];
+    $loc = $paras[1];
+    $sql =
+    "SELECT value
     FROM {feature} F
     INNER JOIN {analysisfeature} AF ON F.feature_id = AF.feature_id
     INNER JOIN {analysis} A ON A.analysis_id = AF.analysis_id
     INNER JOIN {analysisprop} AP ON AP.analysis_id = A.analysis_id
     INNER JOIN {cvterm} V ON V.cvterm_id = AP.type_id
     WHERE
-    V.name = 'Analysis Type' AND
-    AP.value = 'whole_genome' AND
+    V.name = 'JBrowse URL' AND
     F.feature_id = :srcfeature_id";
-  $genome = $srcfeature_id ? chado_query($sql, array('srcfeature_id' => $srcfeature_id))->fetchField() : NULL;
-  $url = "";
-  if($genome == 'Cicer arietinum CDC Frontier genome v1.0') {
-    $loc = preg_replace('/_v1.0_kabuli/', '', $loc);
-    $url = "https://www.coolseasonfoodlegume.org/jbrowse/index.html?data=data%2Fchickpea%2FCa_kabuli_v1&loc=$loc";
-  }
-  return chado_search_link_url ($url);
+    $jbrowse = $srcfeature_id ? chado_query($sql, array('srcfeature_id' => $srcfeature_id))->fetchField() : NULL;
+    if ($jbrowse) {
+        return chado_search_link_url ($jbrowse . $loc);
+    }
+    else {
+        return NULL;
+    }
 }
 
 /*************************************************************
