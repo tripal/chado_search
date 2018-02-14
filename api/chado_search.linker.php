@@ -35,17 +35,32 @@ function chado_search_link_url ($url) {
     }
 }
 
-// Define call back to link the featuremap to its  node for result table
+// Link feature
 function chado_search_link_feature ($feature_id) {
     return chado_search_link_entity('feature', $feature_id);
 }
 
-// Define call back to link the featuremap to its  node for result table
+// Link organism
+function chado_search_link_organism ($organism_id) {
+    return chado_search_link_entity('organism', $organism_id);
+}
+
+// Link featuremap
+function chado_search_link_featuremap ($featuremap_id) {
+    return chado_search_link_entity('featuremap', $featuremap_id);
+}
+
+// Link library
+function chado_search_link_library ($library_id) {
+    return chado_search_link_entity('library', $library_id);
+}
+
+// Link project
 function chado_search_link_project ($project_id) {
     return chado_search_link_entity('project', $project_id);
 }
 
-// Define call back to link the pub to its  node for result table
+// Link pub
 function chado_search_link_pub ($pub_id) {
     return chado_search_link_entity('pub', $pub_id);
 }
