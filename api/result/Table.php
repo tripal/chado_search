@@ -61,14 +61,23 @@ class Table extends Source {
     $table_css_id = $search_id . "-result-table";
     $js_function = $search_id . "_change_order";
     $js_scroll = "";
+    // Scroll only if it is enabled and there is no error on the form
     if ($autoscroll) {
       $js_scroll =
         "<script type=\"text/javascript\">
            (function ($) {
              $(document).ready(function(){
-               var target_offset = $('#$div_css_id-summary').offset();
-               var target_top = target_offset.top;
-               $('html, body').animate({scrollTop: target_top}, 500);
+               var error = false; 
+               $('.element-invisible').each(function(index) {
+                 if ($(this).text() == 'Error message') {
+                   error = true;
+                 }
+               });
+               if (!error) {
+                 var target_offset = $('#$div_css_id-summary').offset();
+                 var target_top = target_offset.top;
+                 $('html, body').animate({scrollTop: target_top}, 500);
+               }
              });
            })(jQuery);
          </script>";

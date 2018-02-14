@@ -1,5 +1,7 @@
 <?php
 
+require_once "chado_search.linker.php";
+
 use ChadoSearch\ChadoSearch;
 use ChadoSearch\result\Pager;
 use ChadoSearch\result\Download;
@@ -342,41 +344,6 @@ function chado_search_ajax_form_update($form, &$form_state) {
   }
   else {
     return $form[$update];
-  }
-}
-
-// Link to node by nid. If nid is unavailable return NULL
-function chado_search_link_node ($nid) {
-  if ($nid) {
-    return "/node/$nid";
-  } else {
-    return NULL;
-  }
-}
-
-function chado_search_link_entity ($base_table, $record_id) {
-  $link = NULL;
-  // tripal v2 link (node)
-  $nid = chado_get_nid_from_id ($base_table, $record_id);
-  if ($nid) {
-    $link = "/node/$nid";
-  }
-  // tripal v3 link (entity)
-  if (function_exists('chado_get_record_entity_by_table') && $record_id) {
-      $entity_id = chado_get_record_entity_by_table ($base_table, $record_id);
-    if ($entity_id) {
-      $link = "/bio_data/$entity_id";
-    }
-  }
-  return $link;
-}
-
-// Link to node by nid. If nid is unavailable return NULL
-function chado_search_link_url ($url) {
-  if ($url) {
-    return $url;
-  } else {
-    return NULL;
   }
 }
 

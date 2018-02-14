@@ -149,11 +149,11 @@ function chado_search_gene_search_form_submit ($form, &$form_state) {
 // Define the result table
 function chado_search_gene_search_table_definition () {
   $headers = array(
-    'name:s:chado_search_gene_search_link_feature:feature_id,name' => 'Name',
+    'name:s:chado_search_link_feature:feature_id' => 'Name',
     'organism:s' => 'Organism',
     'feature_type:s' => 'Type',
     'analysis:s' => 'Source',
-    'location:s:chado_search_gene_search_link_jbrowse:srcfeature_id,location,analysis' => 'Location',
+    'location:s:chado_search_link_jbrowse:srcfeature_id,location' => 'Location',
     'blast_value:s' => 'BLAST',
     'interpro_value:s' => 'InterPro',
     'kegg_value:s' => 'KEGG',

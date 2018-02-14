@@ -87,7 +87,25 @@ function chado_search_snp_genotype_search_form ($form) {
       ->id('location_unit')
       ->text("<strong>bp</strong>")
       ->newLine()
-      );
+  );
+  $form->addLabeledFilter(
+      Set::LabeledFilter()
+      ->id('gene_model')
+      ->title('Gene Model')
+  );
+  $form->addLabeledFilter(
+      Set::LabeledFilter()
+      ->id('range')
+      ->title('+/-')
+      ->labelWidth(30)
+  );
+  $form->addMarkup(
+      Set::markup()
+      ->id('range_unit')
+      ->text("<strong>bp</strong>")      
+      ->newLine()
+  );
+
   $form->addSubmit();
   $form->addReset();
   $desc = "Search SNP Genotype is a page where users can search for the SNP genotyope 
@@ -108,6 +126,34 @@ function chado_search_snp_genotype_search_form ($form) {
 }
 
 // Submit the form
+function chado_search_snp_genotype_search_form_validate (&$form, &$form_state) {
+
+    $gene_model = $form_state['values']['gene_model'];
+    if ($gene_model) {
+      $sql = "SELECT feature_id FROM {feature} WHERE lower(name) = :name OR lower(uniquename) = :uniquename";
+      $feature_id = chado_query($sql, array(":name" => strtolower($gene_model), ":uniquename" => strtolower($gene_model)))->fetchField();
+      if (!$feature_id) {
+        form_set_error('gene_model', t('Gene model not found.'));
+      }
+      $sql = "SELECT srcfeature_id, fmin, fmax FROM {featureloc} WHERE feature_id = :feature_id";
+      $alignment = chado_query($sql, array(":feature_id" => $feature_id))->fetchObject();
+      if (!$alignment) {
+        form_set_error('gene_model', t('Gene model\'s position not available.'));
+      }
+      $form_state['values']['srcfeature_id'] = $alignment->srcfeature_id;
+      if ($form_state['values']['range']) {
+        $form_state['values']['srcfmin'] = $alignment->fmin - $form_state['values']['range'];
+        $form_state['values']['srcfmax'] = $alignment->fmax + $form_state['values']['range'];
+      }
+      else {
+        $form_state['values']['srcfmin'] = $alignment->fmin;
+        $form_state['values']['srcfmax'] = $alignment->fmax;
+      }
+    }
+  
+}
+
+// Submit the form
 function chado_search_snp_genotype_search_form_submit ($form, &$form_state) {
   // Get base sql
   $sql = chado_search_snp_genotype_search_base_query();
@@ -121,6 +167,10 @@ function chado_search_snp_genotype_search_form_submit ($form, &$form_state) {
   $sub [] = Sql::selectFilter('genome', $form_state, 'genome');
   $sub [] = Sql::selectFilter('location', $form_state, 'landmark');
   $sub [] = Sql::betweenFilter('fmin', 'fmax', $form_state, 'fmin', 'fmax');
+  if (isset($form_state['values']['srcfeature_id'])) {
+    $sub [] = "landmark_feature_id = " . $form_state['values']['srcfeature_id'];
+    $sub [] = "fmin >= " . $form_state['values']['srcfmin'] . " AND fmax <= " . $form_state['values']['srcfmax'];
+  }
   $con = " WHERE ";
   for ($i = 0; $i < count($sub); $i ++) {
     if ($sub[$i] != "") {
@@ -131,7 +181,7 @@ function chado_search_snp_genotype_search_form_submit ($form, &$form_state) {
     }
   }
   if($con != " WHERE ") {
-    $where [] = "feature_id IN (SELECT feature_id FROM {chado_search_snp_genotype_location} $con)";
+    $where [] = "GL.feature_id IN (SELECT feature_id FROM {chado_search_snp_genotype_location} $con)";
   }
   Set::result()
     ->sql($sql)
@@ -146,8 +196,7 @@ function chado_search_snp_genotype_search_form_submit ($form, &$form_state) {
 */
 // Define query for the base table. Do not include the WHERE clause
 function chado_search_snp_genotype_search_base_query() {
-  //$query = "SELECT feature_id, feature_uniquename, project_name, filename FROM chado_search_snp_genotype_search CSDS";
-  $query = "SELECT * FROM {chado_search_snp_genotype_search} CSDS";
+  $query = "SELECT GS.*, landmark_feature_id, landmark, genome, fmin, fmax, location FROM {chado_search_snp_genotype_search} GS INNER JOIN {chado_search_snp_genotype_location} GL ON GS.feature_id = GL.feature_id";
   return $query;
 }
 
@@ -157,36 +206,12 @@ function chado_search_snp_genotype_search_base_query() {
 // Define the result table
 function chado_search_snp_genotype_search_table_definition () {
   $headers = array(
-    'project_name:s:chado_search_snp_genotype_search_link_project:project_id' => 'Dataset',
-    'stock_uniquename:s:chado_search_snp_genotype_search_link_stock:stock_id' => 'Germplasm',
-    'feature_name:s:chado_search_snp_genotype_search_link_feature:feature_id' => 'Marker',
-    'genotype:s' => 'Genotype',
+    'feature_name:s:chado_search_link_feature:feature_id' => 'Marker',
+    'genotype:s' => 'Allele',
+    'location:s:chado_search_link_jbrowse:landmark_feature_id,location' => 'Position',
+    'stock_uniquename:s:chado_search_link_stock:stock_id' => 'Germplasm',
   );
   return $headers;
-}
-
-// Define call back to link the featuremap to its  node for result table
-function chado_search_snp_genotype_search_link_feature ($feature_id) {
-  return chado_search_link_entity('feature', $feature_id);
-}
-
-// Define call back to link the featuremap to its  node for result table
-function chado_search_snp_genotype_search_link_project ($project_id) {
-  return chado_search_link_entity('project', $project_id);
-}
-
-function chado_search_snp_genotype_search_link_file ($filename) {
-  return '/bulk_data/www.rosaceae.org/genotype_snp/' . $filename;
-}
-
-// Define call back to link the featuremap to its  node for result table
-function chado_search_snp_genotype_search_link_pub ($pub_id) {
-  return chado_search_link_entity('pub', $pub_id);
-
-}
-
-function chado_search_snp_genotype_search_link_stock ($stock_id) {
-  return chado_search_link_entity('stock', $stock_id);
 }
 
 // User defined: Populating the landmark for selected organism
@@ -197,8 +222,6 @@ function chado_search_snp_genotype_search_ajax_location ($val) {
 
 function chado_search_snp_genotype_search_download_wide_form ($handle, $result, $sql, $total_items, $progress_var) {
   set_time_limit(6000);
-/*   $sql = preg_replace('/(string_agg|count|first) ?\((.+?)\)/', '$2', $sql);
-  $sql = str_replace(array(", '; '", 'distinct ', ' GROUP BY feature_uniquename,allele'), array('', '', ''), $sql); */
   $sql = "
       SELECT
         project_name,

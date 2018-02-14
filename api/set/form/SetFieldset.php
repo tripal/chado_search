@@ -8,6 +8,7 @@ class SetFieldset extends SetElement {
   private $end_widget = '';
   private $collapased = FALSE;
   private $description = NULL;
+  private $clearboth = FALSE;
   
   /**
    * Setters
@@ -33,6 +34,11 @@ class SetFieldset extends SetElement {
     return $this;
   }
   
+  public function clearboth () {
+      $this->clearboth = TRUE;
+      return $this;
+  }
+  
   /**
    * Getters
    */
@@ -52,4 +58,7 @@ class SetFieldset extends SetElement {
     return $this->description;
   }
   
+  public function getClearboth () {
+      return $this->clearboth;
+  }
 }

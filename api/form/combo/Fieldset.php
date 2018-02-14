@@ -10,6 +10,7 @@ class Fieldset extends Filter {
   public $end_widget;
   public $desc;
   public $collapased;
+  public $clearboth;
   
   public function setForm (&$form, &$form_state) {
     $search_name = $this->search_name;
@@ -29,8 +30,13 @@ class Fieldset extends Filter {
       }
     }
     
+    $clearboth = "";
+    if($this->clearboth) {
+        $clearboth = " style=\"clear:both\"";
+    }
+    
     $append =
-    "<fieldset id=\"chado_search-fieldset-$search_name-$id\" class=\"chado_search-fieldset\">";
+    "<fieldset id=\"chado_search-fieldset-$search_name-$id\" class=\"chado_search-fieldset\"$clearboth>";
     if ($title) {
       $append .= 
         "<legend  id=\"chado_search-fieldset-$search_name-$id-legend\" class=\"chado_search-fieldset-legend\" onClick=\"chado_search_fieldset_toggle(this);\">

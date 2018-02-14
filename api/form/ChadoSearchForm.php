@@ -336,6 +336,7 @@ class ChadoSearchForm {
     $f->desc = $conf->getDescription();
     $f->collapased = $conf->getCollapased();
     $f->newline = $conf->getNewLine();
+    $f->clearboth = $conf->getClearboth();
     $f->attach($this->form, $this->form_state);
   }
   
