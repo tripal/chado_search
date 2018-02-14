@@ -163,41 +163,6 @@ function chado_search_gene_search_table_definition () {
   return $headers;
 }
 
-// Define call back to link the featuremap to its  node for result table
-function chado_search_gene_search_link_feature ($var) {
-  $feature_id = $var[0];
-  $name = $var[1];
-  if ($feature_id) {
-    return chado_search_link_entity('feature', $feature_id);
-  
-  }
-  else {
-    return '/feature/' . $name;
-  }
-}
-
-function chado_search_gene_search_link_jbrowse ($paras) {
-    $srcfeature_id = $paras [0];
-    $loc = $paras[1];
-    $sql =
-    "SELECT value
-    FROM {feature} F
-    INNER JOIN {analysisfeature} AF ON F.feature_id = AF.feature_id
-    INNER JOIN {analysis} A ON A.analysis_id = AF.analysis_id
-    INNER JOIN {analysisprop} AP ON AP.analysis_id = A.analysis_id
-    INNER JOIN {cvterm} V ON V.cvterm_id = AP.type_id
-    WHERE
-    V.name = 'JBrowse URL' AND
-    F.feature_id = :srcfeature_id";
-    $jbrowse = $srcfeature_id ? chado_query($sql, array('srcfeature_id' => $srcfeature_id))->fetchField() : NULL;
-    if ($jbrowse) {
-      return chado_search_link_url ($jbrowse . $loc);
-    }
-    else {
-      return NULL;
-    }
-}
-
 /*************************************************************
  * AJAX callbacks
  */
