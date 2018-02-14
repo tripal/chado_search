@@ -52,27 +52,12 @@ function chado_search_species_form_submit ($form, &$form_state) {
 // Define the result table
 function chado_search_species_table_definition () {
   $headers = array(
-      'organism:s:chado_search_species_link_organism:organism_id' => 'Species',
-/*       'common_name:s' => 'Common Name',
-      'grin:s:chado_search_species_link_grin:grin' => 'GRIN',
-      'haploid_chromosome_number:s' => 'Haploid Chromosome Number',
-      'ploidy:s' => 'Ploidy',
-      'geographic_origin:s' => 'Origin', */
+      'organism:s:chado_search_link_organism:organism_id' => 'Species',
       'num_germplasm:s' => 'Num Germplasm',
       'num_sequences:s' => 'Num Sequences',
       'num_libraries:s' => 'Num Libraries'
   );
   return $headers;
-}
-
-// Define call back to link the species to its  node for the result table
-function chado_search_species_link_organism ($organism_id) {
-  return chado_search_link_entity('organism', $organism_id);
-}
-
-// Define call back to link the species to its  node for the result table
-function chado_search_species_link_grin ($grin) {
-  return 'http://www.ars-grin.gov/cgi-bin/npgs/html/taxon.pl?' . $grin;
 }
 
 /*************************************************************

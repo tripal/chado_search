@@ -40,6 +40,13 @@ function chado_search_link_feature ($feature_id) {
     return chado_search_link_entity('feature', $feature_id);
 }
 
+// Link genetic_marker feature
+function chado_search_link_genetic_marker ($locus_feature_id) {
+    // Convert the feature_id of marker_locus to genetic_marker
+    $fid = chado_query("SELECT object_id FROM {feature_relationship} FR WHERE subject_id = $locus_feature_id AND type_id = (SELECT cvterm_id FROM {cvterm} WHERE name = 'instance_of' AND cv_id = (SELECT cv_id FROM {cv} WHERE name = 'relationship'))")->fetchField();
+    return chado_search_link_entity('feature', $fid);
+}
+
 // Link organism
 function chado_search_link_organism ($organism_id) {
     return chado_search_link_entity('organism', $organism_id);
@@ -53,6 +60,11 @@ function chado_search_link_featuremap ($featuremap_id) {
 // Link library
 function chado_search_link_library ($library_id) {
     return chado_search_link_entity('library', $library_id);
+}
+
+// Link analysis
+function chado_search_link_analysis ($analysis_id) {
+    return chado_search_link_entity('analysis', $analysis_id);
 }
 
 // Link project
@@ -91,4 +103,9 @@ function chado_search_link_jbrowse ($paras) {
     else {
         return NULL;
     }
+}
+
+// Link GRIN
+function chado_search_link_grin ($grin) {
+    return 'http://www.ars-grin.gov/cgi-bin/npgs/html/taxon.pl?' . $grin;
 }

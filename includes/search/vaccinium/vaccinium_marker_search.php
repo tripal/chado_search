@@ -64,42 +64,7 @@ function chado_search_marker_search_form ($form) {
       ->labelWidth(260)
       ->newLine()
       ->disable(array('N/A N/A'))
-  );  
-  // Restricted by Location
-/*   $form->addSelectFilter(
-      Set::selectFilter()
-      ->id('genome')
-      ->title('Genome')
-      ->column('genome')
-      ->table('chado_search_marker_search')
-      ->disable(array('Malus x domestica Whole Genome v1.0 Assembly & Annotation'))
-      ->cache(TRUE)
-      ->labelWidth(120)
-      ->newLine()
   );
-  $form->addDynamicSelectFilter(
-      Set::dynamicSelectFilter()
-      ->id('location')
-      ->title('Chr/Scaffold')
-      ->dependOnId('genome')
-      ->callback('chado_search_marker_search_ajax_location')
-      ->labelWidth(120)
-  );
-  $form->addBetweenFilter(
-      Set::betweenFilter()
-      ->id('fmin')
-      ->title("between")
-      ->id2('fmax')
-      ->title2("and")
-      ->labelWidth2(50)
-      ->size(10)
-  );
-  $form->addMarkup(
-      Set::markup()
-      ->id('location_unit')
-      ->text("<strong>bp</strong>")
-      ->newLine()
-  ); */
   $form->addSelectFilter(
       Set::selectFilter()
       ->id('map_name')
@@ -172,11 +137,6 @@ function chado_search_marker_search_form_submit ($form, &$form_state) {
   $where [] = Sql::selectFilter('marker_type', $form_state, 'marker_type');
   $where [] = Sql::selectFilter('organism', $form_state, 'organism');
   $where [] = Sql::selectFilter('mapped_organism', $form_state, 'mapped_organism');
-  /*
-  $where [] = Sql::selectFilter('genome', $form_state, 'genome');
-  $where [] = Sql::selectFilter('location', $form_state, 'landmark');
-  $where [] = Sql::betweenFilter('fmin', 'fmax', $form_state, 'fmin', 'fmax');
-  */
   $where [] = Sql::selectFilter('map_name', $form_state, 'map_name');
   $where [] = Sql::selectFilter('linkage_group', $form_state, 'lg_uniquename');
   $where [] = Sql::betweenFilter('start', 'stop', $form_state, 'start', 'start', TRUE);
@@ -204,28 +164,17 @@ function chado_search_marker_search_base_query() {
 // Define the result table
 function chado_search_marker_search_table_definition () {
   $headers = array(      
-      'marker_name:s:chado_search_marker_search_link_feature:marker_feature_id' => 'Name',
+      'marker_name:s:chado_search_link_feature:marker_feature_id' => 'Name',
       'alias:s' => 'Alias',
       'marker_type:s' => 'Type',
       'organism:s' => 'Species',
-      'map_name:s:chado_search_marker_search_link_featuremap:featuremap_id' => 'Map',
+      'map_name:s:chado_search_link_featuremap:featuremap_id' => 'Map',
       'lg_uniquename:s' => 'Linkage Group',
       'start:s' => 'Start',
       'stop:s' => 'Stop',
       'location:s' => 'Location'
   );
   return $headers;
-}
-
-// Define call back to link the featuremap to its  node for result table
-function chado_search_marker_search_link_feature ($feature_id) {
-  return chado_search_link_entity('feature', $feature_id);
-
-}
-
-// Define call back to link the featuremap to its  node for result table
-function chado_search_marker_search_link_featuremap ($featuremap_id) {
-  return chado_search_link_entity('featuremap', $featuremap_id);
 }
 
 /*************************************************************
