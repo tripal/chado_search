@@ -53,7 +53,7 @@ function chado_search_species_form_submit ($form, &$form_state) {
 // Define the result table
 function chado_search_species_table_definition () {
   $headers = array(
-      'organism:s:chado_search_species_link_organism:organism_id' => 'Species',
+      'organism:s:chado_search_link_organism:organism_id' => 'Species',
       'genome:s' => 'Genome Group',
       'haploid_chromosome_number:s' => 'Haploid Chromosome Number',
       'geographic_origin:s' => 'Geographic Origin',
@@ -62,9 +62,4 @@ function chado_search_species_table_definition () {
       'num_libraries:s' => 'Num Libraries'
   );
   return $headers;
-}
-
-// Define call back to link the species to its  node for the result table
-function chado_search_species_link_organism ($organism_id) {
-  return chado_search_link_entity('organism', $organism_id);
 }

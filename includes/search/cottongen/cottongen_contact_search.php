@@ -83,15 +83,11 @@ function chado_search_contact_search_base_query () {
 // Define the result table
 function chado_search_contact_search_table_definition () {
   $headers = array(
-      'name:s:chado_search_contact_search_link_contact:contact_id' => 'Name',
+      'name:s:chado_search_link_contact:contact_id' => 'Name',
       'institution:s' => 'Institution',
       'address:s' => 'Address',
       'email:s' => 'Email',
       'keywords:s' => 'Research Interests'
   );
   return $headers;
-}
-// Define call back to link the project to its  node for the result table
-function chado_search_contact_search_link_contact ($contact_id) {
-  return chado_search_link_entity('contact', $contact_id);
 }

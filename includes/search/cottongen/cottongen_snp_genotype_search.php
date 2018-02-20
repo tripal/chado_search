@@ -161,36 +161,12 @@ function chado_search_snp_genotype_search_base_query() {
 // Define the result table
 function chado_search_snp_genotype_search_table_definition () {
   $headers = array(
-    'project_name:s:chado_search_snp_genotype_search_link_project:project_id' => 'Dataset',
-    'stock_uniquename:s:chado_search_snp_genotype_search_link_stock:stock_id' => 'Germplasm',
-    'feature_name:s:chado_search_snp_genotype_search_link_feature:feature_id' => 'Marker',
+    'project_name:s:chado_search_link_project:project_id' => 'Dataset',
+    'stock_uniquename:s:chado_search_link_stock:stock_id' => 'Germplasm',
+    'feature_name:s:chado_search_link_feature:feature_id' => 'Marker',
     'genotype:s' => 'Genotype',
   );
   return $headers;
-}
-
-// Define call back to link the featuremap to its  node for result table
-function chado_search_snp_genotype_search_link_feature ($feature_id) {
-  return chado_search_link_entity('feature', $feature_id);
-}
-
-// Define call back to link the featuremap to its  node for result table
-function chado_search_snp_genotype_search_link_project ($project_id) {
-  return chado_search_link_entity('project', $project_id);
-}
-
-function chado_search_snp_genotype_search_link_file ($filename) {
-  return '/bulk_data/www.rosaceae.org/genotype_snp/' . $filename;
-}
-
-// Define call back to link the featuremap to its  node for result table
-function chado_search_snp_genotype_search_link_pub ($pub_id) {
-  return chado_search_link_entity('pub', $pub_id);
-
-}
-
-function chado_search_snp_genotype_search_link_stock ($stock_id) {
-  return chado_search_link_entity('stock', $stock_id);
 }
 
 // User defined: Populating the landmark for selected organism

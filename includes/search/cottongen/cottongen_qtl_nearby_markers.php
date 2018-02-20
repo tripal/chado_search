@@ -116,27 +116,15 @@ function chado_search_qtl_nearby_markers_base_query() {
 // Define the result table
 function chado_search_qtl_nearby_markers_table_definition () {
   $headers = array(      
-    'locus:s:chado_search_qtl_nearby_markers_link_feature:feature_id' => 'QTL',
-    'featuremap:s:chado_search_qtl_nearby_markers_link_featuremap:featuremap_id' => 'Map',
+    'locus:s:chado_search_link_feature:feature_id' => 'QTL',
+    'featuremap:s:chado_search_link_featuremap:featuremap_id' => 'Map',
     'linkage_group:s' => 'Linkage Group',
     'start:s' => 'Start',
     'stop:s' => 'Stop',
-    'nearby_marker:s:chado_search_qtl_nearby_markers_link_feature:nearby_feature_id' => 'Neighbor',
+    'nearby_marker:s:chado_search_link_genetic_marker:nearby_feature_id' => 'Neighbor',
     'nearby_start:s' => 'Position'
   );
   return $headers;
-}
-
-// Define call back to link the feature to its  node for the result table
-function chado_search_qtl_nearby_markers_link_feature ($feature_id) {
-  // Convert the feature_id of marker_locus to genetic_marker
-  $fid = chado_query("SELECT object_id FROM {feature_relationship} FR WHERE subject_id = $feature_id AND type_id = (SELECT cvterm_id FROM {cvterm} WHERE name = 'instance_of' AND cv_id = (SELECT cv_id FROM {cv} WHERE name = 'relationship'))")->fetchField();
-  return chado_search_link_entity('feature', $fid);
-}
-
-// Define call back to link the featuremap to its  node for the result table
-function chado_search_qtl_nearby_markers_link_featuremap ($featuremap_id) {
-  return chado_search_link_entity('featuremap', $featuremap_id);
 }
 
 /*************************************************************

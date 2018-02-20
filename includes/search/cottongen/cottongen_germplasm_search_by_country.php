@@ -53,19 +53,11 @@ function chado_search_germplasm_search_by_country_form_submit ($form, &$form_sta
 // Define the result table
 function chado_search_germplasm_search_by_country_table_definition () {
   $headers = array(      
-    'uniquename:s:chado_search_germplasm_search_by_country_link_stock:stock_id' => 'Germplasm',
-    'organism:s:chado_search_germplasm_search_by_country_link_organism:organism_id' => 'Species',
+    'uniquename:s:chado_search_link_stock:stock_id' => 'Germplasm',
+    'organism:s:chado_search_link_organism:organism_id' => 'Species',
     'stock_type:s' => 'Stock Type',
     'country:s' => 'Country',
     'state:s' => 'State/Province'
   );
   return $headers;
-}
-// Define call back to link the stoc
-function chado_search_germplasm_search_by_country_link_stock ($stock_id) {
-  return chado_search_link_entity('stock', $stock_id);
-}
-// Define call back to link organism
-function chado_search_germplasm_search_by_country_link_organism ($organism_id) {
-  return chado_search_link_entity('organism', $organism_id);
 }

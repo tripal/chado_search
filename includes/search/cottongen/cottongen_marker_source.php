@@ -76,37 +76,13 @@ function chado_search_marker_source_form_submit ($form, &$form_state) {
 // Define the result table
 function chado_search_marker_source_table_definition () {
   $headers = array(      
-      'marker_uniquename:s:chado_search_marker_source_link_feature:marker_feature_id' => 'Marker Name',
+      'marker_uniquename:s:chado_search_link_feature:marker_feature_id' => 'Marker Name',
       'marker_type:s' => 'Type',
-      'src_uniquename:s:chado_search_marker_source_link_feature:src_feature_id' => 'Source Sequence',
+      'src_uniquename:s:chado_search_link_feature:src_feature_id' => 'Source Sequence',
       'src_type:s' => 'Source Molecule Type',
-      'library_name:s:chado_search_marker_source_link_library:library_id' => 'DNA Library',
-      'stock_uniquename:s:chado_search_marker_source_link_stock:stock_id' => 'Source Germplasm',
-          'organism:s:chado_search_marker_source_link_organism:organism_id' => 'Source Species',
+      'library_name:s:chado_search_link_library:library_id' => 'DNA Library',
+      'stock_uniquename:s:chado_search_link_stock:stock_id' => 'Source Germplasm',
+      'organism:s:chado_search_link_organism:organism_id' => 'Source Species',
   );
   return $headers;
-}
-
-/*************************************************************
- * Build the search result table
-*/
-
-// Define call back to link the featuremap to its  node for result table
-function chado_search_marker_source_link_feature ($feature_id) {
-  return chado_search_link_entity('feature', $feature_id);
-}
-
-// Define call back to link the organism to its  node for result table
-function chado_search_marker_source_link_organism ($organism_id) {
-  return chado_search_link_entity('organism', $organism_id);
-}
-
-// Define call back to link the featuremap to its  node for result table
-function chado_search_marker_source_link_library ($library_id) {
-  return chado_search_link_entity('library', $library_id);
-}
-
-// Define call back to link the organism to its  node for result table
-function chado_search_marker_source_link_stock ($stock_id) {
-  return chado_search_link_entity('stock', $stock_id);
 }

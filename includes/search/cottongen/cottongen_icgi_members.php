@@ -113,8 +113,3 @@ function chado_search_icgi_members_table_definition () {
 function chado_search_icgi_members_link_icgi_members ($uid) {
   return "/icgi/member/$uid/profile";
 }
-
-// Define call back to link the project to its  node for the result table
-function chado_search_icgi_members_link_parent ($stock_id) {
-  return chado_search_link_entity('stock', $stock_id);
-}

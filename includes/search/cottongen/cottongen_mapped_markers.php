@@ -62,26 +62,16 @@ function chado_search_mapped_markers_form_submit ($form, &$form_state) {
 // Define the result table
 function chado_search_mapped_markers_table_definition () {
   $headers = array(      
-      'marker_uniquename:s:chado_search_mapped_markers_link_feature:marker_feature_id' => 'Name',
+      'marker_uniquename:s:chado_search_link_feature:marker_feature_id' => 'Name',
       'marker_type:s' => 'Type',
       'locus_uniquename:s' => 'Locus',
-      'map_name:s:chado_search_mapped_markers_link_featuremap:featuremap_id' => 'Map',
-          'lg_uniquename:s' => 'Linkage Group',
+      'map_name:s:chado_search_link_featuremap:featuremap_id' => 'Map',
+      'lg_uniquename:s' => 'Linkage Group',
       'chr_number:s' => 'Chr number',
       'start:s' => 'Start',
       'stop:s' => 'Stop'
   );
   return $headers;
-}
-
-// Define call back to link the feature to its  node for the result table
-function chado_search_mapped_markers_link_feature ($feature_id) {
-  return chado_search_link_entity('feature', $feature_id);
-}
-
-// Define call back to link the featuremap to its  node for the result table
-function chado_search_mapped_markers_link_featuremap ($featuremap_id) {
-  return chado_search_link_entity('featuremap', $featuremap_id);
 }
 
 // Downloading Definition if different from the Table Definition

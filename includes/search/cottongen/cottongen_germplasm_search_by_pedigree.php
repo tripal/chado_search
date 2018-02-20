@@ -57,12 +57,8 @@ function chado_search_germplasm_search_by_pedigree_form_submit ($form, &$form_st
 // Define the result table
 function chado_search_germplasm_search_by_pedigree_table_definition () {
   $headers = array(      
-    'uniquename:s:chado_search_germplasm_search_by_pedigree_link_stock:stock_id' => 'Germplasm',
+    'uniquename:s:chado_search_link_stock:stock_id' => 'Germplasm',
     'pedigree:s' => 'Pedigree'
   );
   return $headers;
-}
-// Define call back to link the stoc
-function chado_search_germplasm_search_by_pedigree_link_stock ($stock_id) {
-  return chado_search_link_entity('stock', $stock_id);
 }

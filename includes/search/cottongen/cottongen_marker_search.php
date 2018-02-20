@@ -169,11 +169,11 @@ function chado_search_marker_search_form_submit ($form, &$form_state) {
 // Define the result table
 function chado_search_marker_search_table_definition () {
   $headers = array(      
-      'marker_uniquename:s:chado_search_marker_search_link_feature:marker_feature_id' => 'Name',
+      'marker_uniquename:s:chado_search_link_feature:marker_feature_id' => 'Name',
       'alias:s' => 'Alias',
       'marker_type:s' => 'Type',
-      'organism:s:chado_search_marker_search_link_organism:organism_id' => 'Species',
-      'map_name:s:chado_search_marker_search_link_featuremap:featuremap_id' => 'Map',
+      'organism:s:chado_search_link_organism:organism_id' => 'Species',
+      'map_name:s:chado_search_link_featuremap:featuremap_id' => 'Map',
       'lg_uniquename:s:chado_search_marker_search_link_cmap:featuremap_id' => 'Linkage Group',
       'start:s' => 'Genetic Location',
       'landmark:s:chado_search_marker_search_link_landmark:landmark' => 'Genome Sequence Name',
@@ -195,21 +195,6 @@ function chado_search_marker_search_rewrite_landmark ($value) {
 // Rewrite species
 function chado_search_marker_search_rewrite_organism ($value) {
   return preg_replace('/^Gossypium /', '',$value);
-}
-
-// Define call back to link the featuremap to its  node for result table
-function chado_search_marker_search_link_feature ($feature_id) {
-  return chado_search_link_entity('feature', $feature_id);
-}
-
-// Define call back to link the organism to its  node for result table
-function chado_search_marker_search_link_organism ($organism_id) {
-  return chado_search_link_entity('organism', $organism_id);
-}
-
-// Define call back to link the featuremap to its  node for result table
-function chado_search_marker_search_link_featuremap ($featuremap_id) {
-  return chado_search_link_entity('featuremap', $featuremap_id);
 }
 
 // Define call back to link the sequence_feature to its  node for result table

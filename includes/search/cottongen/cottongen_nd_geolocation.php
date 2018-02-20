@@ -28,26 +28,16 @@ function chado_search_nd_geolocation_form_submit ($form, &$form_state) {
 // Define the result table
 function chado_search_nd_geolocation_table_definition () {
   $headers = array(
-          'description:s:chado_search_nd_geolocation_link_nd_geolocation:nd_geolocation_id' => 'Environment',
-      'project_name:s:chado_search_nd_geolocation_link_project:project_id' => 'Associated Project',
-      'project_type:s' => 'Project Type',
-      'latitude:s' => 'Latitude',
-          'longitude:s' => 'Longitude',
-          'altitude:s' => 'Altitude',
-          'country:s' => 'Country',
-      'region:s' => 'Region',
-          'type:s' => 'Type',
-          'year:s' => 'Year'
+    'description:s:chado_search_link_nd_geolocation:nd_geolocation_id' => 'Environment',
+    'project_name:s:chado_search_link_project:project_id' => 'Associated Project',
+    'project_type:s' => 'Project Type',
+    'latitude:s' => 'Latitude',
+    'longitude:s' => 'Longitude',
+    'altitude:s' => 'Altitude',
+    'country:s' => 'Country',
+    'region:s' => 'Region',
+    'type:s' => 'Type',
+    'year:s' => 'Year'
   );
   return $headers;
-}
-
-// Define call back to link the nd_geolocation to its  node for the result table
-function chado_search_nd_geolocation_link_nd_geolocation ($nd_geolocation_id) {
-  return chado_search_link_entity('nd_geolocation', $nd_geolocation_id);
-}
-
-// Define call back to link the project to its  node for the result table
-function chado_search_nd_geolocation_link_project ($project_id) {
-  return chado_search_link_entity('project', $project_id);
 }

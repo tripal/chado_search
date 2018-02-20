@@ -59,22 +59,14 @@ function chado_search_germplasm_search_by_collection_form_submit ($form, &$form_
 // Define the result table
 function chado_search_germplasm_search_by_collection_table_definition () {
   $headers = array(      
-    'organism:s:chado_search_germplasm_search_by_collection_link_organism:organism_id' => 'Species',
+    'organism:s:chado_search_link_organism:organism_id' => 'Species',
     'genome:s' => 'Genome',
     'collection:s' => 'Collection',
-    'uniquename:s:chado_search_germplasm_search_by_collection_link_stock:stock_id' => 'Germplasm',
+    'uniquename:s:chado_search_link_stock:stock_id' => 'Germplasm',
     'db:s' => 'Database',
     'version:s:chado_search_germplasm_search_by_collection_link_accession:db,accession,urlprefix' => 'Accession'
   );
   return $headers;
-}
-// Define call back to link the stoc
-function chado_search_germplasm_search_by_collection_link_stock ($stock_id) {
-  return chado_search_link_entity('stock', $stock_id);
-}
-// Define call back to link organism
-function chado_search_germplasm_search_by_collection_link_organism ($organism_id) {
-  return chado_search_link_entity('organism', $organism_id);
 }
 // Define call back to link the accession
 function chado_search_germplasm_search_by_collection_link_accession ($params = NULL) {

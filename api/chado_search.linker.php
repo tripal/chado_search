@@ -82,6 +82,16 @@ function chado_search_link_stock ($stock_id) {
     return chado_search_link_entity('stock', $stock_id);
 }
 
+// Link contact
+function chado_search_link_contact ($contact_id) {
+    return chado_search_link_entity('contact', $contact_id);
+}
+
+// Link nd_geolocation
+function chado_search_link_nd_geolocation ($nd_geolocation_id) {
+    return chado_search_link_entity('nd_geolocation', $nd_geolocation_id);
+}
+
 // Link jbrowse
 function chado_search_link_jbrowse ($paras) {
     $srcfeature_id = $paras [0];

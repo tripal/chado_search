@@ -134,18 +134,13 @@ function chado_search_gene_search_form_submit ($form, &$form_state) {
 // Define the result table
 function chado_search_gene_search_table_definition () {
   $headers = array(
-    'name:s:chado_search_gene_search_link_feature:feature_id' => 'Name',
+    'name:s:chado_search_link_feature:feature_id' => 'Name',
     'organism:s' => 'Organism',
     'feature_type:s' => 'Type',
     'analysis:s' => 'Source',
     'location:s:chado_search_gene_search_link_gbrowse:srcfeature_id,location,analysis' => 'Location',
   );
   return $headers;
-}
-
-// Define call back to link the featuremap to its  node for result table
-function chado_search_gene_search_link_feature ($feature_id) {
-  return chado_search_link_entity('feature', $feature_id);
 }
 
 // Define call back to link the location to GDR GBrowse
