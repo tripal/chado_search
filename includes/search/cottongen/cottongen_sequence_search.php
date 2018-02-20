@@ -109,7 +109,7 @@ function chado_search_sequence_search_table_definition () {
       'feature_type:s' => 'Type',
       'organism:s' => 'Organism',
       'analysis_name:s:chado_search_link_analysis:analysis_id' => 'Source',
-      'location:s:chado_search_sequence_search_link_jbrowse:srcfeature_id,location:analysis' => 'Location'
+      'location:s:chado_search_sequence_search_link_jbrowse:srcfeature_id,location:analysis_name' => 'Location'
   );
   return $headers;
 }

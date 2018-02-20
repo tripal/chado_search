@@ -175,31 +175,16 @@ function chado_search_marker_search_base_query() {
 // Define the result table
 function chado_search_marker_search_table_definition () {
   $headers = array(      
-      'marker_uniquename:s:chado_search_marker_search_link_feature:marker_feature_id' => 'Name',
+      'marker_uniquename:s:chado_search_link_feature:marker_feature_id' => 'Name',
       'alias:s' => 'Alias',
       'marker_type:s' => 'Type',
-      'organism:s:chado_search_marker_search_link_organism:organism_id' => 'Species',
+      'organism:s:chado_search_link_organism:organism_id' => 'Species',
       'map_name:s' => 'Map',
       'lg_uniquename:s' => 'Linkage Group',
       'start:s' => 'Start',
       'stop:s' => 'Stop'
   );
   return $headers;
-}
-
-// Define call back to link the featuremap to its  node for result table
-function chado_search_marker_search_link_feature ($feature_id) {
-  return chado_search_link_entity('feature', $feature_id);
-}
-
-// Define call back to link the featuremap to its  node for result table
-function chado_search_marker_search_link_organism ($organism_id) {
-  return chado_search_link_entity('organism', $organism_id);
-}
-
-// Define call back to link the sequence_feature to its  node for result table
-function chado_search_marker_search_link_seq_feature ($feature_id) {
-  return chado_search_link_entity('feature', $feature_id);
 }
 
 /*************************************************************
