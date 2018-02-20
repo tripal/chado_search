@@ -145,72 +145,13 @@ function chado_search_gene_search_form_submit ($form, &$form_state) {
 // Define the result table
 function chado_search_gene_search_table_definition () {
   $headers = array(      
-    'name:s:chado_search_gene_search_link_feature:feature_id' => 'Name',
+    'name:s:chado_search_link_feature:feature_id' => 'Name',
     'organism:s' => 'Organism',
     'feature_type:s' => 'Type',
     'analysis:s' => 'Source',
-    'location:s:chado_search_gene_search_link_jbrowse:srcfeature_id,location,analysis' => 'Location',
+    'location:s:chado_search_link_jbrowse:srcfeature_id,location' => 'Location',
   );
   return $headers;
-}
-
-// Define call back to link the featuremap to its  node for result table
-function chado_search_gene_search_link_feature ($feature_id) {
-  return chado_search_link_entity('feature', $feature_id);
-}
-
-// Define call back to link the location to GDR GBrowse
-function chado_search_gene_search_link_jbrowse ($paras) {
-  $srcfeature_id = $paras [0];
-  $loc = preg_replace("/ +/", "", $paras [1]);
-  if (!$srcfeature_id) {
-    $srcfeature = explode(':', $loc);
-    $srcfeature_id =
-    chado_query(
-        "SELECT feature_id FROM {feature} WHERE uniquename = :uniquename OR name = :uniquename",
-        array(':uniquename' =>$srcfeature[0]))
-        ->fetchField();
-  }
-  $ncbi = preg_match('/NCBI /', $paras[2]);
-  $sql =
-  "SELECT A.analysis_id
-    FROM {feature} F
-    INNER JOIN {analysisfeature} AF ON F.feature_id = AF.feature_id
-    INNER JOIN {analysis} A ON A.analysis_id = AF.analysis_id
-    INNER JOIN {analysisprop} AP ON AP.analysis_id = A.analysis_id
-    INNER JOIN {cvterm} V ON V.cvterm_id = AP.type_id
-    WHERE
-    V.name = 'Analysis Type' AND
-    AP.value = 'whole_genome' AND
-    F.feature_id = :srcfeature_id";
-  $url = "";
-  // Get analysis_id from srcfeature_id
-  $analysis_id = $srcfeature_id ? chado_query($sql, array('srcfeature_id' => $srcfeature_id))->fetchField() : NULL;
-  // If srcfeature_id is not properly loaded, try getting analysis_id from analysis name
-  if (!$analysis_id) {
-    $sql = "SELECT analysis_id FROM {analysis} WHERE name = :name";
-    $analysis_id = chado_query($sql, array(':name' => $paras[2]))->fetchField();
-  }
-  if ($analysis_id && db_table_exists('field_data_field_resource_links')) {
-    $sql = 
-    "SELECT field_resource_links_value from field_data_field_resource_links 
-     WHERE entity_id = (SELECT nid FROM chado_analysis WHERE analysis_id = :analysis_id)";
-    $results = db_query($sql, array(':analysis_id' => $analysis_id));
-    // Get rid of improper srcfeature name as $location
-    $location = 
-      str_replace(
-        array('_Hzau_Valencia_v2.0','_Csinensis_154_v1.1'), 
-        array('', ''),
-        $loc);
-    // Get JBrowse URL from drupal resource links
-    foreach ($results AS $result) {
-      if (preg_match('/^JBrowse/i', $result->field_resource_links_value)) {
-        $token = explode('|', $result->field_resource_links_value);
-        $url = $token[1] . "&loc=$location";
-      }
-    }
-  }
-  return chado_search_link_url ($url);
 }
 
 /*************************************************************
