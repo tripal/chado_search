@@ -125,11 +125,11 @@ function chado_search_qtl_search_base_query() {
 function chado_search_qtl_search_table_definition () {
   $headers = array(      
     'type:s' => 'Type',
-    'qtl:s:chado_search_qtl_search_link_qtl:feature_id' => 'Label',
+    'qtl:s:chado_search_link_feature:feature_id' => 'Label',
     'trait:s' => 'Trait Name',
     'symbol:s' => 'Published Symbol',
-    'map:s:chado_search_qtl_search_link_map:featuremap_id' => 'Map',
-    'organism:s:chado_search_qtl_search_link_organism:organism_id' => 'Species'
+    'map:s:chado_search_link_featuremap:featuremap_id' => 'Map',
+    'organism:s:chado_search_link_organism:organism_id' => 'Species'
   );
   return $headers;
 }
@@ -153,16 +153,4 @@ function chado_search_qtl_search_download_definition () {
       'reference' => 'Publication'
   );
   return $headers;
-}
-// Define call back to link feature
-function chado_search_qtl_search_link_qtl ($feature_id) {
-  return chado_search_link_entity('feature', $feature_id);
-}
-// Define call back to link organism
-function chado_search_qtl_search_link_organism ($organism_id) {
-  return chado_search_link_entity('organism', $organism_id);
-}
-// Define call back to link featuremap
-function chado_search_qtl_search_link_map ($featuremap_id) {
-  return chado_search_link_entity('featuremap', $featuremap_id);
 }

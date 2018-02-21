@@ -110,11 +110,11 @@ function chado_search_ssr_genotype_search_base_query() {
 function chado_search_ssr_genotype_search_table_definition () {
   $headers = array(
       'marker_allele:s:chado_search_ssr_genotype_search_link_polymorphism:feature_id' => 'Marker Allele',
-      'marker_uniquename:s:chado_search_ssr_genotype_search_link_feature:feature_id' => 'Marker Name',
+      'marker_uniquename:s:chado_search_link_feature:feature_id' => 'Marker Name',
       'allele:s:chado_search_ssr_genotype_search_link_marker_allele:marker_uniquename,allele,marker_organism_id' => 'Allele',
       'germplasm:s:chado_search_ssr_genotype_search_link_marker_allele_filtered:marker_uniquename,allele,marker_organism_id' => 'Germplasm',
-      'project_name:s:chado_search_ssr_genotype_search_link_project:project_id' => 'Dataset',
-      'citation:s:chado_search_ssr_genotype_search_link_pub:pub_id' => 'Publication'
+      'project_name:s:chado_search_link_project:project_id' => 'Dataset',
+      'citation:s:chado_search_link_pub:pub_id' => 'Publication'
   );
   return $headers;
 }
@@ -251,21 +251,6 @@ function chado_search_ssr_genotype_search_download_wide_form ($handle, $result, 
     fwrite($handle, "\n");
     $counter ++;
   }
-}
-
-// Define call back to link the featuremap to its  node for result table
-function chado_search_ssr_genotype_search_link_feature ($feature_id) {
-  return chado_search_link_entity('feature', $feature_id);
-}
-
-// Define call back to link the featuremap to its  node for result table
-function chado_search_ssr_genotype_search_link_project ($project_id) {
-  return chado_search_link_entity('project', $project_id);
-}
-
-// Define call back to link the featuremap to its  node for result table
-function chado_search_ssr_genotype_search_link_pub ($pub_id) {
-  return chado_search_link_entity('pub', $pub_id);
 }
 
 // Define call back to link the marker_allele to the Allele page

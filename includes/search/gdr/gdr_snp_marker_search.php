@@ -71,21 +71,6 @@ function chado_search_snp_marker_search_form ($form) {
       ->text("<strong>bp</strong>")
       ->newLine()
   );
-/*   $form->addCustomOutput(
-      Set::customOutput()
-      ->id('custom_output')
-      ->options(
-          array(
-            'array_name' => 'SNP Array Name', 
-            'array_id' => 'SNP Array ID', 
-            'alias' => 'Alias', 
-            'allele'=> 'Allele', 
-            'location' => 'Location', 
-             'flanking_sequence' => 'Flanking Sequence'
-          )
-      )
-      ->groupBySelection('chado_search_snp_marker_search')
-  ); */
   $form->addSubmit();
   $form->addReset();
   $desc =
@@ -136,7 +121,7 @@ function chado_search_snp_marker_search_base_query() {
 // Define the result table
 function chado_search_snp_marker_search_table_definition () {
   $headers = array(      
-      'snp_name:s:chado_search_snp_marker_search_link_feature:snp_feature_id' => 'Name',
+      'snp_name:s:chado_search_link_feature:snp_feature_id' => 'Name',
       'array_name:s' => 'SNP Array Name',
       'array_id:s' => 'SNP Array ID',
       'alias:s' => 'Alias',
@@ -145,11 +130,6 @@ function chado_search_snp_marker_search_table_definition () {
       'flanking_sequence:s' => 'Flanking Sequence'
   );
   return $headers;
-}
-
-// Define call back to link the featuremap to its  node for result table
-function chado_search_snp_marker_search_link_feature ($feature_id) {
-  return chado_search_link_entity('feature', $feature_id);
 }
 
 // Define call back to link the location to GDR GBrowse

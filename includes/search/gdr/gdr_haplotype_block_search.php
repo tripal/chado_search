@@ -97,7 +97,7 @@ function chado_search_haplotype_block_search_form_submit ($form, &$form_state) {
 // Define the result table
 function chado_search_haplotype_block_search_table_definition () {
   $headers = array(
-      'haplotype_block:s:chado_search_haplotype_block_search_link_feature:hb_feature_id' => 'Haplotype Block',
+      'haplotype_block:s:chado_search_link_feature:hb_feature_id' => 'Haplotype Block',
       'location:s' => 'Location',
   );
   return $headers;

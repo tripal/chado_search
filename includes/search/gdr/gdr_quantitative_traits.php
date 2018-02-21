@@ -216,30 +216,15 @@ function chado_search_quantitative_traits_form_submit ($form, &$form_state) {
 // Define the result table
 function chado_search_quantitative_traits_table_definition () {
   $headers = array(      
-    'variety_name:s:chado_search_quantitative_traits_link_stock:stock_id' => 'Germplasm',
-    'organism:s:chado_search_quantitative_traits_link_organism:organism_id' => 'Species',
+    'variety_name:s:chado_search_link_stock:stock_id' => 'Germplasm',
+    'organism:s:chado_search_link_organism:organism_id' => 'Species',
     'all_traits:s' => 'All Traits',
     'value0:s' => 'Trait1',
     'value1:s' => 'Trait2',
     'value2:s' => 'Trait3',
-    'project_name:s:chado_search_quantitative_traits_link_project:project_id' => 'Dataset'
+    'project_name:s:chado_search_link_project:project_id' => 'Dataset'
   );
   return $headers;
-}
-
-// Define call back to link the featuremap to its  node for result table
-function chado_search_quantitative_traits_link_project ($project_id) {
-    return chado_search_link_entity('project', $project_id);
-}
-
-// Define call back to link the stock to its  node for the result table
-function chado_search_quantitative_traits_link_stock ($stock_id) {
-  return chado_search_link_entity('stock', $stock_id);
-}
-
-// Define call back to link the featuremap to its  node for the result table
-function chado_search_quantitative_traits_link_organism ($organism_id) {
-  return chado_search_link_entity('organism', $organism_id);
 }
 
 /*************************************************************

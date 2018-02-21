@@ -150,7 +150,7 @@ function chado_search_gene_search_form_submit ($form, &$form_state) {
 // Define the result table
 function chado_search_gene_search_table_definition () {
   $headers = array(
-    'name:s:chado_search_gene_search_link_feature:feature_id,name' => 'Name',
+    'name:s:chado_search_link_feature:feature_id' => 'Name',
     'organism:s' => 'Organism',
     'feature_type:s' => 'Type',
     'analysis:s' => 'Source',
@@ -162,18 +162,6 @@ function chado_search_gene_search_table_definition () {
     'gb_keyword:s' => 'GenBank'
   );
   return $headers;
-}
-
-// Define call back to link the featuremap to its  node for result table
-function chado_search_gene_search_link_feature ($var) {
-  $feature_id = $var[0];
-  $name = $var[1];
-  if ($feature_id) {
-    return chado_search_link_entity('feature', $feature_id);
-  }
-  else {
-    return '/feature/' . $name;
-  }
 }
 
 // Define call back to link the location to GDR GBrowse
