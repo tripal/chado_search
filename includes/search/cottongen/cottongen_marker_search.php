@@ -177,7 +177,7 @@ function chado_search_marker_search_table_definition () {
       'lg_uniquename:s:chado_search_marker_search_link_cmap:featuremap_id' => 'Linkage Group',
       'start:s' => 'Genetic Location',
       'landmark:s:chado_search_marker_search_link_landmark:landmark' => 'Genome Sequence Name',
-      'location:s:chado_search_marker_search_link_location:landmark,location,marker_uniquename' => 'Genomic Location'
+      'location:s:chado_search_link_jbrowse:landmark_feature_id,location' => 'Genomic Location'
   );
   return $headers;
 }
@@ -219,20 +219,6 @@ function chado_search_marker_search_link_landmark ($landmark) {
     return '/species/Gossypium_raimondii/jgi_genome_221';
   } else if (preg_match('/^Chr\d+$|^scaffold\d+-BGI-CGP_v1\.0/', $landmark)) {
     return '/species/Gossypium_raimondii/bgi-cgp_genome_v1.0';
-  } else {
-    return NULL;
-  }
-}
-
-// Define call back to link the location
-function chado_search_marker_search_link_location ($vars) {
-  $landmark = $vars[0];
-  $location = $vars[1];
-  $marker_uniquename = $vars[2];
-  if (preg_match('/^Chr\d+_JGI_v2\.0|^scaffold_\d+_JGI_v2\.0/', $landmark)) {
-    return "/gb/gbrowse/JGI_221_Dgenome/?name=$location&h_feat=$marker_uniquename";
-  } else if (preg_match('/^Chr\d+$|^scaffold\d+-BGI-CGP_v1\.0/', $landmark)) {
-    return "/gb/gbrowse/CGP_Dgenome/?name=$location&h_feat=$marker_uniquename";
   } else {
     return NULL;
   }
