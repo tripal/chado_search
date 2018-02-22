@@ -154,7 +154,7 @@ function chado_search_gene_search_table_definition () {
     'organism:s' => 'Organism',
     'feature_type:s' => 'Type',
     'analysis:s' => 'Source',
-    'location:s:chado_search_gene_search_link_gbrowse:srcfeature_id,location,analysis' => 'Location',
+    'location:s:chado_search_link_jbrowse:srcfeature_id,location' => 'Location',
     'blast_value:s' => 'BLAST',
     'interpro_value:s' => 'InterPro',
     'kegg_value:s' => 'KEGG',
@@ -162,72 +162,6 @@ function chado_search_gene_search_table_definition () {
     'gb_keyword:s' => 'GenBank'
   );
   return $headers;
-}
-
-// Define call back to link the location to GDR GBrowse
-function chado_search_gene_search_link_gbrowse ($paras) {
-  $srcfeature_id = $paras [0];
-  $loc = preg_replace("/ +/", "", $paras [1]);
-  if (!$srcfeature_id) {
-    $srcfeature = explode(':', $loc);
-    $srcfeature_id =
-    chado_query(
-        "SELECT feature_id FROM {feature} WHERE uniquename = :uniquename OR name = :uniquename",
-        array(':uniquename' =>$srcfeature[0]))
-        ->fetchField();
-  }
-  $ncbi = preg_match('/NCBI /', $paras[2]);
-  $sql = 
-    "SELECT A.name
-    FROM {feature} F
-    INNER JOIN {analysisfeature} AF ON F.feature_id = AF.feature_id
-    INNER JOIN {analysis} A ON A.analysis_id = AF.analysis_id
-    INNER JOIN {analysisprop} AP ON AP.analysis_id = A.analysis_id
-    INNER JOIN {cvterm} V ON V.cvterm_id = AP.type_id
-    WHERE
-    V.name = 'Analysis Type' AND
-    AP.value = 'whole_genome' AND
-    F.feature_id = :srcfeature_id";
-  $genome = $srcfeature_id ? chado_query($sql, array('srcfeature_id' => $srcfeature_id))->fetchField() : NULL;
-  $url = "";
-  if($genome == 'Fragaria vesca Whole Genome v1.0 (build 8) Assembly & Annotation') {
-    $ver = $ncbi ? 'v1.1' : 'v1.0';
-    $url = "https://www.rosaceae.org/gb/gbrowse/fragaria_vesca_$ver-lg?name=$loc&enable=NCBI%20Sequence%20Alignments";
-  }
-  else if ($genome == 'Fragaria vesca Whole Genome v1.1 Assembly & Annotation') {
-    $url = "https://www.rosaceae.org/gb/gbrowse/fragaria_vesca_v1.1-lg?name=$loc&enable=NCBI%20Sequence%20Alignments";
-  }
-  else if ($genome == 'Fragaria vesca Whole Genome v4.0.a1 Assembly & Annotation') {
-      $url = "https://www.rosaceae.org/jbrowse/index.html?data=data/fragaria/fvesca_v4.0.a1&loc=$loc";
-  }
-  else if ($genome == 'Prunus persica Whole Genome v1.0 Assembly & Annotation') {
-    $url = "https://www.rosaceae.org/gb/gbrowse/prunus_persica?name=$loc&enable=NCBI%20Sequence%20Alignments";
-  }
-  else if ($genome == 'Prunus persica Whole Genome Assembly v2.0 & Annotation v2.1 (v2.0.a1)') {
-    $url = "https://www.rosaceae.org/gb/gbrowse/prunus_persica_v2.0.a1?name=$loc&enable=NCBI%20Sequence%20Alignments";  
-  }
-  else if ($genome == 'Malus x domestica Whole Genome v1.0p Assembly & Annotation') {
-      $url = "https://www.rosaceae.org/gb/gbrowse/malus_x_domestica_v1.0-primary?name=$loc&enable=NCBI%20Sequence%20Alignments";
-  }
-  else if($genome == 'Malus x domestica Whole Genome v1.0 Assembly & Annotation') {
-      $url = "https://www.rosaceae.org/gb/gbrowse/malus_x_domestica?name=$loc&enable=NCBI%20Sequence%20Alignments";
-  }
-  else if ($genome == 'Pyrus communis Genome v1.0 Draft Assembly & Annotation') {
-    $url = "https://www.rosaceae.org/gb/gbrowse/pyrus_communis_v1.0?name=$loc&enable=NCBI%20Sequence%20Alignments";
-  }
-  else if ($genome == 'Rubus occidentalis Whole Genome Assembly v1.0 & Annotation v1') {
-    $url = "https://www.rosaceae.org/gb/gbrowse/rubus_occidentalis_v1.0.a1?name=$loc&enable=NCBI%20Sequence%20Alignments";
-  }
-  else if ($genome == 'Rubus occidentalis Whole Genome Assembly v1.1') {
-      $url = "https://www.rosaceae.org/jbrowse/index.html?data=data/rubus/roccidentalis_v1.1&loc=$loc";
-  }
-  else if ($genome == 'Prunus avium Whole Genome Assembly v1.0 & Annotation v1 (v1.0.a1)') {
-    $url = "https://www.rosaceae.org/jbrowse/index.html?data=data/prunus/pavium_v1.0.a1&loc=$loc";
-  }
-  else if($genome == 'Malus x domestica GDDH13 v1.1  Whole Genome Assembly & Annotation') {
-    $url = "https://www.rosaceae.org/jbrowse/index.html?data=data/malus/mdomestica_gddh13_v1.1&loc=$loc";
-  }
-  return chado_search_link_url ($url);
 }
 
 /*************************************************************

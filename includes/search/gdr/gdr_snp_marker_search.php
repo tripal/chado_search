@@ -126,47 +126,10 @@ function chado_search_snp_marker_search_table_definition () {
       'array_id:s' => 'SNP Array ID',
       'alias:s' => 'Alias',
       'allele:s' => 'Allele',
-      'location:s:chado_search_snp_marker_search_link_gbrowse:genome,location' => 'Location',
+      'location:s:chado_search_link_jbrowse:landmark_feature_id,location' => 'Location',
       'flanking_sequence:s' => 'Flanking Sequence'
   );
   return $headers;
-}
-
-// Define call back to link the location to GDR GBrowse
-function chado_search_snp_marker_search_link_gbrowse ($paras) {
-  $genome = $paras[0];
-  $loc = preg_replace("/ +/", "", $paras [1]);
-  $url = "";
-  if($genome == 'Fragaria vesca Whole Genome v1.0 (build 8) Assembly & Annotation') {
-    $url = "http://www.rosaceae.org/gb/gbrowse/fragaria_vesca_v1.0-lg?name=$loc&enable=NCBI%20Sequence%20Alignments";
-  }
-  else if ($genome == 'Fragaria vesca Whole Genome v1.1 Assembly & Annotation') {
-    $url = "http://www.rosaceae.org/gb/gbrowse/fragaria_vesca_v1.1-lg?name=$loc&enable=NCBI%20Sequence%20Alignments";
-  }
-  else if ($genome == 'Fragaria vesca Whole Genome v2.0.a1 Assembly & Annotation') {
-    //$url = "http://www.rosaceae.org/gb/gbrowse/fragaria_vesca_v2.0.a1/?name=$loc";
-    $url = "https://www.rosaceae.org/jbrowse/index.html?data=data/fragaria/fvesca_v2.0.a1&loc=$loc&tracks=DNA,genes,strawberry_90k_snp";
-  }
-  else if ($genome == 'Prunus persica Whole Genome v1.0 Assembly & Annotation') {
-    $url = "http://www.rosaceae.org/gb/gbrowse/prunus_persica?name=$loc&enable=IRSC_6K_cherry_SNP_array&enable=IRSC_9K_peach_SNP_array";
-  } 
-  else if ($genome == 'Prunus persica Whole Genome Assembly v2.0 & Annotation v2.1 (v2.0.a1)') {
-    //$url = "http://www.rosaceae.org/gb/gbrowse/prunus_persica_v2.0.a1?name=$loc&enable=NCBI%20Sequence%20Alignments";
-    $url = "https://www.rosaceae.org/jbrowse/index.html?data=data/prunus/ppersica_v2.0.a1&loc=$loc&tracks=DNA,genes,irsc_cherry_6k_snp,irsc_peach_9k_snp";
-  } 
-  else if ($genome == 'Malus x domestica Whole Genome v1.0p Assembly & Annotation') {
-      $url = "http://www.rosaceae.org/gb/gbrowse/malus_x_domestica_v1.0-primary?name=$loc&enable=NCBI%20Sequence%20Alignments";
-  } 
-  else if($genome == 'Malus x domestica Whole Genome v1.0 Assembly & Annotation') {
-      $url = "http://www.rosaceae.org/gb/gbrowse/malus_x_domestica?name=$loc&enable=NCBI%20Sequence%20Alignments";
-  } 
-  else if ($genome == 'Pyrus communis Genome v1.0 Draft Assembly & Annotation') {
-    $url = "http://www.rosaceae.org/gb/gbrowse/pyrus_communis_v1.0?name=$loc&enable=NCBI%20Sequence%20Alignments";
-  } 
-  else if ($genome == 'Rubus occidentalis Whole Genome Assembly v1.0 & Annotation v1') {
-    $url = "http://www.rosaceae.org/gb/gbrowse/rubus_occidentalis_v1.0.a1?name=$loc&enable=NCBI%20Sequence%20Alignments";
-  }
-  return chado_search_link_url ($url);
 }
 
 function chado_search_snp_marker_search_rewrite_column_alias ($val) {
