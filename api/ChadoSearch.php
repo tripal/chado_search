@@ -134,6 +134,7 @@ class ChadoSearch {
    * $customFasta - the function to call to modified the SQL for Fasta download. This function will be passed with the current SQL (i.e. $sql variable) and should return the modified version of SQL which retrieves all 'feature_id' for the download
    * $showDownload - add download links to the up right conner of the table
    * $showPager - add pager to the bottom right conner of the table
+   * $hideNullColumns - hide columns that contains only NULL values
   */ 
   // Main Result
   public function createResult (&$form_state, $conf) {
@@ -162,6 +163,7 @@ class ChadoSearch {
       $customFasta = $conf->getCustomFasta();
       $showDownload = $conf->getShowDownload();
       $showPager = $conf->getShowPager();
+      $hideNullColumns = $conf->getHideNullColumns();
       
       $search_id = $this->search_id;
       
@@ -202,6 +204,26 @@ class ChadoSearch {
           $headers[$field] = $field;
         }
         SessionVar::setSessionVar($search_id, 'default-headers', $headers);
+      }
+      
+      // Hide columns that contain only NULL values
+      $nullCols = array();
+      foreach ($headers AS $key => $value) {
+        $token_key = explode(':', $key);
+        $nullCols [] = $token_key[0];
+      }
+      if ($hideNullColumns) {
+        $results = chado_query($sql);
+        while ($row = $results->fetchObject()) {
+          foreach ($nullCols AS $id => $colname) {
+            if ($row->$colname) {
+              unset ($nullCols[$id]);
+            }
+          } 
+        }
+        foreach ($nullCols AS $nc) {
+          $disableCols .= ";$nc";
+        }
       }
       
       // Customize output with DISTINCT in statement for selected columns

@@ -17,6 +17,16 @@ function chado_search_drush_command() {
       ),
       'aliases' => array('csreload'),
   );
+  $items['cs-run'] = array(
+    'description' => dt('Call \'chado_search_<search_id>_drush_run\' function defined in any search.'),
+    'arguments'   => array(
+    ),
+    'examples' => array(
+      'Standard example (reload settings)' => 'drush cs-run',
+      'Using command alias' => 'drush csrun',
+    ),
+    'aliases' => array('csrun'),
+  );
   return $items;
 }
 
@@ -36,4 +46,15 @@ function drush_chado_search_cs_settings_reload() {
   }
   // Update Drupal menus
   menu_rebuild();
+}
+
+function drush_chado_search_cs_run() {
+  $searches = chado_search_get_enabled_searches();
+  foreach ($searches AS $search) {
+    require_once $search['file'];
+    $func = 'chado_search_' . $search['id'] . '_drush_run';
+    if (function_exists($func)) {
+      $func();
+    }
+  }
 }

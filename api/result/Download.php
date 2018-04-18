@@ -151,12 +151,12 @@ class Download extends Source {
     // If there is a custom function call, pass in $handle and $result for it to modify output
     $custom_function = isset($_POST['custom_function_call']) ? $_POST['custom_function_call'] : NULL;
     if ($custom_function) {
-      $custom_function($handle, $result, $sql, $total_items, $progress_var);
+      $custom_function($handle, $result, $sql, $total_items, $progress_var, $headers);
     } else {
-      fwrite($handle, "#,");
+      fwrite($handle, "\"#\",");
       $col = 0;
       foreach ($headers AS $k => $v) {
-        fwrite($handle, $v);
+        fwrite($handle, "\"". $v . "\"");
         $col ++;
         if ($col < count($headers)) {
           fwrite($handle, ",");

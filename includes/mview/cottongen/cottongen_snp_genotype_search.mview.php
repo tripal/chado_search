@@ -156,7 +156,7 @@ function chado_search_create_snp_genotype_location_mview() {
   --- Get project sub_type
     INNER JOIN (SELECT * FROM projectprop PP WHERE type_id = (SELECT cvterm_id FROM cvterm WHERE name = 'sub_type' AND cv_id = (SELECT cv_id FROM cv WHERE name = 'MAIN'))) SUBTYPE ON SUBTYPE.project_id = P.project_id
   --- Get genome location
-      LEFT JOIN
+      INNER JOIN
         (SELECT
            max(FL.feature_id) AS feature_id,
            max(srcfeature_id) AS srcfeature_id,

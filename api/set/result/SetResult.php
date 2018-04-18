@@ -20,6 +20,7 @@ class SetResult {
   private $customFasta = NULL;
   private $showDownload = TRUE;
   private $showPager = TRUE;
+  private $hideNullColumns = FALSE;
   
   /**
    * Setters
@@ -95,6 +96,11 @@ class SetResult {
     return $this;
   }
   
+  public function hideNullColumns () {
+    $this->hideNullColumns = TRUE;
+    return $this;
+  }
+  
   public function execute($form, &$form_state) {
     $search_id = $form['#search_id'];
     $url = $form['#search_url'];
@@ -162,4 +168,7 @@ class SetResult {
     return $this->showPager;
   }
   
+  public function getHideNullColumns () {
+    return $this->hideNullColumns;
+  }
 }
