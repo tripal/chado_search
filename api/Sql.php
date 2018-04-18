@@ -86,4 +86,9 @@ class Sql {
     return Statement::pairConditions($arr1, $arr2, $concatbyOR);
   }
   
+  // At least one of specified columns can not be NULL
+  // Returns (col1 IS NOT NULL OR col2 IS NOT NULL OR col3 IS NOT NULL...)
+  static function notNullCols ($columns) {
+    return Statement::notNullCols($columns);
+  }
 }

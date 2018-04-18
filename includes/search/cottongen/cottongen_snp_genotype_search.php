@@ -20,7 +20,7 @@ function chado_search_snp_genotype_search_form ($form) {
       ->title('Dataset')
       ->column('project_name')
       ->table('chado_search_snp_genotype_cache')
-      ->cache(FALSE)
+      ->cache(TRUE)
       ->labelWidth(140)
       ->newLine()
   );
@@ -31,7 +31,7 @@ function chado_search_snp_genotype_search_form ($form) {
       ->column('organism')
       ->table('chado_search_snp_genotype_cache')
       ->multiple(TRUE)
-      ->cache(FALSE)
+      ->cache(TRUE)
       ->labelWidth(140)
       ->newLine()
   );
@@ -121,17 +121,16 @@ function chado_search_snp_genotype_search_form_submit ($form, &$form_state) {
   // Add conditions
   $where [] = Sql::selectFilter('project_name', $form_state, 'project_name');
   $where [] = Sql::textFilter('feature_uniquename', $form_state, 'feature_uniquename');
-
-  $disableCols = "";
-  if ($form_state['values']['stock_uniquename'] && !in_array('0', $form_state['values']['stock_uniquename'])) {
-    $stocks = variable_get('chado_search_snp_genotype_search_stocks');    
-    $sel_stocks = is_array($form_state['values']['stock_uniquename']) ? $form_state['values']['stock_uniquename'] : array($form_state['values']['stock_uniquename']);
-    foreach ($stocks AS $id => $s) {
-      if (!in_array($s, $sel_stocks)) {
-        $disableCols .= "s$id;";
-      }
+  $allStocks = variable_get('chado_search_snp_genotype_search_stocks');
+  $selStocks = $form_state['values']['stock_uniquename'];
+  $notNullStocks = array();
+  foreach ($selStocks AS $s) {
+    $id = array_search($s, $allStocks);
+    if ($id !== FALSE) {
+      $notNullStocks [] = "s$id";
     }
   }
+  $where [] = Sql::notNullCols($notNullStocks);
   
 /*
   $where [] = Sql::selectFilter('organism', $form_state, 'organism');   
@@ -153,13 +152,14 @@ function chado_search_snp_genotype_search_form_submit ($form, &$form_state) {
   if($con != " WHERE ") {
     $where [] = "feature_id IN (SELECT feature_id FROM {chado_search_snp_genotype_location} $con)";
   } */
+
   Set::result()
     ->sql($sql)
     ->tableDefinitionCallback('chado_search_snp_genotype_search_table_definition')
     ->where($where)
     ->disableCols($disableCols)
-    ->hideNullColumns()
     ->customDownload(array('chado_search_snp_genotype_search_download_polymorphic' => 'Table (Polymorphic)'))
+    ->hideNullColumns()
     ->execute($form, $form_state);
 }
 
@@ -265,9 +265,7 @@ function chado_search_snp_genotype_cache_mview() {
              feature_name varchar(510),
              feature_uniquename text,
              project_id integer,
-             project_name varchar(255),
-             organism_id integer,
-             organism varchar(510)";
+             project_name varchar(255)";
         foreach ($stocks AS $id => $s) {
           $sql .= ', s' .  $id . ' varchar(255)';
         }
@@ -298,8 +296,6 @@ function chado_search_snp_genotype_search_drush_run() {
                 feature_uniquename,
                 project_id,
                 project_name,
-                organism_id,
-                organism,
                 $col)
               VALUES (
                 $r->feature_id,
@@ -307,8 +303,6 @@ function chado_search_snp_genotype_search_drush_run() {
                 '$r->feature_uniquename',
                 $r->project_id,
                 '$r->project_name',
-                $r->organism_id,
-                '$r->organism',
                 '$r->genotype'
               )";
       }

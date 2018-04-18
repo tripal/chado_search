@@ -50,4 +50,18 @@ class Statement {
     }
     return $conditions;
   }
+  
+  // At least one of specified columns can not be NULL
+  // Returns (col1 IS NOT NULL OR col2 IS NOT NULL OR col3 IS NOT NULL...)
+  public static function notNullCols ($columns) {
+    $conditions = "";
+    if (is_array($columns) && count($columns) > 0) {
+      $conditions .= "(" . $columns[0] . " IS NOT NULL";
+      for ($i = 1; $i < count($columns); $i ++) {
+        $conditions .= " OR " . $columns[$i] . " IS NOT NULL";
+      }
+      $conditions .= ")";
+    }
+    return $conditions;
+  }
 }
