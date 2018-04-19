@@ -8,7 +8,6 @@ use ChadoSearch\Sql;
  */
 // Search form
 function chado_search_snp_genotype_search_form ($form) {
-  chado_search_snp_genotype_cache_mview();
   $form->addTabs(
       Set::tab()
       ->id('snp_genotype_tabs')
@@ -269,7 +268,7 @@ function chado_search_snp_genotype_cache_mview() {
         foreach ($stocks AS $id => $s) {
           $sql .= ', s' .  $id . ' varchar(255)';
         }
-        $sql .= ", CONSTRAINT feature_id_uniq UNIQUE(feature_id))";
+        $sql .= ", CONSTRAINT feature_project_uniq UNIQUE(feature_id, project_id))";
         chado_query($sql);
       }
     }
@@ -277,6 +276,8 @@ function chado_search_snp_genotype_cache_mview() {
 }
 
 function chado_search_snp_genotype_search_drush_run() {
+  print "Checking MView chado_search_snp_genotype_cache...";
+  chado_search_snp_genotype_cache_mview();
   print "Populating chado_search_snp_genotype_cache...";
   $exist_search = chado_table_exists('chado_search_snp_genotype_search');
   $exist_cache = chado_table_exists('chado_search_snp_genotype_cache');
@@ -285,7 +286,10 @@ function chado_search_snp_genotype_search_drush_run() {
     $sql = "SELECT * FROM {chado_search_snp_genotype_search}";
     $results = chado_query($sql);
     while ($r = $results->fetchObject()) {
-      $exists = chado_query("SELECT feature_id FROM {chado_search_snp_genotype_cache} WHERE feature_id = :feature_id", array(':feature_id' => $r->feature_id))->fetchField();
+      $exists = 
+        chado_query(
+          "SELECT feature_id, project_id FROM {chado_search_snp_genotype_cache} WHERE feature_id = :feature_id AND project_id = :project_id", 
+          array(':feature_id' => $r->feature_id, ':project_id' => $r->project_id))->fetchField();
       $col = 's' . $r->stock_id;
       // Insert if not exist
       if (!$exists) {
@@ -312,6 +316,7 @@ function chado_search_snp_genotype_search_drush_run() {
         "UPDATE {chado_search_snp_genotype_cache}
               SET $col = '$r->genotype'
               WHERE feature_id = $r->feature_id
+              AND project_id = $r->project_id
             ";
       }
       chado_query($sql);
