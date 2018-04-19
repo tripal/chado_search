@@ -131,7 +131,7 @@ class Table extends Source {
       foreach ($headers AS $k => $v) {
         $key = explode(":", $k);
         $col = $key[0]; // column name
-        $value = $obj->$col; // column value
+        $value = property_exists($obj, $col) ? $obj->$col : ''; // column value
         if (key_exists($col, $rewriteCallback)) {
           $rwfunc = $rewriteCallback[$col];
           $value = $rwfunc($value);

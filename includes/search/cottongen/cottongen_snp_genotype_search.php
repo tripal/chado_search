@@ -115,21 +115,31 @@ function chado_search_snp_genotype_search_form ($form) {
 // Submit the form
 function chado_search_snp_genotype_search_form_submit ($form, &$form_state) {
   // Get base sql
-  $sql = chado_search_snp_genotype_search_base_query();
+  $sql = "SELECT * FROM {chado_search_snp_genotype_cache}";
+  $disableCols = "";
+  
+  $selStocks = $form_state['values']['stock_uniquename'];
+  $notNullStocks = array();
+  if (!key_exists('0', $selStocks)) {
+    $allStocks = variable_get('chado_search_snp_genotype_search_stocks');
+    $select = "feature_id, feature_name, allele";
+    foreach ($selStocks AS $s) {
+      $id = array_search($s, $allStocks);
+      if ($id !== FALSE) {
+        $notNullStocks [] = "s$id";
+        $select .= ", s$id";
+      }
+    }
+    if ($select != "feature_id, feature_name, allele") {
+      $sql = "SELECT $select FROM {chado_search_snp_genotype_cache}";
+    }
+  }
   
   // Add conditions
   $where [] = Sql::selectFilter('project_name', $form_state, 'project_name');
   $where [] = Sql::textFilter('feature_uniquename', $form_state, 'feature_uniquename');
-  $allStocks = variable_get('chado_search_snp_genotype_search_stocks');
-  $selStocks = $form_state['values']['stock_uniquename'];
-  $notNullStocks = array();
-  foreach ($selStocks AS $s) {
-    $id = array_search($s, $allStocks);
-    if ($id !== FALSE) {
-      $notNullStocks [] = "s$id";
-    }
-  }
-  $where [] = Sql::notNullCols($notNullStocks);
+  // make sure essential columns are NOT NULL
+  $where [] = Sql::notNullCols($notNullStocks); 
   
 /*
   $where [] = Sql::selectFilter('organism', $form_state, 'organism');   
@@ -163,15 +173,6 @@ function chado_search_snp_genotype_search_form_submit ($form, &$form_state) {
 }
 
 /*************************************************************
- * SQL
-*/
-// Define query for the base table. Do not include the WHERE clause
-function chado_search_snp_genotype_search_base_query() {
-  $query = "SELECT * FROM {chado_search_snp_genotype_cache}";
-  return $query;
-}
-
-/*************************************************************
  * Build the search result table
 */
 // Define the result table
@@ -179,6 +180,7 @@ function chado_search_snp_genotype_search_table_definition () {
   $stocks = variable_get('chado_search_snp_genotype_search_stocks');
   $headers = array(
     'feature_name:s:chado_search_link_feature:feature_id' => 'Marker',
+    'allele:s' => 'Allele',
   );
   foreach ($stocks AS $id => $s) {
     $headers['s' . $id . ':s'] = $s;

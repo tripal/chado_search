@@ -207,20 +207,27 @@ class ChadoSearch {
       }
       
       // Hide columns that contain only NULL values
-      $nullCols = array();
-      foreach ($headers AS $key => $value) {
-        $token_key = explode(':', $key);
-        $nullCols [] = $token_key[0];
-      }
       if ($hideNullColumns) {
+        $nullCols = array();
+        foreach ($headers AS $key => $value) {
+          $token_key = explode(':', $key);
+          $nullCols [] = $token_key[0];
+        }
         $results = chado_query($sql);
         while ($row = $results->fetchObject()) {
           foreach ($nullCols AS $id => $colname) {
-            if ($row->$colname) {
+            // disable columns that are not in the SELECT statement & unset them from $nullCols
+            if (!property_exists($row, $colname)) {
+              unset ($nullCols[$id]);
+              $disableCols .= ";$colname";
+            }
+            // unset columns that have values from $nullCols
+            else if ($row->$colname) {
               unset ($nullCols[$id]);
             }
           } 
         }
+        // disable NULL columns
         foreach ($nullCols AS $nc) {
           $disableCols .= ";$nc";
         }
