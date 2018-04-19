@@ -18,7 +18,7 @@ function chado_search_snp_genotype_search_form ($form) {
       ->id('project_name')
       ->title('Dataset')
       ->column('project_name')
-      ->table('chado_search_snp_genotype_cache')
+      ->table('chado_search_snp_genotype_search')
       ->cache(TRUE)
       ->labelWidth(140)
       ->newLine()
@@ -28,7 +28,7 @@ function chado_search_snp_genotype_search_form ($form) {
       ->id('organism')
       ->title('Species')
       ->column('organism')
-      ->table('chado_search_snp_genotype_cache')
+      ->table('chado_search_snp_genotype_search')
       ->multiple(TRUE)
       ->cache(TRUE)
       ->labelWidth(140)
@@ -264,7 +264,8 @@ function chado_search_snp_genotype_cache_mview() {
              feature_name varchar(510),
              feature_uniquename text,
              project_id integer,
-             project_name varchar(255)";
+             project_name varchar(255),
+             allele text";
         foreach ($stocks AS $id => $s) {
           $sql .= ', s' .  $id . ' varchar(255)';
         }
@@ -276,7 +277,7 @@ function chado_search_snp_genotype_cache_mview() {
 }
 
 function chado_search_snp_genotype_search_drush_run() {
-  print "Checking MView chado_search_snp_genotype_cache...";
+  print "Checking MView chado_search_snp_genotype_cache...\n";
   chado_search_snp_genotype_cache_mview();
   print "Populating chado_search_snp_genotype_cache...";
   $exist_search = chado_table_exists('chado_search_snp_genotype_search');
@@ -300,6 +301,7 @@ function chado_search_snp_genotype_search_drush_run() {
                 feature_uniquename,
                 project_id,
                 project_name,
+                allele,
                 $col)
               VALUES (
                 $r->feature_id,
@@ -307,6 +309,7 @@ function chado_search_snp_genotype_search_drush_run() {
                 '$r->feature_uniquename',
                 $r->project_id,
                 '$r->project_name',
+                '$r->allele',
                 '$r->genotype'
               )";
       }
