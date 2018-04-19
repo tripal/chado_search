@@ -11,6 +11,7 @@ class SetDynamicSelectFilter extends SetElement {
   private $cacheTable = '';
   private $cacheColumns = array();
   private $reset_on_change_id;
+  private $multiple = FALSE;
   
   /**
    * Setters
@@ -47,6 +48,11 @@ class SetDynamicSelectFilter extends SetElement {
     return $this;
   }
   
+  public function multiple ($multiple) {
+    $this->multiple = $multiple;
+    return $this;
+  }
+  
   /**
    * Getters
    */
@@ -76,5 +82,9 @@ class SetDynamicSelectFilter extends SetElement {
   
   public function getResetOnChange() {
     return $this->reset_on_change_id;
+  }
+  
+  public function getMultiple () {
+    return $this->multiple;
   }
 }

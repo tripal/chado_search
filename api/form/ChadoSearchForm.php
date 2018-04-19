@@ -306,6 +306,7 @@ class ChadoSearchForm {
     $f->cacheTable = $conf->getCacheTable();
     $f->cacheColumns = $conf->getCacheColumns();
     $f->reset_on_change_id = $conf->getResetOnChange();
+    $f->multiple = $conf->getMultiple();
     $f->attach($this->form, $this->form_state);
   }
   

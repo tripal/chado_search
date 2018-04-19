@@ -13,6 +13,7 @@ class DynamicSelectFilter extends Filter {
   public $cacheTable;
   public $cacheColumns;
   public $reset_on_change_id;
+  public $multiple;
   
   public function setForm (&$form, &$form_state) {
     $search_name = $this->search_name;
@@ -65,6 +66,7 @@ class DynamicSelectFilter extends Filter {
     $id_label = $id . '_label';
     $title = $this->title;
     $depend_on_id = $this->depend_on_id;
+    $multiple = $this->multiple;
     $width = '';
     if ($this->label_width) {
       $width = "style=\"width:" . $this->label_width ."px\"";
@@ -121,7 +123,7 @@ class DynamicSelectFilter extends Filter {
     }
     if (function_exists($callback)) {
       //$selected_value = is_array($selected) ? array_shift($selected) : $selected; //deprecated. this only allows one selection
-      $this->csform->addSelect(Set::select()->id($id)->options($opt)->size($size));
+      $this->csform->addSelect(Set::select()->id($id)->options($opt)->multiple($multiple)->size($size));
       $form[$id]['#prefix'] =
         "<div id=\"chado_search-filter-$search_name-$id-field\" class=\"chado_search-filter-field chado_search-widget\">";
       $form[$id]['#suffix'] =
