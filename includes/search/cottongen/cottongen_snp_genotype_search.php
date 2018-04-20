@@ -59,39 +59,57 @@ function chado_search_snp_genotype_search_form ($form) {
   );
   // Restricted by Location
   $form->addSelectFilter(
-      Set::selectFilter()
-      ->id('genome')
-      ->title('Genome')
-      ->column('genome')
-      ->table('chado_search_snp_genotype_location')
-      ->disable(array('Malus x domestica Whole Genome v1.0 Assembly & Annotation'))
-      ->cache(TRUE)
-      ->labelWidth(140)
-      ->newLine()
-      );
-   $form->addDynamicSelectFilter(
-      Set::dynamicSelectFilter()
-      ->id('location')
-      ->title('Chr/Scaffold')
-      ->dependOnId('genome')
-      ->callback('chado_search_snp_genotype_search_ajax_location')
-      ->labelWidth(140)
-      ); 
+    Set::selectFilter()
+    ->id('genome')
+    ->title('Genome')
+    ->column('genome')
+    ->table('chado_search_snp_genotype_location')
+    ->disable(array('Malus x domestica Whole Genome v1.0 Assembly & Annotation'))
+    ->cache(TRUE)
+    ->labelWidth(140)
+    ->newLine()
+  );
+  $form->addDynamicSelectFilter(
+    Set::dynamicSelectFilter()
+    ->id('location')
+    ->title('Chr/Scaffold')
+    ->dependOnId('genome')
+    ->callback('chado_search_snp_genotype_search_ajax_location')
+    ->labelWidth(140)
+  );
   $form->addBetweenFilter(
-      Set::betweenFilter()
-      ->id('fmin')
-      ->title("between")
-      ->id2('fmax')
-      ->title2("and")
-      ->labelWidth2(50)
-      ->size(10)
-      );
+    Set::betweenFilter()
+    ->id('fmin')
+    ->title("between")
+    ->id2('fmax')
+    ->title2("and")
+    ->labelWidth2(50)
+    ->size(10)
+  );
   $form->addMarkup(
-      Set::markup()
-      ->id('location_unit')
-      ->text("<strong>bp</strong>")
-      ->newLine()
-      );
+    Set::markup()
+    ->id('location_unit')
+    ->text("<strong>bp</strong>")
+    ->newLine()
+  );
+  $form->addLabeledFilter(
+    Set::LabeledFilter()
+    ->id('gene_model')
+    ->title('Gene Model')
+  );
+  $form->addLabeledFilter(
+  Set::LabeledFilter()
+    ->id('range')
+    ->title('+/-')
+    ->labelWidth(30)
+  );
+  $form->addMarkup(
+    Set::markup()
+    ->id('range_unit')
+    ->text("<strong>bp</strong>")
+    ->newLine()
+  );
+  
   $form->addSubmit();
   $form->addReset();
   $desc = "Search SNP Genotype is a page where users can search for the SNP genotyope 
@@ -109,6 +127,33 @@ function chado_search_snp_genotype_search_form ($form) {
       ->description($desc)
   );
   return $form;
+}
+
+// Validate the form
+function chado_search_snp_genotype_search_form_validate (&$form, &$form_state) {
+  
+  $gene_model = $form_state['values']['gene_model'];
+  if ($gene_model) {
+    $sql = "SELECT feature_id FROM {feature} WHERE lower(name) = :name OR lower(uniquename) = :uniquename";
+    $feature_id = chado_query($sql, array(":name" => strtolower($gene_model), ":uniquename" => strtolower($gene_model)))->fetchField();
+    if (!$feature_id) {
+      form_set_error('gene_model', t('Gene model not found.'));
+    }
+    $sql = "SELECT srcfeature_id, fmin, fmax FROM {featureloc} WHERE feature_id = :feature_id";
+    $alignment = chado_query($sql, array(":feature_id" => $feature_id))->fetchObject();
+    if (!$alignment) {
+      form_set_error('gene_model', t('Gene model\'s position not available.'));
+    }
+    $form_state['values']['srcfeature_id'] = $alignment->srcfeature_id;
+    if ($form_state['values']['range']) {
+      $form_state['values']['srcfmin'] = $alignment->fmin - $form_state['values']['range'];
+      $form_state['values']['srcfmax'] = $alignment->fmax + $form_state['values']['range'];
+    }
+    else {
+      $form_state['values']['srcfmin'] = $alignment->fmin;
+      $form_state['values']['srcfmax'] = $alignment->fmax;
+    }
+  }
 }
 
 // Submit the form
@@ -174,10 +219,14 @@ function chado_search_snp_genotype_search_form_submit ($form, &$form_state) {
   $where [] = Sql::textFilter('feature_uniquename', $form_state, 'feature_uniquename');
   $where [] = Sql::notNullCols($notNullStocks); // Remove all NULL stock rows
   
-/*
+  // Filter the genome position
   $sub [] = Sql::selectFilter('genome', $form_state, 'genome');
   $sub [] = Sql::selectFilter('location', $form_state, 'landmark');
   $sub [] = Sql::betweenFilter('fmin', 'fmax', $form_state, 'fmin', 'fmax');
+  if (isset($form_state['values']['srcfeature_id'])) {
+    $sub [] = "landmark_feature_id = " . $form_state['values']['srcfeature_id'];
+    $sub [] = "fmin >= " . $form_state['values']['srcfmin'] . " AND fmax <= " . $form_state['values']['srcfmax'];
+  }
   $con = " WHERE ";
   for ($i = 0; $i < count($sub); $i ++) {
     if ($sub[$i] != "") {
@@ -188,8 +237,8 @@ function chado_search_snp_genotype_search_form_submit ($form, &$form_state) {
     }
   }
   if($con != " WHERE ") {
-    $where [] = "feature_id IN (SELECT feature_id FROM {chado_search_snp_genotype_location} $con)";
-  } */
+    $where [] = "GL.feature_id IN (SELECT feature_id FROM {chado_search_snp_genotype_location} $con)";
+  }
 
   Set::result()
     ->sql($sql)
@@ -307,7 +356,7 @@ function chado_search_snp_genotype_search_download_polymorphic ($handle, $result
  * Check cache MView and populate its data when 'drush csrun' is issued
  */
 function chado_search_snp_genotype_search_drush_run() {
-  print "Checking MView chado_search_snp_genotype_cache...\n";
+  print "Checking Required MViews...\n";
   chado_search_snp_genotype_cache_mview();
   print "Populating chado_search_snp_genotype_cache...";
   $exist_search = chado_table_exists('chado_search_snp_genotype_search');
@@ -329,6 +378,8 @@ function chado_search_snp_genotype_search_drush_run() {
                (feature_id,
                 feature_name,
                 feature_uniquename,
+                srcfeature_id,
+                location,
                 project_id,
                 project_name,
                 allele,
@@ -337,6 +388,8 @@ function chado_search_snp_genotype_search_drush_run() {
                 $r->feature_id,
                 '$r->feature_name',
                 '$r->feature_uniquename',
+                (SELECT first(landmark_feature_id) FROM (SELECT * FROM {chado_Search_snp_genotype_location} WHERE feature_id = $r->feature_id ORDER BY char_length(landmark), landmark) T),
+                (SELECT first(location) FROM (SELECT * FROM {chado_Search_snp_genotype_location} WHERE feature_id = $r->feature_id ORDER BY char_length(landmark), landmark) T),
                 $r->project_id,
                 '$r->project_name',
                 '$r->allele',
@@ -395,7 +448,9 @@ function chado_search_snp_genotype_cache_mview() {
   $exist_search = chado_table_exists('chado_search_snp_genotype_search');
   $exist_cache = chado_table_exists('chado_search_snp_genotype_cache');
   $exist_cache_project = chado_table_exists('chado_search_snp_genotype_cache_project');
+  
   if ($exist_search) {
+    // if chado_search_snp_genotype_cache not exists, create it
     if (!$exist_cache) {
       $stocks = chado_search_snp_genotype_cache_get_stocks();
       if (count($stocks != 0)) {
@@ -406,6 +461,8 @@ function chado_search_snp_genotype_cache_mview() {
              feature_id integer,
              feature_name varchar(510),
              feature_uniquename text,
+             srcfeature_id integer,
+             location varchar(510),
              project_id integer,
              project_name varchar(255),
              allele text";
@@ -416,13 +473,47 @@ function chado_search_snp_genotype_cache_mview() {
         chado_query($sql);
       }
     }
+    
+    // if chado_search_snp_genotype_cache_project not exists, create it
     if (!$exist_cache_project) {
-      print "Checking MView chado_search_snp_genotype_cache_project...\n";
+      print "Create MView chado_search_snp_genotype_cache_project...\n";
       $sql = 
       "SELECT DISTINCT project_name, organism, stock_uniquename 
        INTO {chado_search_snp_genotype_cache_project} 
        FROM {chado_search_snp_genotype_search}";
       chado_query($sql);
+    }
+    
+    // if chado_search_snp_genotype_cache already exists, check if there are new stocks. 
+    // If there are, add them as new columns to chado_search_snp_genotype_cache AND
+    // add them as new rows to chado_search_snp_genotype_cache_project, 
+    // vice versa for stocks that no longer exist 
+    if ($exist_cache) {
+      print "Checking new stocks...\n";
+      $before_stocks = variable_get('chado_search_snp_genotype_search_stocks');
+      $after_stocks = chado_search_snp_genotype_cache_get_stocks();
+      $only_before = array_diff_key($before_stocks, $after_stocks);
+      $only_after = array_diff_key($after_stocks, $before_stocks);
+      // Remove stock columns that no longer exist. Also remove those stocks from the 'project_cache'
+      if (count($only_before) != 0) {
+        print "Remove stock data that no longer exist...\n";
+        foreach($only_before AS $id => $name) {
+          $sql = "ALTER TABLE {chado_search_snp_genotype_cache} DROP COLUMN s$id IF EXISTS";
+          chado_query($sql);
+          $sql = "DELETE FROM {chado_search_snp_genotype_cache_project} WHERE stock_uniquename = '$name'";
+          chado_query($sql);
+        }
+      }
+      // Add new stock columns. Also add new rows to the 'project_cache'
+      if (count($only_after) != 0) {
+        print "Add new stock data...\n";
+        foreach($only_after AS $id => $name) {
+          $sql = "ALTER TABLE {chado_search_snp_genotype_cache} ADD COLUMN s$id";
+          chado_query($sql);
+          $sql = "INSERT INTO {chado_search_snp_genotype_cache_project} (project_name, organism, stock_uniquename) (SELECT DISTINCT project_name, organism, stock_uniquename FROM {chado_search_snp_genotype_search} WHERE stock_id = $id )";
+          chado_query($sql);
+        }
+      }
     }
   }
 }

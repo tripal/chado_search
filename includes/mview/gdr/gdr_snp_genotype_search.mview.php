@@ -13,12 +13,6 @@ function chado_search_create_snp_genotype_search_mview() {
         'type' => 'varchar',
         'length' => '255'
       ),
-      'pub_id' => array(
-        'type' => 'int'
-      ),
-      'citation' => array(
-        'type' => 'text'
-      ),
       'organism_id' => array(
         'type' => 'int'
       ),
@@ -46,7 +40,7 @@ function chado_search_create_snp_genotype_search_mview() {
       'feature_uniquename' => array(
         'type' => 'text'
       ),
-      'filename' => array(
+      'allele' => array(
         'type' => 'text'
       ),
       'genotype' => array (
@@ -59,8 +53,6 @@ function chado_search_create_snp_genotype_search_mview() {
     SELECT
       P.project_id,
       P.name AS project_name,
-      PUB.pub_id,
-      PUB.uniquename AS citation,
       S.organism_id,
       (SELECT genus || ' ' || species FROM organism WHERE organism_id = S.organism_id) AS species,
       S.stock_id,
@@ -69,15 +61,12 @@ function chado_search_create_snp_genotype_search_mview() {
       F.feature_id,
       F.name AS feature_name,
       F.uniquename AS feature_uniquenaem,
-      FL.value AS filename,
+  --- Select Allele
+      (SELECT value FROM featureprop WHERE feature_id = F.feature_id AND type_id = (SELECT cvterm_id FROM cvterm WHERE name = 'SNP' AND cv_id = (SELECT cv_id FROM cv WHERE name = 'sequence'))) AS allele,
   --- Select genotype
       (SELECT description FROM genotype WHERE genotype_id = GC.genotype_id) AS genotype
     FROM genotype_call GC
     INNER JOIN project P ON P.project_id = GC.project_id
-    LEFT JOIN (
-      SELECT DISTINCT project_id, P.pub_id, uniquename FROM project_pub PP 
-      INNER JOIN pub P ON PP.pub_id = P.pub_id
-    ) PUB ON P.project_id = PUB.project_id
     INNER JOIN feature F ON F.feature_id = GC.feature_id
     INNER JOIN stock S ON S.stock_id = GC.stock_id
   --- Get project type
@@ -86,9 +75,7 @@ function chado_search_create_snp_genotype_search_mview() {
     INNER JOIN (SELECT * FROM projectprop PP WHERE type_id = (SELECT cvterm_id FROM cvterm WHERE name = 'sub_type' AND cv_id = (SELECT cv_id FROM cv WHERE name = 'MAIN'))) SUBTYPE ON SUBTYPE.project_id = P.project_id
   --- Get permission
     INNER JOIN (SELECT * FROM projectprop PP WHERE type_id = (SELECT cvterm_id FROM cvterm WHERE name = 'permission' AND cv_id = (SELECT cv_id FROM cv WHERE name = 'MAIN'))) PERM ON PERM.project_id = P.project_id
-  --- Get filename
-    LEFT JOIN (SELECT * FROM projectprop PP WHERE type_id = (SELECT cvterm_id FROM cvterm WHERE name = 'filename' AND cv_id = (SELECT cv_id FROM cv WHERE name = 'MAIN'))) FL ON FL.project_id = P.project_id 
- --- Restrict to SNP genotyping public projects
+--- Restrict to SNP genotyping public projects
     WHERE 
       PTYPE.value = 'genotyping'
     AND
@@ -168,7 +155,7 @@ function chado_search_create_snp_genotype_location_mview() {
   --- Get permission
     INNER JOIN (SELECT * FROM projectprop PP WHERE type_id = (SELECT cvterm_id FROM cvterm WHERE name = 'permission' AND cv_id = (SELECT cv_id FROM cv WHERE name = 'MAIN'))) PERM ON PERM.project_id = P.project_id
   --- Get genome location
-      LEFT JOIN
+      INNER JOIN
         (SELECT
            max(FL.feature_id) AS feature_id,
            max(srcfeature_id) AS srcfeature_id,
