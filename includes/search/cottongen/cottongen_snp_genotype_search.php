@@ -39,6 +39,7 @@ function chado_search_snp_genotype_search_form ($form) {
       ->title('Germplasm Name')
       ->dependOnId('project_name')
       ->callback('chado_search_snp_genotype_search_ajax_dynamic_stock')
+      ->alsoDependOn(array('organism'))
       ->multiple(TRUE)
       ->labelWidth(140)
   );
@@ -118,19 +119,22 @@ function chado_search_snp_genotype_search_form_submit ($form, &$form_state) {
   
   // Get selected stocks
   $selStocks = $form_state['values']['stock_uniquename']; //stocks from selection
-  
-  // Convert selected ogranisms into stock selection
+
+  // Get selected organisms
   $selOrgs = $form_state['values']['organism'];
+  
+  // Convert selected ogranisms into stock selection ONLY IF no stock is selected
   $org_stocks = array();
-  if (!key_exists('0', $selOrgs) && count($selOrgs) != 0) {
+  if (!key_exists('0', $selOrgs) && count($selOrgs) != 0 && (key_exists('0', $selStocks) || count($selStocks) == 0)) {
     $organisms = variable_get('chado_search_snp_genotype_search_organisms');
     $index = 0;
     foreach($selOrgs AS $o) {
       foreach($organisms[$o] AS $stk) {
-        $selStocks["o$index"] = $stk;
+        $org_stocks["o$index"] = $stk;
         $index ++;
       }
     }
+    unset($selStocks['0']); // make sure organism will be filtered if no stock is selected
   }
   $selStocks += $org_stocks;
 
@@ -148,6 +152,7 @@ function chado_search_snp_genotype_search_form_submit ($form, &$form_state) {
   }
   $selStocks += $file_stocks;
   
+  // Finally, filter on stocks IF 'Any' is not selected or there is at least one stock to filter
   $notNullStocks = array();
   if (!key_exists('0', $selStocks) && count($selStocks) != 0) {
     $allStocks = variable_get('chado_search_snp_genotype_search_stocks');
@@ -202,6 +207,7 @@ function chado_search_snp_genotype_search_form_submit ($form, &$form_state) {
 // Define the result table
 function chado_search_snp_genotype_search_table_definition () {
   $stocks = variable_get('chado_search_snp_genotype_search_stocks');
+  asort($stocks);
   $headers = array(
     'feature_name:s:chado_search_link_feature:feature_id' => 'Marker',
     'allele:s' => 'Allele',
@@ -227,8 +233,20 @@ function chado_search_snp_genotype_search_ajax_dynamic_organism ($val) {
 
 function chado_search_snp_genotype_search_ajax_dynamic_stock ($val) {
   if ($val && chado_table_exists('chado_search_snp_genotype_cache_project')) {
-    $sql = "SELECT distinct stock_uniquename FROM {chado_search_snp_genotype_cache_project} WHERE project_name = :project_name ORDER BY stock_uniquename";
-    return chado_search_bind_dynamic_select(array(':project_name'=> $val), 'stock_uniquename', $sql);
+    $orgs = $_POST['organism'] ? $_POST['organism'] : array();
+    foreach($orgs AS $idx => $o) {
+      if ($o == '0') {
+        unset ($orgs[$idx]);
+      }
+    }
+    if (count($orgs) > 0) {
+      $sql = "SELECT distinct stock_uniquename FROM {chado_search_snp_genotype_cache_project} WHERE project_name = :project_name AND organism IN (:organism) ORDER BY stock_uniquename";
+      return chado_search_bind_dynamic_select(array(':project_name'=> $val, ':organism' => $orgs), 'stock_uniquename', $sql);
+    }
+    else {
+      $sql = "SELECT distinct stock_uniquename FROM {chado_search_snp_genotype_cache_project} WHERE project_name = :project_name ORDER BY stock_uniquename";
+      return chado_search_bind_dynamic_select(array(':project_name'=> $val), 'stock_uniquename', $sql);
+    }
   }
 }
 

@@ -14,6 +14,7 @@ class DynamicSelectFilter extends Filter {
   public $cacheColumns;
   public $reset_on_change_id;
   public $multiple;
+  public $alsoDependOn;
   
   public function setForm (&$form, &$form_state) {
     $search_name = $this->search_name;
@@ -61,12 +62,11 @@ class DynamicSelectFilter extends Filter {
       }
     }
     
-/*     $id_prefix = $id . '_prefix';
-    $id_suffix = $id . '_suffix'; */
     $id_label = $id . '_label';
     $title = $this->title;
     $depend_on_id = $this->depend_on_id;
     $multiple = $this->multiple;
+    $alsoDependOn = $this->alsoDependOn;
     $width = '';
     if ($this->label_width) {
       $width = "style=\"width:" . $this->label_width ."px\"";
@@ -93,6 +93,27 @@ class DynamicSelectFilter extends Filter {
       $form[$depend_on_id]['#attribute'] = array ('update' => $id);
     }
     
+    // Also add Ajax to other dependent elements
+    foreach ($alsoDependOn AS $did) {
+      $form[$did]['#ajax'] = array(
+        //'callback' => 'chado_search_ajax_form_update', // deprecated. drupal won't allow multiple selection when a file upload exists
+        'path' => 'chado_search_ajax_callback',
+        'wrapper' => "chado_search-filter-$search_name-$id-field",
+        'effect' => 'fade'
+      );
+      if(isset($form[$did]['#attribute']['update'])) {
+        $updates = $form[$did]['#attribute']['update'];
+        if (!is_array($updates)) {
+          $updates = array($updates => array('wrapper' => "chado_search-filter-$search_name-$updates-field"));
+        }
+        $updates[$id] = array('wrapper' => "chado_search-filter-$search_name-$id-field");
+        $form[$did]['#attribute'] = array ('update' => $updates);
+      }
+      else {
+        $form[$did]['#attribute'] = array ('update' => $id);
+      }
+    }
+    
     // Add Ajax to reset values on change of another element
     $reset_on_change_id = $this->reset_on_change_id;
     if ($reset_on_change_id) {
@@ -105,10 +126,6 @@ class DynamicSelectFilter extends Filter {
       $form[$reset_on_change_id]['#attribute'] = array ('update' => $updates);
     }
     
-    // Wrap the widget around a <div> tag
-/*     $form[$id_prefix] = array (
-      '#markup' => "<div id=\"chado_search-filter-$search_name-$id\" class=\"chado_search-filter chado_search-widget\">"
-    ); */
     // Add Label
     $this->csform->addMarkup(Set::markup()->id($id_label)->text($title));
     $form[$id_label]['#prefix'] =
@@ -128,9 +145,6 @@ class DynamicSelectFilter extends Filter {
         "<div id=\"chado_search-filter-$search_name-$id-field\" class=\"chado_search-filter-field chado_search-widget\">";
       $form[$id]['#suffix'] =
         "</div>";
-/*       $form[$id_suffix] = array (
-        '#markup' => "</div>"
-      ); */
     }
     else {
       drupal_set_message('Fatal Error: DynamicSelectFilter ajax function not implemented', 'error');

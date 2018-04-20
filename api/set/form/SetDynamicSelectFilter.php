@@ -12,6 +12,7 @@ class SetDynamicSelectFilter extends SetElement {
   private $cacheColumns = array();
   private $reset_on_change_id;
   private $multiple = FALSE;
+  private $alsoDependOn = array();
   
   /**
    * Setters
@@ -53,6 +54,11 @@ class SetDynamicSelectFilter extends SetElement {
     return $this;
   }
   
+  public function alsoDependOn ($ids) {
+    $this->alsoDependOn = $ids;
+    return $this;
+  }
+  
   /**
    * Getters
    */
@@ -86,5 +92,9 @@ class SetDynamicSelectFilter extends SetElement {
   
   public function getMultiple () {
     return $this->multiple;
+  }
+  
+  public function getAlsoDependOn () {
+    return $this->alsoDependOn;
   }
 }
