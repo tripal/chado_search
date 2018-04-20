@@ -227,8 +227,8 @@ function chado_search_snp_genotype_search_ajax_dynamic_organism ($val) {
 
 function chado_search_snp_genotype_search_ajax_dynamic_stock ($val) {
   if ($val && chado_table_exists('chado_search_snp_genotype_cache_project')) {
-    $sql = "SELECT distinct stock FROM {chado_search_snp_genotype_cache_project} WHERE project_name = :project_name ORDER BY stock";
-    return chado_search_bind_dynamic_select(array(':project_name'=> $val), 'stock', $sql);
+    $sql = "SELECT distinct stock_uniquename FROM {chado_search_snp_genotype_cache_project} WHERE project_name = :project_name ORDER BY stock_uniquename";
+    return chado_search_bind_dynamic_select(array(':project_name'=> $val), 'stock_uniquename', $sql);
   }
 }
 
