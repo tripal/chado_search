@@ -282,7 +282,7 @@ function chado_search_snp_genotype_search_ajax_dynamic_organism ($val) {
 
 function chado_search_snp_genotype_search_ajax_dynamic_stock ($val) {
   if ($val && chado_table_exists('chado_search_snp_genotype_cache_project')) {
-    $orgs = $_POST['organism'] ? $_POST['organism'] : array();
+    $orgs = isset($_POST['organism']) ? $_POST['organism'] : array();
     foreach($orgs AS $idx => $o) {
       if ($o == '0') {
         unset ($orgs[$idx]);
@@ -358,7 +358,7 @@ function chado_search_snp_genotype_search_download_polymorphic ($handle, $result
 function chado_search_snp_genotype_search_drush_run() {
   print "Checking Required MViews...\n";
   chado_search_snp_genotype_cache_mview();
-  print "Populating chado_search_snp_genotype_cache...";
+  print "Populating chado_search_snp_genotype_cache...\n";
   $exist_search = chado_table_exists('chado_search_snp_genotype_search');
   $exist_cache = chado_table_exists('chado_search_snp_genotype_cache');
   if ($exist_search && $exist_cache) {
