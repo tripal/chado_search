@@ -237,10 +237,14 @@ class ChadoSearch {
           $nullCols [] = $token_key[0];
         }
         $results = chado_query($sql);
+        $counter_row = 0;
         while ($row = $results->fetchObject()) {
+          if (count($nullCols) == 0) {
+            break;
+          }
           foreach ($nullCols AS $id => $colname) {
             // disable columns that are not in the SELECT statement & unset them from $nullCols
-            if (!property_exists($row, $colname)) {
+            if ($counter_row == 0 && !property_exists($row, $colname)) {
               unset ($nullCols[$id]);
               $disableCols .= ";$colname";
             }
@@ -249,6 +253,7 @@ class ChadoSearch {
               unset ($nullCols[$id]);
             }
           }
+          $counter_row ++;
         }
         // disable NULL columns
         foreach ($nullCols AS $nc) {
