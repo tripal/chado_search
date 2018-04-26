@@ -169,10 +169,10 @@ function chado_search_gene_search_table_definition () {
  */
 function chado_search_gene_search_ajax_location ($val) {
   $sql = "SELECT distinct landmark FROM {chado_search_gene_search} WHERE analysis IN (:analysis) ORDER BY landmark";
-  if (count($val) == 1 && key($val) == 'Rubus occidentalis Whole Genome Assembly v1.0 & Annotation v1') {
+  if (count($val) == 1 && is_array($val) && key($val) == 'Rubus occidentalis Whole Genome Assembly v1.0 & Annotation v1') {
     $sql = "SELECT distinct landmark FROM {chado_search_gene_search} WHERE analysis IN (:analysis) AND landmark LIKE 'BraspberryS%' ORDER BY landmark";
   }
-  else if (count($val) == 1 && key($val) == 'Rubus occidentalis Whole Genome Assembly v1.1') {
+  else if (count($val) == 1 && is_array($val) && key($val) == 'Rubus occidentalis Whole Genome Assembly v1.1') {
     $sql = "SELECT distinct landmark FROM {chado_search_gene_search} WHERE analysis IN (:analysis) AND landmark LIKE 'chr%' ORDER BY landmark";
   }
   return chado_search_bind_dynamic_select(array(':analysis' => $val), 'landmark', $sql);
