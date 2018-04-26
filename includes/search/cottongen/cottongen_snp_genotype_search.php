@@ -159,7 +159,7 @@ function chado_search_snp_genotype_search_form_validate (&$form, &$form_state) {
 // Submit the form
 function chado_search_snp_genotype_search_form_submit ($form, &$form_state) {
   // Get base sql
-  $sql = "SELECT * FROM {chado_search_snp_genotype_cache}";
+  $sql = "SELECT * FROM {chado_search_snp_genotype_cache} GL";
   $disableCols = "";
   
   // Get selected stocks

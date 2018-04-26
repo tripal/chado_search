@@ -91,4 +91,9 @@ class Sql {
   static function notNullCols ($columns) {
     return Statement::notNullCols($columns);
   }
+  
+  // Return a condition that make sure hstore has value for any of specified keys
+  static function hstoreHasValue ($hs_col, $hs_keys = array()) {
+    return Statement::hstoreHasValue($hs_col, $hs_keys);
+  }
 }

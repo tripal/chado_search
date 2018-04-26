@@ -136,6 +136,10 @@ class Download extends Source {
       }
     }
   
+    // Get hstore column settings if there is any
+    $hstoreToColumns = SessionVar::getSessionVar($search_id, 'hstore-to-columns');
+    $hstoreCol = $hstoreToColumns['column'];
+    
     // Create result
     $result = chado_query($sql);
     $sid = session_id();
@@ -151,12 +155,26 @@ class Download extends Source {
     // If there is a custom function call, pass in $handle and $result for it to modify output
     $custom_function = isset($_POST['custom_function_call']) ? $_POST['custom_function_call'] : NULL;
     if ($custom_function) {
-      $custom_function($handle, $result, $sql, $total_items, $progress_var, $headers);
+      $custom_function($handle, $result, $sql, $total_items, $progress_var, $headers, $hstoreCol, $hstoreToColumns);
     } else {
       fwrite($handle, "\"#\",");
       $col = 0;
       foreach ($headers AS $k => $v) {
-        fwrite($handle, "\"". $v . "\"");
+        // handle the hstore column
+        if ($k == $hstoreCol) {
+          $counter_hs = 0;
+          $total_hs = count($hstoreToColumns['data']);
+          foreach ($hstoreToColumns['data'] AS $hsk => $hsv) {
+            fwrite($handle, "\"". $hsv . "\"");
+            if ($counter_hs < $total_hs - 1) {
+              fwrite($handle, ",");
+            }
+            $counter_hs ++;
+          }
+        }
+        else {
+          fwrite($handle, "\"". $v . "\"");
+        }
         $col ++;
         if ($col < count($headers)) {
           fwrite($handle, ",");
@@ -175,12 +193,29 @@ class Download extends Source {
         fwrite($handle, "\"$counter\",");
         $col = 0;
         foreach ($headers AS $k => $v) {
-          $value = $row->$k;
-          if (key_exists($k, $rewriteCallback)) {
-            $rwfunc = $rewriteCallback[$k];
-            $value = $rwfunc($value);
+          // handle the hstore column
+          if ($k == $hstoreCol) {
+            $value = property_exists($row, $k) ? $row->$k : ''; // hstore column value
+            $values = chado_search_hstore_to_assoc($value);
+            $counter_hs = 0;
+            $total_hs = count($hstoreToColumns['data']);
+            foreach ($hstoreToColumns['data'] AS $hsk => $hsv) {
+              $display_val = key_exists($hsk, $values) ? $values[$hsk] : '';
+              fwrite($handle, '"' . str_replace('"', '""', $display_val) . '"');
+              if ($counter_hs < $total_hs - 1) {
+                fwrite($handle, ",");
+              }
+              $counter_hs ++;
+            }
           }
-          fwrite($handle, '"' . str_replace('"', '""', $value) . '"');
+          else {
+            $value = $row->$k;
+            if (key_exists($k, $rewriteCallback)) {
+              $rwfunc = $rewriteCallback[$k];
+              $value = $rwfunc($value);
+            }
+            fwrite($handle, '"' . str_replace('"', '""', $value) . '"');
+          }
           $col ++;
           if ($col < count($headers)) {
             fwrite($handle, ",");

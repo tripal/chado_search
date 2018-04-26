@@ -159,7 +159,7 @@ function chado_search_snp_genotype_search_form_validate (&$form, &$form_state) {
 // Submit the form
 function chado_search_snp_genotype_search_form_submit ($form, &$form_state) {
   // Get base sql
-  $sql = "SELECT * FROM {chado_search_snp_genotype_cache}";
+  $sql = "SELECT * FROM {chado_search_snp_genotype_cache} GL";
   $disableCols = "";
   
   // Get selected stocks
@@ -197,27 +197,29 @@ function chado_search_snp_genotype_search_form_submit ($form, &$form_state) {
   }
   $selStocks += $file_stocks;
   
+  $stocks = variable_get('chado_search_snp_genotype_search_stocks');
   // Finally, filter on stocks IF 'Any' is not selected or there is at least one stock to filter
   $notNullStocks = array();
   if (!key_exists('0', $selStocks) && count($selStocks) != 0) {
-    $allStocks = variable_get('chado_search_snp_genotype_search_stocks');
-    $select = "feature_id, feature_name, allele";
     foreach ($selStocks AS $s) {
-      $id = array_search($s, $allStocks);
+      $id = array_search($s, $stocks); // Convert selected stock uniquename into stock_id
       if ($id !== FALSE) {
-        $notNullStocks [] = "s$id";
-        $select .= ", s$id";
+        $notNullStocks [] = $id;
       }
     }
-    if ($select != "feature_id, feature_name, allele") {
-      $sql = "SELECT $select FROM {chado_search_snp_genotype_cache}";
+    $where [] = Sql::hstoreHasValue('genotypes', $notNullStocks);
+    // Keep only the not null stocks to show
+    foreach ($stocks AS $stock_id => $stock_uniquename) {
+      if (!in_array($stock_id, $notNullStocks)) {
+        unset($stocks[$stock_id]);
+      }
     }
   }
+  asort($stocks);
   
   // Add conditions
   $where [] = Sql::selectFilter('project_name', $form_state, 'project_name');
   $where [] = Sql::textFilter('feature_uniquename', $form_state, 'feature_uniquename');
-//  $where [] = Sql::notNullCols($notNullStocks); // Remove all NULL stock rows
   
   // Filter the genome position
   $sub [] = Sql::selectFilter('genome', $form_state, 'genome');
@@ -239,10 +241,7 @@ function chado_search_snp_genotype_search_form_submit ($form, &$form_state) {
   if($con != " WHERE ") {
     $where [] = "GL.feature_id IN (SELECT feature_id FROM {chado_search_snp_genotype_location} $con)";
   }
-  
-  $stocks = variable_get('chado_search_snp_genotype_search_stocks');
-  asort($stocks);
-  
+
   Set::result()
   ->sql($sql)
   ->tableDefinitionCallback('chado_search_snp_genotype_search_table_definition')
@@ -261,7 +260,8 @@ function chado_search_snp_genotype_search_form_submit ($form, &$form_state) {
 function chado_search_snp_genotype_search_table_definition () {
   $headers = array(
     'feature_name:s:chado_search_link_feature:feature_id' => 'Marker',
-    'allele:s' => 'Allele',
+    'location' => 'Location',
+    'allele' => 'Allele',
     'genotypes' => 'Genotypes'
   );
   return $headers;
@@ -302,12 +302,27 @@ function chado_search_snp_genotype_search_ajax_dynamic_stock ($val) {
 /**
  * Custom download only polymorphic data
  */
-function chado_search_snp_genotype_search_download_polymorphic ($handle, $result, $sql, $total_items, $progress_var, $headers) {
+function chado_search_snp_genotype_search_download_polymorphic ($handle, $result, $sql, $total_items, $progress_var, $headers, $hstoreCol, $hstoreToColumns) {
   set_time_limit(6000);
+  fwrite($handle, "\"$hstoreCol\",");
   fwrite($handle, "\"#\",");
   $col = 0;
   foreach ($headers AS $k => $v) {
-    fwrite($handle, "\"". $v . "\"");
+    // handle the hstore column
+    if ($k == $hstoreCol) {
+      $counter_hs = 0;
+      $total_hs = count($hstoreToColumns['data']);
+      foreach ($hstoreToColumns['data'] AS $hsk => $hsv) {
+        fwrite($handle, "\"". $hsv . "\"");
+        if ($counter_hs < $total_hs - 1) {
+          fwrite($handle, ",");
+        }
+        $counter_hs ++;
+      }
+    }
+    else {
+      fwrite($handle, "\"". $v . "\"");
+    }
     $col ++;
     if ($col < count($headers)) {
       fwrite($handle, ",");
@@ -326,17 +341,30 @@ function chado_search_snp_genotype_search_download_polymorphic ($handle, $result
     }
     $line = "\"$line_no\",";
     $col = 0;
-    $polymorphic = FALSE;
+    $total_hs = count($hstoreToColumns['data']);
+    $polymorphic = $total_hs == 1 ? TRUE : FALSE;
     $gtype = NULL;
     foreach ($headers AS $k => $v) {
       $value = $row->$k;
-      if (preg_match('/s\d+/', $k)) {
-        $gtype = $gtype == NULL ? $value : $gtype;
-        if ($value != $gtype) {
-          $polymorphic = TRUE;
+      if ($k == $hstoreCol) {
+        $values = chado_search_hstore_to_assoc($value);
+        $counter_hs = 0;
+        foreach ($hstoreToColumns['data'] AS $hsk => $hsv) {
+          $display_val = key_exists($hsk, $values) ? $values[$hsk] : '';
+          $gtype = $gtype == NULL ? $display_val : $gtype;
+          if ($display_val != $gtype) {
+            $polymorphic = TRUE;
+          }
+          $line .= '"' . str_replace('"', '""', $display_val) . '"';
+          if ($counter_hs < $total_hs - 1) {
+            $line .= ",";
+          }
+          $counter_hs ++;
         }
       }
-      $line .= '"' . str_replace('"', '""', $value) . '"';
+      else {
+        $line .= '"' . str_replace('"', '""', $value) . '"';
+      }
       $col ++;
       if ($col < count($headers)) {
         $line .= ",";

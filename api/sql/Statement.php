@@ -64,4 +64,22 @@ class Statement {
     }
     return $conditions;
   }
+  
+  // Return a condition that make sure hstore has value for any of specified keys
+  public static function hstoreHasValue ($hs_col, $hs_keys) {
+    $condition = "";
+    $total_keys = count($hs_keys);
+    $counter = 0;
+    foreach ($hs_keys AS $hs_k) {
+      $condition .= "exist($hs_col, '$hs_k')";
+      if ($counter < $total_keys -1) {
+        $condition .= " OR ";
+      }
+      $counter ++;
+    }
+    if ($total_keys > 0) {
+      $condition = '(' . $condition . ')';
+    }
+    return $condition;
+  }
 }
