@@ -129,9 +129,10 @@ function chado_search_snp_genotype_search_form ($form) {
       return $form;
 }
 
-// Validate the form
-function chado_search_snp_genotype_search_form_validate (&$form, &$form_state) {
+// Submit the form
+function chado_search_snp_genotype_search_form_submit ($form, &$form_state) {
   
+  // If there is gene model, convert it into positions first
   $gene_model = $form_state['values']['gene_model'];
   if ($gene_model) {
     $sql = "SELECT feature_id FROM {feature} WHERE lower(name) = :name OR lower(uniquename) = :uniquename";
@@ -154,10 +155,7 @@ function chado_search_snp_genotype_search_form_validate (&$form, &$form_state) {
       $form_state['values']['srcfmax'] = $alignment->fmax;
     }
   }
-}
-
-// Submit the form
-function chado_search_snp_genotype_search_form_submit ($form, &$form_state) {
+  
   // Get base sql
   $sql = "SELECT * FROM {chado_search_snp_genotype_cache} GL";
   $disableCols = "";
