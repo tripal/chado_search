@@ -249,7 +249,6 @@ function chado_search_snp_genotype_search_form_submit ($form, &$form_state) {
   ->disableCols($disableCols)
   ->customDownload(array('chado_search_snp_genotype_search_download_polymorphic' => 'Table (Polymorphic)'))
   ->hstoreToColumns('genotypes', $stocks)
-//  ->hideNullColumns()  // Remove all NULL (stock) columns
   ->execute($form, $form_state);
 }
 
