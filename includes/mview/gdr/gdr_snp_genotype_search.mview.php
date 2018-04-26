@@ -62,7 +62,7 @@ function chado_search_create_snp_genotype_search_mview() {
       F.name AS feature_name,
       F.uniquename AS feature_uniquenaem,
   --- Select Allele
-      (SELECT max(value) FROM featureprop WHERE feature_id = F.feature_id AND type_id = (SELECT cvterm_id FROM cvterm WHERE name = 'SNP' AND cv_id = (SELECT cv_id FROM cv WHERE name = 'sequence'))) AS allele,
+      (SELECT max(value) FROM featureprop WHERE feature_id = F.feature_id AND type_id IN (SELECT cvterm_id FROM cvterm WHERE name = 'SNP')) AS allele,
   --- Select genotype
       (SELECT description FROM genotype WHERE genotype_id = GC.genotype_id) AS genotype
     FROM genotype_call GC

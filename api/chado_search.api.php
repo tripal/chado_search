@@ -418,4 +418,18 @@ function chado_search_ajax_form_callback() {
   }
 }
 
-
+/**
+ * Convert postgres hstore format into an associative array
+ * hstore has a text format of "key1"=>"value1", "key2"=>"value2", "key3" =>NULL
+ */
+function chado_search_hstore_to_assoc($hstore_value) {
+  $hstore = explode(',', $hstore_value);
+  $assoc = array();
+  foreach ($hstore AS $hs) {
+    $pair = explode('=>', $hs);
+    if (count($pair) == 2) {
+      $assoc[trim($pair[0], '" ')] = trim($pair[1], '" ');
+    }
+  }
+  return $assoc;
+}

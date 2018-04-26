@@ -217,7 +217,7 @@ function chado_search_snp_genotype_search_form_submit ($form, &$form_state) {
   // Add conditions
   $where [] = Sql::selectFilter('project_name', $form_state, 'project_name');
   $where [] = Sql::textFilter('feature_uniquename', $form_state, 'feature_uniquename');
-  $where [] = Sql::notNullCols($notNullStocks); // Remove all NULL stock rows
+//  $where [] = Sql::notNullCols($notNullStocks); // Remove all NULL stock rows
   
   // Filter the genome position
   $sub [] = Sql::selectFilter('genome', $form_state, 'genome');
@@ -240,13 +240,17 @@ function chado_search_snp_genotype_search_form_submit ($form, &$form_state) {
     $where [] = "GL.feature_id IN (SELECT feature_id FROM {chado_search_snp_genotype_location} $con)";
   }
   
+  $stocks = variable_get('chado_search_snp_genotype_search_stocks');
+  asort($stocks);
+  
   Set::result()
   ->sql($sql)
   ->tableDefinitionCallback('chado_search_snp_genotype_search_table_definition')
   ->where($where)
   ->disableCols($disableCols)
   ->customDownload(array('chado_search_snp_genotype_search_download_polymorphic' => 'Table (Polymorphic)'))
-  ->hideNullColumns()  // Remove all NULL (stock) columns
+  ->hstoreToColumns('genotypes', $stocks)
+//  ->hideNullColumns()  // Remove all NULL (stock) columns
   ->execute($form, $form_state);
 }
 
@@ -255,15 +259,11 @@ function chado_search_snp_genotype_search_form_submit ($form, &$form_state) {
  */
 // Define the result table
 function chado_search_snp_genotype_search_table_definition () {
-  $stocks = variable_get('chado_search_snp_genotype_search_stocks');
-  asort($stocks);
   $headers = array(
     'feature_name:s:chado_search_link_feature:feature_id' => 'Marker',
     'allele:s' => 'Allele',
+    'genotypes' => 'Genotypes'
   );
-  foreach ($stocks AS $id => $s) {
-    $headers['s' . $id . ':s'] = $s;
-  }
   return $headers;
 }
 
@@ -370,7 +370,6 @@ function chado_search_snp_genotype_search_drush_run() {
       chado_query(
           "SELECT feature_id, project_id FROM {chado_search_snp_genotype_cache} WHERE feature_id = :feature_id AND project_id = :project_id",
           array(':feature_id' => $r->feature_id, ':project_id' => $r->project_id))->fetchField();
-          $col = 's' . $r->stock_id;
           // Insert if not exist
           if (!$exists) {
             $sql =
@@ -383,7 +382,7 @@ function chado_search_snp_genotype_search_drush_run() {
                 project_id,
                 project_name,
                 allele,
-                $col)
+                genotypes)
               VALUES (
                 $r->feature_id,
                 '$r->feature_name',
@@ -393,14 +392,14 @@ function chado_search_snp_genotype_search_drush_run() {
                 $r->project_id,
                 '$r->project_name',
                 '$r->allele',
-                '$r->genotype'
+                '\"$r->stock_id\" => \"$r->genotype\"'
               )";
           }
           // Update if exist
           else {
             $sql =
             "UPDATE {chado_search_snp_genotype_cache}
-              SET $col = '$r->genotype'
+              SET genotypes = genotypes || '\"$r->stock_id\" => \"$r->genotype\"' :: hstore
               WHERE feature_id = $r->feature_id
               AND project_id = $r->project_id
             ";
@@ -417,8 +416,8 @@ function chado_search_snp_genotype_cache_get_stocks() {
   // Get all distinct stocks in the search mview
   $sql = "SELECT DISTINCT stock_id, stock_uniquename FROM {chado_search_snp_genotype_search}";
   $results = chado_query($sql);
-  $stocks = array();
-  $organisms = array();
+  $stocks = array(); // array(stock_id, stock_uniquename)
+  $organisms = array(); // array(organism, stock_uniquename). For converting a list of organisms into corresponding stocks
   while ($stock = $results->fetchObject()) {
     $stocks [$stock->stock_id] = $stock->stock_uniquename;
     $organism =
@@ -447,9 +446,17 @@ function chado_search_snp_genotype_cache_mview() {
   // Check if the cache table exists
   $exist_search = chado_table_exists('chado_search_snp_genotype_search');
   $exist_cache = chado_table_exists('chado_search_snp_genotype_cache');
-  $exist_cache_project = chado_table_exists('chado_search_snp_genotype_cache_project');
+  $exist_cache_project = chado_table_exists('chado_search_snp_genotype_cache_project'); // A table that stores DISTINCT project, organism, stock_uniquename for fast dropdown population
   
   if ($exist_search) {
+    // Make sure hstore extension is enabled
+    print "Checking Postgres for hstore extension...\n";
+    $sql = "SELECT extname FROM pg_extension WHERE extname = 'hstore'";
+    $ext_exists = db_query($sql)->fetchField();
+    if (!$ext_exists) {
+      $sql = "CREATE EXTENSION hstore";
+      db_query($sql);
+    }
     // if chado_search_snp_genotype_cache not exists, create it
     if (!$exist_cache) {
       $stocks = chado_search_snp_genotype_cache_get_stocks();
@@ -465,11 +472,9 @@ function chado_search_snp_genotype_cache_mview() {
              location varchar(510),
              project_id integer,
              project_name varchar(255),
-             allele text";
-        foreach ($stocks AS $id => $s) {
-          $sql .= ', s' .  $id . ' varchar(255)';
-        }
-        $sql .= ", CONSTRAINT feature_project_uniq UNIQUE(feature_id, project_id))";
+             allele text,
+             genotypes hstore,
+             CONSTRAINT feature_project_uniq UNIQUE(feature_id, project_id))";
         chado_query($sql);
       }
     }
@@ -482,38 +487,6 @@ function chado_search_snp_genotype_cache_mview() {
        INTO {chado_search_snp_genotype_cache_project}
        FROM {chado_search_snp_genotype_search}";
       chado_query($sql);
-    }
-    
-    // if chado_search_snp_genotype_cache already exists, check if there are new stocks.
-    // If there are, add them as new columns to chado_search_snp_genotype_cache AND
-    // add them as new rows to chado_search_snp_genotype_cache_project,
-    // vice versa for stocks that no longer exist
-    if ($exist_cache) {
-      print "Checking new stocks...\n";
-      $before_stocks = variable_get('chado_search_snp_genotype_search_stocks');
-      $after_stocks = chado_search_snp_genotype_cache_get_stocks();
-      $only_before = array_diff_key($before_stocks, $after_stocks);
-      $only_after = array_diff_key($after_stocks, $before_stocks);
-      // Remove stock columns that no longer exist. Also remove those stocks from the 'project_cache'
-      if (count($only_before) != 0) {
-        print "Remove stock data that no longer exist...\n";
-        foreach($only_before AS $id => $name) {
-          $sql = "ALTER TABLE {chado_search_snp_genotype_cache} DROP COLUMN s$id IF EXISTS";
-          chado_query($sql);
-          $sql = "DELETE FROM {chado_search_snp_genotype_cache_project} WHERE stock_uniquename = '$name'";
-          chado_query($sql);
-        }
-      }
-      // Add new stock columns. Also add new rows to the 'project_cache'
-      if (count($only_after) != 0) {
-        print "Add new stock data...\n";
-        foreach($only_after AS $id => $name) {
-          $sql = "ALTER TABLE {chado_search_snp_genotype_cache} ADD COLUMN s$id";
-          chado_query($sql);
-          $sql = "INSERT INTO {chado_search_snp_genotype_cache_project} (project_name, organism, stock_uniquename) (SELECT DISTINCT project_name, organism, stock_uniquename FROM {chado_search_snp_genotype_search} WHERE stock_id = $id )";
-          chado_query($sql);
-        }
-      }
     }
   }
 }

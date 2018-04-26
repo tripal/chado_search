@@ -126,7 +126,7 @@ class ChadoSearch {
    * $groupby - group the result by column(s). format = '<column>:<table>:<separator>'. You need to have a '*' in the SQL SELECT statement in order to be replaced by the arregated version of SELECT statement. If not, $groupby will be ignored.
    * $fasta_download - create a Fasta download link
    * $append - a free SQL string that will be append to the end of the statement
-   * $disableCols - hide these columns from the result table. format = '<column1>;<column2>;<column3>;...'
+   * $disableCols - hide these columns from the result table. format = '<column1>;<column2>;<column3>;...'. To disable the Row Counter, pass in a column named 'row-counter'
    * $changeHeaders - change the title for these headers. format = '<column1>=<title1>;<column2>=<title2>;<column3>=<title3>;...'
    * $rewriteCols - rewrite the value in specified columns by passing the value to the specified function($value). format = '<column1>=<callback1>;<column2>=<callback2>;<column3>=<callback3>;...'
    * $autoscroll - automatically scroll the page to the top of the result table
@@ -135,6 +135,7 @@ class ChadoSearch {
    * $showDownload - add download links to the up right conner of the table
    * $showPager - add pager to the bottom right conner of the table
    * $hideNullColumns - hide columns that contains only NULL values
+   * $hstoreToColumns - split the specified hstore column into multiple columns according to the keys of passed in array. The array values will be used for displaying column headers
   */ 
   // Main Result
   public function createResult (&$form_state, $conf) {
@@ -164,7 +165,8 @@ class ChadoSearch {
       $showDownload = $conf->getShowDownload();
       $showPager = $conf->getShowPager();
       $hideNullColumns = $conf->getHideNullColumns();
-      
+      $hstoreToColumns = $conf->getHstoreToColumns();
+
       $search_id = $this->search_id;
       
       // Get custom outputs setting if it exists
@@ -199,38 +201,11 @@ class ChadoSearch {
       // Default header if header difinition does not exist
       else {
         $hsql = "SELECT * FROM ($sql LIMIT 1) T";
-        $fields = array_keys(db_query($hsql)->fetchAssoc());
+        $fields = array_keys(chado_query($hsql)->fetchAssoc());
         foreach($fields AS $field) {
           $headers[$field] = $field;
         }
         SessionVar::setSessionVar($search_id, 'default-headers', $headers);
-      }
-      
-      // Hide columns that contain only NULL values
-      if ($hideNullColumns) {
-        $nullCols = array();
-        foreach ($headers AS $key => $value) {
-          $token_key = explode(':', $key);
-          $nullCols [] = $token_key[0];
-        }
-        $results = chado_query($sql);
-        while ($row = $results->fetchObject()) {
-          foreach ($nullCols AS $id => $colname) {
-            // disable columns that are not in the SELECT statement & unset them from $nullCols
-            if (!property_exists($row, $colname)) {
-              unset ($nullCols[$id]);
-              $disableCols .= ";$colname";
-            }
-            // unset columns that have values from $nullCols
-            else if ($row->$colname) {
-              unset ($nullCols[$id]);
-            }
-          } 
-        }
-        // disable NULL columns
-        foreach ($nullCols AS $nc) {
-          $disableCols .= ";$nc";
-        }
       }
       
       // Customize output with DISTINCT in statement for selected columns
@@ -252,7 +227,85 @@ class ChadoSearch {
         SessionVar::setSessionVar($search_id, 'fasta_sql', $sql);
         $sql = "SELECT $max_cols $select_cols FROM ($sql) SQL GROUP BY $select_cols";
         $result_query->setSQL($sql);
+      }      
+      
+      // Hide columns that contain only NULL values
+      if ($hideNullColumns) {
+        $nullCols = array();
+        foreach ($headers AS $key => $value) {
+          $token_key = explode(':', $key);
+          $nullCols [] = $token_key[0];
+        }
+        $results = chado_query($sql);
+        while ($row = $results->fetchObject()) {
+          foreach ($nullCols AS $id => $colname) {
+            // disable columns that are not in the SELECT statement & unset them from $nullCols
+            if (!property_exists($row, $colname)) {
+              unset ($nullCols[$id]);
+              $disableCols .= ";$colname";
+            }
+            // unset columns that have values from $nullCols
+            else if ($row->$colname) {
+              unset ($nullCols[$id]);
+            }
+          }
+        }
+        // disable NULL columns
+        foreach ($nullCols AS $nc) {
+          $disableCols .= ";$nc";
+        }
       }
+      
+      // Also Remove NULL hstore columns
+      if (isset($hstoreToColumns['remove_null_columns']) && $hstoreToColumns['remove_null_columns']) {
+        $hs_col = $hstoreToColumns['column'];
+        $hs_data = $hstoreToColumns['data'];
+          // Algorithem 1: Use a big SQL query that returns NULL columns (may be slow)
+        /*
+        $hs_sql = "";
+        $counter_hs_k = 0;
+        $total_hs_k = count($hs_data);
+        // Get a list of not-null hstore columns
+        $hs_sql = "WITH T AS ($sql) ";
+        foreach ($hs_data AS $hs_k => $hs_v) {
+          $hs_sql .= "(SELECT $hs_k AS keys FROM  T WHERE exist($hs_col, '$hs_k') LIMIT 1)";
+          if ($counter_hs_k < $total_hs_k - 1) {
+            $hs_sql .= " UNION ALL ";
+          }
+          $counter_hs_k ++;
+        }
+        $hs_keys = chado_query($hs_sql);
+        // Create hstore new column data
+        $new_data = array();
+        while ($hs_key = $hs_keys->fetchField()) {
+          $new_data [$hs_key] = $hs_data[$hs_key];
+        }
+        asort($new_data);
+        $hstoreToColumns['data'] = $new_data; 
+        */
+        
+        // Algorithem 2: Loop through all results to determine NULL columns
+        $nullCols = array();
+        foreach ($hs_data AS $key => $value) {
+          $nullCols [$key] = $value;
+        }
+        $results = chado_query($sql);        
+        while ($row = $results->fetchObject()) {
+          if (count($nullCols) == 0) {
+            break;
+          }
+          $pairs = chado_search_hstore_to_assoc($row->$hs_col);
+          foreach ($pairs AS $pair_k => $pair_v) {
+            unset($nullCols[$pair_k]);
+          }
+        }
+        // disable NULL columns
+        foreach ($nullCols AS $nk => $nv) {
+          unset($hs_data[$nk]);
+        }
+        $hstoreToColumns['data'] = $hs_data;
+      }
+      
       // dpm($sql);
       $total_items = $result_query->count();
       $total_pages =Pager::totalPages($total_items, $this->number_per_page);
@@ -268,13 +321,14 @@ class ChadoSearch {
       // Show the first page
       if ($total_items != 0) {
         
-        // Store settings to session variables
+        // Store settings to session variables for result table/download modification if needed
         SessionVar::setSessionVar($search_id, 'disabled-columns', $disableCols);
         SessionVar::setSessionVar($search_id, 'changed-headers', $changeHeaders);
         SessionVar::setSessionVar($search_id, 'rewrite-columns', $rewriteCols);
         SessionVar::setSessionVar($search_id, 'custom-fasta-download', $customFasta);
         SessionVar::setSessionVar($search_id, 'autoscroll', $autoscroll);
         SessionVar::setSessionVar($search_id, 'total-items', $total_items);
+        SessionVar::setSessionVar($search_id, 'hstore-to-columns', $hstoreToColumns);
         
         // Build the result
         $div .= 

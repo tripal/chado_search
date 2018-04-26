@@ -61,6 +61,10 @@ class Table extends Source {
     $table_css_id = $search_id . "-result-table";
     $js_function = $search_id . "_change_order";
     $js_scroll = "";
+    
+    // Get hstore column settings if there is any
+    $hstoreToColumns = SessionVar::getSessionVar($search_id, 'hstore-to-columns');
+    $hstoreCol = $hstoreToColumns['column'];
     // Scroll only if it is enabled and there is no error on the form
     if ($autoscroll) {
       $js_scroll =
@@ -104,11 +108,19 @@ class Table extends Source {
     }
     $idx_header = 1;
     foreach ($headers AS $k => $v) {
-      $key = explode(":", $k);
-      if (key_exists(1, $key) && ($key[1] == 's' || $key[1] == 'sortable')) {
-        $table .= "<th id=\"chado_search-$search_id-header-$idx_header\"><a href=\"javascript:void(0)\" onClick=\"$js_function('$key[0]');return false;\">$v</a></th>";
-      } else {
-        $table .= "<th id=\"chado_search-$search_id-header-$idx_header\">$v</th>";
+      // handle the hstore column
+      if ($k == $hstoreCol) {
+        foreach ($hstoreToColumns['data'] AS $hsk => $hsv) {
+          $table .= "<th id=\"chado_search-$search_id-header-$idx_header\">$hsv</th>";
+        }
+      }
+      else {
+        $key = explode(":", $k);
+        if (key_exists(1, $key) && ($key[1] == 's' || $key[1] == 'sortable')) {
+          $table .= "<th id=\"chado_search-$search_id-header-$idx_header\"><a href=\"javascript:void(0)\" onClick=\"$js_function('$key[0]');return false;\">$v</a></th>";
+        } else {
+          $table .= "<th id=\"chado_search-$search_id-header-$idx_header\">$v</th>";
+        }
       }
       $idx_header ++;
     }
@@ -129,35 +141,46 @@ class Table extends Source {
         $table .= "<td>$item</td>";
       }
       foreach ($headers AS $k => $v) {
-        $key = explode(":", $k);
-        $col = $key[0]; // column name
-        $value = property_exists($obj, $col) ? $obj->$col : ''; // column value
-        if (key_exists($col, $rewriteCallback)) {
-          $rwfunc = $rewriteCallback[$col];
-          $value = $rwfunc($value);
+        // handle the hstore column
+        if ($k == $hstoreCol) {
+          $value = property_exists($obj, $k) ? $obj->$k : ''; // hstore column value
+          $values = chado_search_hstore_to_assoc($value);
+          foreach ($hstoreToColumns['data'] AS $hsk => $hsv) {
+            $display_val = key_exists($hsk, $values) ? $values[$hsk] : ''; 
+            $table .= "<td>" . $display_val . "</td>";
+          }
         }
-        if (key_exists(3, $key) && $key[2] != '') { // If there is a link function callback (key[2]) and passing parameters (key[3],...)
-          $callback = $key[2];
-          $var = $key[3];
-          $vars = explode(',', $var);
-          $pass_params = array();
-          foreach($vars AS $param) { // if there is more than one passing parameter
-            if (trim ($param)) {
-              $stored = isset($obj->$param) ? $obj->$param : NULL;
-              array_push($pass_params, $stored);
+        else {
+          $key = explode(":", $k);
+          $col = $key[0]; // column name
+          $value = property_exists($obj, $col) ? $obj->$col : ''; // column value
+          if (key_exists($col, $rewriteCallback)) {
+            $rwfunc = $rewriteCallback[$col];
+            $value = $rwfunc($value);
+          }
+          if (key_exists(3, $key) && $key[2] != '') { // If there is a link function callback (key[2]) and passing parameters (key[3],...)
+            $callback = $key[2];
+            $var = $key[3];
+            $vars = explode(',', $var);
+            $pass_params = array();
+            foreach($vars AS $param) { // if there is more than one passing parameter
+              if (trim ($param)) {
+                $stored = isset($obj->$param) ? $obj->$param : NULL;
+                array_push($pass_params, $stored);
+              }
             }
-          }
-          if (count($pass_params) == 1) {
-            $pass_params = $pass_params [0];
-          }
-          $link = $callback($pass_params);
-          if ($link) {
-            $table .= "<td>" . l ($value, $link) . "</td>";
-          } else {
+            if (count($pass_params) == 1) {
+              $pass_params = $pass_params [0];
+            }
+            $link = $callback($pass_params);
+            if ($link) {
+              $table .= "<td>" . l ($value, $link) . "</td>";
+            } else {
+              $table .= "<td>" . $value . "</td>";
+            }
+          } else { // If there is no link function, show the value without link
             $table .= "<td>" . $value . "</td>";
           }
-        } else { // If there is no link function, show the value without link
-          $table .= "<td>" . $value . "</td>";
         }
       }
       $table .= "</tr>";

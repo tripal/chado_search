@@ -21,6 +21,7 @@ class SetResult {
   private $showDownload = TRUE;
   private $showPager = TRUE;
   private $hideNullColumns = FALSE;
+  private $hstoreToColumns = array();
   
   /**
    * Setters
@@ -101,6 +102,16 @@ class SetResult {
     return $this;
   }
   
+  public function hstoreToColumns($col, $toCols, $remove_null_columns = TRUE) {
+    $this->hstoreToColumns = 
+      array(
+        'column' => $col,
+        'data' => $toCols,
+        'remove_null_columns' => $remove_null_columns
+      );
+    return $this;
+  }
+  
   public function execute($form, &$form_state) {
     $search_id = $form['#search_id'];
     $url = $form['#search_url'];
@@ -170,5 +181,9 @@ class SetResult {
   
   public function getHideNullColumns () {
     return $this->hideNullColumns;
+  }
+  
+  public function getHstoreToColumns () {
+    return $this->hstoreToColumns;
   }
 }
