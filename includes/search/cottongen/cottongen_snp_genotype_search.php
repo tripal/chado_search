@@ -301,7 +301,6 @@ function chado_search_snp_genotype_search_ajax_dynamic_stock ($val) {
  */
 function chado_search_snp_genotype_search_download_polymorphic ($handle, $result, $sql, $total_items, $progress_var, $headers, $hstoreCol, $hstoreToColumns) {
   set_time_limit(6000);
-  fwrite($handle, "\"$hstoreCol\",");
   fwrite($handle, "\"#\",");
   $col = 0;
   foreach ($headers AS $k => $v) {
