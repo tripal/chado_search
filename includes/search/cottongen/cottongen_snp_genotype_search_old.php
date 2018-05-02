@@ -11,7 +11,7 @@ function chado_search_snp_genotype_search_old_form ($form) {
     $form->addTabs(
       Set::tab()
       ->id('snp_genotype_tabs')
-      ->items(array('/find/ssr_genotype' => 'SSR Genotype', '/find/snp/genotype' => 'SNP Genotype'))
+      ->items(array('/find/ssr_genotype' => 'SSR Genotype', '/find/snp_genotype' => 'SNP Genotype'))
   );
   $form->addSelectFilter(
       Set::selectFilter()
