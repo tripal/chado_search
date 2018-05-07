@@ -124,7 +124,7 @@ function chado_search_snp_marker_search_table_definition () {
       'snp_name:s:chado_search_link_feature:snp_feature_id' => 'Name',
       'array_name:s' => 'SNP Array Name',
       'array_id:s' => 'SNP Array ID',
-      'alias:s' => 'Alias',
+      'dbsnp_id:s' => 'dbSNP ID',
       'allele:s' => 'Allele',
       'location:s:chado_search_link_jbrowse:landmark_feature_id,location' => 'Location',
       'flanking_sequence:s' => 'Flanking Sequence'
