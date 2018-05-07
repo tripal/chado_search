@@ -8,11 +8,11 @@ use ChadoSearch\Sql;
  */
 // Search form
 function chado_search_snp_marker_search_form ($form) {
-/*   $form->addTabs(
+   $form->addTabs(
       Set::tab()
       ->id('nearby_marker_tabs')
-      ->items(array('/search/markers' => 'Marker Search', '/search/snp_markers' => 'SNP Marker Search', '/search/nearby_markers' => 'Search Nearby Markers'))
-  ); */
+      ->items(array('/find/markers' => 'Advanced Marker Search', '/find/snp_markers' => 'SNP Marker Search', '/find/nearby_markers' => 'Nearby Markers', '/find/qtl_nearby_markers' => 'QTL Nearby Markers'))
+  );
 
   // Search by Name
   $form->addTextFilter(
@@ -70,21 +70,6 @@ function chado_search_snp_marker_search_form ($form) {
       ->text("<strong>bp</strong>")
       ->newLine()
   );
-/*   $form->addCustomOutput(
-      Set::customOutput()
-      ->id('custom_output')
-      ->options(
-          array(
-            'array_name' => 'SNP Array Name', 
-            'array_id' => 'SNP Array ID', 
-            'alias' => 'Alias', 
-            'allele'=> 'Allele', 
-            'location' => 'Location', 
-             'flanking_sequence' => 'Flanking Sequence'
-          )
-      )
-      ->groupBySelection('chado_search_snp_marker_search')
-  ); */
   $form->addSubmit();
   $form->addReset();
   $desc =
@@ -106,7 +91,7 @@ function chado_search_snp_marker_search_form_submit ($form, &$form_state) {
   // Get base sql
   $sql = chado_search_snp_marker_search_base_query();
   // Add conditions
-  $where [] = Sql::textFilterOnMultipleColumns('snp_uniquename', $form_state, array('snp_uniquename', 'alias'));
+  $where [] = Sql::textFilterOnMultipleColumns('snp_uniquename', $form_state, array('snp_uniquename', 'array_id', 'dbsnp_id'));
   $where [] = Sql::fileOnMultipleColumns('feature_name_file_inline', array('snp_uniquename', 'alias'));
   $where [] = Sql::selectFilter('array_name', $form_state, 'array_name');
   $where [] = Sql::selectFilter('genome', $form_state, 'genome');

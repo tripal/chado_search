@@ -27,6 +27,10 @@ function chado_search_create_snp_marker_search_mview() {
         'type' => 'varchar',
         'length' => '255'
       ),
+      'dbsnp_id' => array (
+        'type' => 'varchar',
+        'length' => '255'
+      ),
       'genome' => array (
         'type' => 'varchar',
         'length' => '255'
@@ -65,7 +69,8 @@ function chado_search_create_snp_marker_search_mview() {
   SNP.name AS snp_name,
   ARR.library_id,
   ARR.snp_array_name,
-  ARR.array_id,  
+  ARR.array_id,
+  DBSNP.accession,
   --- Select genome name
   (
 SELECT name FROM analysis A
@@ -117,6 +122,13 @@ LEFT JOIN
         (SELECT cv_id FROM cv WHERE name = 'MAIN')
       )
   ) ARR ON ARR.feature_id = SNP.feature_id
+--- GET dbSNP ID
+LEFT JOIN (
+  SELECT accession, feature_id
+  FROM dbxref X
+  INNER JOIN feature_dbxref FD ON X.dbxref_id = FD.dbxref_id
+  WHERE db_id = (SELECT db_id FROM db WHERE name = 'dbSNP')
+) DBSNP ON DBSNP.feature_id = SNP.feature_id
 --- Get aliases
 LEFT JOIN
   (SELECT feature_id, string_agg(value, ':::') AS value FROM featureprop WHERE type_id =
