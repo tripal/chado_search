@@ -64,7 +64,7 @@ function chado_search_snp_genotype_search_form ($form) {
       ->title('Genome')
       ->column('genome')
       ->table('chado_search_snp_genotype_location')
-      ->disable(array('Malus x domestica Whole Genome v1.0 Assembly & Annotation'))
+      ->disable(array('Malus x domestica Whole Genome v1.0 Assembly & Annotation', 'Prunus persica Whole Genome v1.0 Assembly & Annotation'))
       ->cache(TRUE)
       ->labelWidth(140)
       ->newLine()
@@ -257,7 +257,7 @@ function chado_search_snp_genotype_search_form_submit ($form, &$form_state) {
 function chado_search_snp_genotype_search_table_definition () {
   $headers = array(
     'feature_name:s:chado_search_link_feature:feature_id' => 'Marker',
-    'location' => 'Location',
+    'location:s:chado_search_link_jbrowse:srcfeature_id,location' => 'Location',
     'allele' => 'Allele',
     'genotypes' => 'Genotypes'
   );
