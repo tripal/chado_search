@@ -349,7 +349,7 @@ function chado_search_snp_genotype_search_download_polymorphic ($handle, $result
         foreach ($hstoreToColumns['data'] AS $hsk => $hsv) {
           $display_val = key_exists($hsk, $values) ? $values[$hsk] : '';
           $gtype = $gtype == NULL ? $display_val : $gtype;
-          if ($display_val != '' && $gtype != '' && $display_val != $gtype) {
+          if ($display_val != '' && $gtype != '' && $gtype != '-' && $gtype != '-|-' && $display_val != $gtype) {
             $polymorphic = TRUE;
           }
           $line .= '"' . str_replace('"', '""', $display_val) . '"';
