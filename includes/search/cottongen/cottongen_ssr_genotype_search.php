@@ -60,9 +60,7 @@ function chado_search_ssr_genotype_search_form ($form) {
   $desc =
   "Search SSR Genotype is a page where users can search the SSR genotype data by dataset 
       name, marker name, germplasm name and/or species. Click the next tab to search for 
-      SNP Genotype. To search for SSR genotype data only for cultivars and breeding selections 
-      please visit the <a href=\"/legacy/bt_search_genotype/by_variety\">'Search Genotyping 
-      Data'</a> page in the <a href=\"/legacy/breeders_toolbox\">Breeders Toolbox</a>.
+      SNP Genotype.
      <b> | " . l('Short video tutorial', 'https://www.youtube.com/watch?v=ARZGxKz5mRo', array('attributes' => array('target' => '_blank'))) . ' | ' . l('Text tutorial', 'tutorial/search_ssr_genotype') . ' | ' .
        l('Email us with problems and suggestions', 'contact') . '</b>';
   $form->addFieldset(

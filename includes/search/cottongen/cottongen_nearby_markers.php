@@ -11,7 +11,7 @@ function chado_search_nearby_markers_form ($form) {
   $form->addTabs(
       Set::tab()
       ->id('nearby_marker_tabs')
-      ->items(array('/find/markers' => 'Advanced Marker Search', '/find/snp_markers' => 'SNP Marker Search', '/find/nearby_markers' => 'Nearby Markers', '/find/qtl_nearby_markers' => 'QTL Nearby Markers'))
+      ->items(array('/find/markers' => 'Advanced Marker Search', '/find/marker/source' => 'Marker Source', '/find/snp_markers' => 'SNP Marker Search', '/find/nearby_markers' => 'Nearby Markers', '/find/qtl_nearby_markers' => 'QTL Nearby Markers'))
   );
   
   $form->addLabeledFilter(

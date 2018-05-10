@@ -256,6 +256,7 @@ function chado_search_snp_genotype_search_form_submit ($form, &$form_state) {
 // Define the result table
 function chado_search_snp_genotype_search_table_definition () {
   $headers = array(
+    'array_id:s' => 'Array ID',
     'feature_name:s:chado_search_link_feature:feature_id' => 'Marker',
     'location:s:chado_search_link_jbrowse:srcfeature_id,location' => 'Location',
     'allele' => 'Allele',
@@ -401,6 +402,8 @@ function chado_search_snp_genotype_search_drush_run() {
                (feature_id,
                 feature_name,
                 feature_uniquename,
+                array_id,
+                array_name,
                 srcfeature_id,
                 location,
                 project_id,
@@ -411,6 +414,8 @@ function chado_search_snp_genotype_search_drush_run() {
                 $r->feature_id,
                 '$r->feature_name',
                 '$r->feature_uniquename',
+                '$r->array_id',
+                '$r->array_name',
                 (SELECT first(landmark_feature_id) FROM (SELECT * FROM {chado_Search_snp_genotype_location} WHERE feature_id = $r->feature_id ORDER BY char_length(landmark), landmark) T),
                 (SELECT first(location) FROM (SELECT * FROM {chado_Search_snp_genotype_location} WHERE feature_id = $r->feature_id ORDER BY char_length(landmark), landmark) T),
                 $r->project_id,
@@ -492,6 +497,8 @@ function chado_search_snp_genotype_cache_mview() {
              feature_id integer,
              feature_name varchar(510),
              feature_uniquename text,
+             array_id varchar(255),
+             array_name varchar(255),
              srcfeature_id integer,
              location varchar(510),
              project_id integer,

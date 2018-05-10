@@ -47,6 +47,14 @@ function chado_search_create_snp_genotype_search_mview() {
         'type' => 'varchar',
         'length' => '255'
       ),
+      'array_name' => array (
+        'type' => 'varchar',
+        'length' => '255'
+      ),
+      'array_id' => array (
+        'type' => 'varchar',
+        'length' => '255'
+      )
     )
   );
   $sql = "
@@ -64,7 +72,11 @@ function chado_search_create_snp_genotype_search_mview() {
   --- Select Allele
       (SELECT max(value) FROM featureprop WHERE feature_id = F.feature_id AND type_id IN (SELECT cvterm_id FROM cvterm WHERE name = 'SNP')) AS allele,
   --- Select genotype
-      (SELECT description FROM genotype WHERE genotype_id = GC.genotype_id) AS genotype
+      (SELECT description FROM genotype WHERE genotype_id = GC.genotype_id) AS genotype,
+  --- Select Array ID
+      array_id,
+  --- Select Array Name
+      snp_array_name
     FROM genotype_call GC
     INNER JOIN project P ON P.project_id = GC.project_id
     INNER JOIN feature F ON F.feature_id = GC.feature_id
@@ -75,6 +87,20 @@ function chado_search_create_snp_genotype_search_mview() {
     INNER JOIN (SELECT * FROM projectprop PP WHERE type_id = (SELECT cvterm_id FROM cvterm WHERE name = 'sub_type' AND cv_id = (SELECT cv_id FROM cv WHERE name = 'MAIN'))) SUBTYPE ON SUBTYPE.project_id = P.project_id
   --- Get permission
     INNER JOIN (SELECT * FROM projectprop PP WHERE type_id = (SELECT cvterm_id FROM cvterm WHERE name = 'permission' AND cv_id = (SELECT cv_id FROM cv WHERE name = 'MAIN'))) PERM ON PERM.project_id = P.project_id
+  --- Get SNP array name and SNP array ID
+    LEFT JOIN
+      (SELECT 
+         feature_id, string_agg(S.name, ', ') AS array_id, string_agg(L.name, ', ') AS snp_array_name
+       FROM synonym S
+       INNER JOIN feature_synonym FS ON FS.synonym_id = S.synonym_id
+       INNER JOIN library_synonym LS ON FS.synonym_id = LS.synonym_id
+       INNER JOIN library L ON L.library_id = LS.library_id
+       WHERE S.type_id =
+         (SELECT cvterm_id FROM cvterm WHERE name = 'SNP_chip' AND cv_id =
+            (SELECT cv_id FROM cv WHERE name = 'MAIN')
+          )
+       GROUP BY feature_id
+      ) ARR ON ARR.feature_id = F.feature_id 
 --- Restrict to SNP genotyping public projects
     WHERE 
       PTYPE.value = 'genotyping'

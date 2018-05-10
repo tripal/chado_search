@@ -8,7 +8,11 @@ use ChadoSearch\Sql;
  */
 // Search form
 function chado_search_marker_source_form ($form) {
-
+  $form->addTabs(
+      Set::tab()
+      ->id('marker_source_tabs')
+      ->items(array('/find/markers' => 'Advanced Marker Search', '/find/marker/source' => 'Marker Source', '/find/snp_markers' => 'SNP Marker Search', '/find/nearby_markers' => 'Nearby Markers', '/find/qtl_nearby_markers' => 'QTL Nearby Markers'))
+      );
   $form->addTextFilter(
       Set::textFilter()
       ->id('src_uniquename')
@@ -31,6 +35,22 @@ function chado_search_marker_source_form ($form) {
       ->title('Source Germplasm')
       ->column('stock_uniquename')
       ->table('chado_search_marker_source')
+      ->labelWidth(160)
+      ->newLine()
+  );
+  // Search by Name
+  $form->addTextFilter(
+      Set::textFilter()
+      ->id('marker_uniquename')
+      ->title('Marker Name')
+      ->labelWidth(160)
+      ->newLine()
+  );
+  $form->addFile(
+      Set::file()
+      ->id('marker_uniquename_file')
+      ->title("File Upload")
+      ->description("Provide marker names in a file. Separate each name by a new line.")
       ->labelWidth(160)
       ->newLine()
   );
@@ -62,6 +82,8 @@ function chado_search_marker_source_form_submit ($form, &$form_state) {
   $where [] = Sql::textFilter('src_uniquename', $form_state, 'src_uniquename');
   $where [] = Sql::selectFilter('src_type', $form_state, 'src_type');
   $where [] = Sql::selectFilter('src_germplasm', $form_state, 'stock_uniquename');
+  $where [] = Sql::textFilterOnMultipleColumns('marker_uniquename', $form_state, array('marker_uniquename'));
+  $where [] = Sql::file('marker_uniquename_file', 'marker_uniquename');
   $where [] = Sql::selectFilter('marker_type', $form_state, 'marker_type');
   Set::result()
     ->sql($sql)
