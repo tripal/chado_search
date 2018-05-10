@@ -256,7 +256,7 @@ function chado_search_snp_genotype_search_form_submit ($form, &$form_state) {
 // Define the result table
 function chado_search_snp_genotype_search_table_definition () {
   $headers = array(
-    'array_name:s' => 'Array ID',
+    //'array_name:s' => 'Array ID',
     'feature_name:s:chado_search_link_feature:feature_id' => 'Marker',
     'location:s:chado_search_link_jbrowse:srcfeature_id,location' => 'Location',
     'allele' => 'Allele',
