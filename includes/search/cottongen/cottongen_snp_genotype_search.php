@@ -95,6 +95,7 @@ function chado_search_snp_genotype_search_form ($form) {
       Set::LabeledFilter()
       ->id('gene_model')
       ->title('Gene Model')
+      ->labelWidth(140)
       );
   $form->addLabeledFilter(
       Set::LabeledFilter()
