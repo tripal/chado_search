@@ -136,6 +136,7 @@ class ChadoSearch {
    * $showPager - add pager to the bottom right conner of the table
    * $hideNullColumns - hide columns that contains only NULL values
    * $hstoreToColumns - split the specified hstore column into multiple columns according to the keys of passed in array. The array values will be used for displaying column headers
+   * $defaultOrder - default order for the result table
   */ 
   // Main Result
   public function createResult (&$form_state, $conf) {
@@ -166,6 +167,7 @@ class ChadoSearch {
       $showPager = $conf->getShowPager();
       $hideNullColumns = $conf->getHideNullColumns();
       $hstoreToColumns = $conf->getHstoreToColumns();
+      $defaultOrder = $conf->getDefaultOrder();
 
       $search_id = $this->search_id;
       
@@ -369,9 +371,14 @@ class ChadoSearch {
         $div .= "</div>";
         
         // Add Table
-        $lsql = "$sql LIMIT $this->number_per_page;";
+        if ($defaultOrder) {
+          $lsql = "$sql ORDER BY $defaultOrder LIMIT $this->number_per_page;";
+          SessionVar::setSessionVar($search_id, 'download-order', $defaultOrder);
+        } else {
+          $lsql = "$sql LIMIT $this->number_per_page;";
+        }
         $result = chado_query($lsql);
-        $table = new Table($this->search_id, $result, 0, $this->number_per_page, $headers, NULL, $autoscroll);
+        $table = new Table($this->search_id, $result, 0, $this->number_per_page, $headers, $defaultOrder, $autoscroll);
         $div .= $table->getSrc();
   
         // Add Pager (and code for switching pages/sorting results)

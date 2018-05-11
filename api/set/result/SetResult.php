@@ -22,6 +22,7 @@ class SetResult {
   private $showPager = TRUE;
   private $hideNullColumns = FALSE;
   private $hstoreToColumns = array();
+  private $defaultOrder = NULL;
   
   /**
    * Setters
@@ -112,6 +113,11 @@ class SetResult {
     return $this;
   }
   
+  public function defaultOrder ($orderby) {
+    $this->defaultOrder = $orderby;
+    return $this;
+  }
+  
   public function execute($form, &$form_state) {
     $search_id = $form['#search_id'];
     $url = $form['#search_url'];
@@ -185,5 +191,9 @@ class SetResult {
   
   public function getHstoreToColumns () {
     return $this->hstoreToColumns;
+  }
+  
+  public function getDefaultOrder () {
+    return $this->defaultOrder;
   }
 }

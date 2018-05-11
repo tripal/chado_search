@@ -187,6 +187,9 @@ class Table extends Source {
       $counter ++;
     }
     $table .= "</table></div>";
+    if ($order) {
+      $table .= "<input id=\"" . $search_id . "_current_order\" type=\"hidden\" value=\"$order\">";
+    }
     return $table;
   }
 }
