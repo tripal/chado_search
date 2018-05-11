@@ -244,6 +244,7 @@ function chado_search_snp_genotype_search_form_submit ($form, &$form_state) {
   ->disableCols($disableCols)
   ->customDownload(array('chado_search_snp_genotype_search_download_polymorphic' => 'Table (Polymorphic)'))
   ->hstoreToColumns('genotypes', $stocks)
+  ->defaultOrder('split_part(location,\':\',1),split_part(split_part(location,\':\',2),\'..\',1)::int')
   ->execute($form, $form_state);
 }
 
