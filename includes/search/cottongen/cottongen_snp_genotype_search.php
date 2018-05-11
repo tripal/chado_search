@@ -253,7 +253,7 @@ function chado_search_snp_genotype_search_form_submit ($form, &$form_state) {
 // Define the result table
 function chado_search_snp_genotype_search_table_definition () {
   $headers = array(
-    'array_id:s' => 'Array ID',
+    'array_name:s' => 'Array ID',
     'feature_name:s:chado_search_link_feature:feature_id' => 'Marker',
     'location:s:chado_search_link_jbrowse:srcfeature_id,location' => 'Location',
     'allele' => 'Allele',
@@ -346,7 +346,7 @@ function chado_search_snp_genotype_search_download_polymorphic ($handle, $result
         foreach ($hstoreToColumns['data'] AS $hsk => $hsv) {
           $display_val = key_exists($hsk, $values) ? $values[$hsk] : '';
           $gtype = $gtype == NULL ? $display_val : $gtype;
-          if ($display_val != '' && $gtype != '' && $gtype != '-' && $gtype != '-|-' && $display_val != $gtype) {
+          if ($display_val != '' && $display_val != '-' && $display_val != '-|-' && $display_val != '- | -' && $gtype != '' && $gtype != '-' && $gtype != '-|-' && $gtype != '- | -' && $display_val != $gtype) {
             $polymorphic = TRUE;
           }
           $line .= '"' . str_replace('"', '""', $display_val) . '"';
