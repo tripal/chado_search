@@ -244,17 +244,6 @@ summary_allowed=1
 summary_title= Genotype Data
 
 [SNP Genotype Search]
-id=snp_genotype_search_old
-path=find/snp_genotype
-file=includes/search/cottongen/cottongen_snp_genotype_search_old.php
-mview_name=chado_search_snp_genotype_search
-mview_file=includes/mview/cottongen/cottongen_snp_genotype_search.mview.php
-mview_callback=chado_search_create_snp_genotype_search_mview
-enabled=1
-summary_allowed=1
-summary_title= Genotype Data
-
-[SNP Genotype Search]
 id=snp_genotype_search
 path=find/snp/genotype
 file=includes/search/cottongen/cottongen_snp_genotype_search.php
