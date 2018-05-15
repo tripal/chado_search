@@ -367,7 +367,7 @@ function chado_search_bind_dynamic_textfields($value, $column, $sql) {
 
 // Bind unique values of a certain column to the DynamicSelect element
 // This function is usually called by an AJAX function to populate the values in a select box
-function chado_search_bind_dynamic_select($value, $column, $sql) {
+function chado_search_bind_dynamic_select($value, $column, $sql, $key_column = NULL) {
   try {
     $data = array(0 => 'Any');
     reset ($value);
@@ -376,7 +376,12 @@ function chado_search_bind_dynamic_select($value, $column, $sql) {
     $result = chado_query($sql, $value);
       while ($obj = $result->fetchObject()) {
         if ($obj->$column) {
-          $data[$obj->$column] = $obj->$column;
+          if ($key_column) {
+            $data[$obj->$key_column] = $obj->$column;
+          }
+          else {
+            $data[$obj->$column] = $obj->$column;
+          }
         }
       }
     }
