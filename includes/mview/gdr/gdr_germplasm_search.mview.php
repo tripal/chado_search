@@ -31,6 +31,10 @@ function chado_search_create_germplasm_search_mview() {
         'type' => 'varchar',
         'length' => 255
       ),
+      'type' => array (
+        'type' => 'varchar',
+        'length' => 1024
+      ),
       'genome' => array(
         'type' => 'text'
       ),
@@ -60,6 +64,7 @@ function chado_search_create_germplasm_search_mview() {
       O.genus || ' ' || O.species AS organism,
       O.genus,
       O.species,
+      (SELECT name FROM cvterm WHERE cvterm_id = S.type_id),
       GENOME.value AS genome,
       DATA.name AS db,
       DATA.accession,

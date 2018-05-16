@@ -65,6 +65,7 @@ function chado_search_germplasm_search_form_submit ($form, &$form_state) {
   $where [1] = str_replace('*', '%', $where[1]);
   $where [2] = Sql::selectFilter('genus', $form_state, 'genus');
   $where [3] = Sql::selectFilter('species', $form_state, 'organism');
+  $where [4] = "type <> 'clone'";
   $groupby = "stock_id:chado_search_germplasm_search";
   Set::result()
     ->sql($sql)
