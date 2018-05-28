@@ -91,7 +91,7 @@ function chado_search_snp_marker_search_form_submit ($form, &$form_state) {
   // Get base sql
   $sql = chado_search_snp_marker_search_base_query();
   // Add conditions
-  $where [] = Sql::textFilterOnMultipleColumns('snp_uniquename', $form_state, array('snp_uniquename', 'array_id', 'dbsnp_id'));
+  $where [] = Sql::textFilterOnMultipleColumns('snp_uniquename', $form_state, array('snp_uniquename', 'array_id', 'dbsnp_id', 'alias'));
   $where [] = Sql::fileOnMultipleColumns('feature_name_file_inline', array('snp_uniquename', 'alias'));
   $where [] = Sql::selectFilter('array_name', $form_state, 'array_name');
   $where [] = Sql::selectFilter('genome', $form_state, 'genome');
