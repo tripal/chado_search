@@ -372,7 +372,7 @@ function chado_search_bind_dynamic_select($value, $column, $sql, $key_column = N
     $data = array(0 => 'Any');
     reset ($value);
     $key = key($value);
-    if (count($value[$key]) > 0) {
+    if (is_scalar($value[$key]) || count($value[$key]) > 0) {
     $result = chado_query($sql, $value);
       while ($obj = $result->fetchObject()) {
         if ($obj->$column) {
