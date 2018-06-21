@@ -47,6 +47,9 @@ function chado_search_create_marker_source_mview() {
         'type' => 'varchar',
         'length' => '510' 
       ),
+      'alias' => array (
+            'type' => 'text'
+        )
     ) 
   );
   $sql = "SELECT
@@ -61,7 +64,8 @@ function chado_search_create_marker_source_mview() {
     STK.stock_id,
     STK.uniquename AS stock,
     O.organism_id,
-    concat(O.genus, ' ', O.species) AS organism
+    concat(O.genus, ' ', O.species) AS organism,
+    ALIAS.value AS alias
     FROM feature F
     LEFT JOIN (SELECT feature_id, value 
            FROM featureprop FP
@@ -100,6 +104,11 @@ function chado_search_create_marker_source_mview() {
            FROM library L
        INNER JOIN library_stock LS ON L.library_id = LS.library_id)
       SLIB ON STK.stock_id = SLIB.stock_id
+    LEFT JOIN
+      (SELECT feature_id, string_agg(value, '; ') AS value FROM featureprop FP
+      WHERE FP.type_id = (SELECT cvterm_id FROM cvterm WHERE name = 'alias' AND cv_id = (SELECT cv_id FROM cv WHERE name = 'MAIN'))
+      GROUP BY feature_id
+    ) ALIAS ON ALIAS.feature_id = F.feature_id
     WHERE type_id = (SELECT cvterm_id 
                  FROM cvterm 
                  WHERE name = 'genetic_marker' 

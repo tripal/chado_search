@@ -27,6 +27,7 @@ function chado_search_marker_source_form ($form) {
       ->column('src_type')
       ->table('chado_search_marker_source')
       ->labelWidth(160)
+      ->cache(TRUE)
       ->newLine()
   );
   $form->addSelectFilter(
@@ -36,6 +37,7 @@ function chado_search_marker_source_form ($form) {
       ->column('stock_uniquename')
       ->table('chado_search_marker_source')
       ->labelWidth(160)
+      ->cache(TRUE)
       ->newLine()
   );
   // Search by Name
@@ -82,8 +84,8 @@ function chado_search_marker_source_form_submit ($form, &$form_state) {
   $where [] = Sql::textFilter('src_uniquename', $form_state, 'src_uniquename');
   $where [] = Sql::selectFilter('src_type', $form_state, 'src_type');
   $where [] = Sql::selectFilter('src_germplasm', $form_state, 'stock_uniquename');
-  $where [] = Sql::textFilterOnMultipleColumns('marker_uniquename', $form_state, array('marker_uniquename'));
-  $where [] = Sql::file('marker_uniquename_file', 'marker_uniquename');
+  $where [] = Sql::textFilterOnMultipleColumns('marker_uniquename', $form_state, array('marker_uniquename', 'alias'));
+  $where [] = Sql::fileOnMultipleColumns('marker_uniquename_file', array('marker_uniquename', 'alias'), FALSE, TRUE);
   $where [] = Sql::selectFilter('marker_type', $form_state, 'marker_type');
   Set::result()
     ->sql($sql)
@@ -99,6 +101,7 @@ function chado_search_marker_source_form_submit ($form, &$form_state) {
 function chado_search_marker_source_table_definition () {
   $headers = array(      
       'marker_uniquename:s:chado_search_link_feature:marker_feature_id' => 'Marker Name',
+      'alias:s' => 'Alias',
       'marker_type:s' => 'Type',
       'src_uniquename:s:chado_search_link_feature:src_feature_id' => 'Source Sequence',
       'src_type:s' => 'Source Molecule Type',

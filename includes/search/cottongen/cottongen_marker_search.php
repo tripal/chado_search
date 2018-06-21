@@ -146,7 +146,7 @@ function chado_search_marker_search_form_submit ($form, &$form_state) {
   $sql = "SELECT * FROM {chado_search_marker_search}";
   // Add conditions
   $where [] = Sql::textFilterOnMultipleColumns('marker_uniquename', $form_state, array('marker_uniquename', 'alias'));
-  $where [] = Sql::file('marker_uniquename_file', 'marker_uniquename');
+  $where [] = Sql::fileOnMultipleColumns('marker_uniquename_file', array('marker_uniquename', 'alias'), FALSE, TRUE);
   $where [] = Sql::selectFilter('marker_type', $form_state, 'marker_type');
   $where [] = Sql::selectFilter('organism', $form_state, 'organism');
   $where [] = Sql::selectFilter('map_genome', $form_state, 'map_genome');
