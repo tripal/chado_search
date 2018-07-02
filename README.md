@@ -22,10 +22,10 @@ https://www.bioinfo.wsu.edu
  
 ## Requirement
  - Drupal 7.x
- - Tripal 7.x-2.x
+ - Tripal 7.x-2.x or Tripal 7.x-3.x
 
 ## Version
-1.0.0
+2.0.0
 
 ## Download
 The Mainlab Chado Search module can be downloaded from GitHub:
