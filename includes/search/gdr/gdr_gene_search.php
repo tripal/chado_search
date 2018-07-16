@@ -35,7 +35,7 @@ function chado_search_gene_search_form ($form) {
       ->column('analysis')
       ->table('chado_search_gene_search')
       ->multiple(TRUE)
-      ->optGroupByPattern(array('Curated Genes' => 'GDR Gene Database|NCBI', 'Predicted Genes' => 'Genome', 'Unigene' => 'Unigene', 'RefTrans' => 'RefTrans'))
+      ->optGroupByPattern(array('Curated Genes' => 'GDR Gene Database|NCBI', 'Predicted Genes' => '[G|g]enome', 'Unigene' => 'Unigene', 'RefTrans' => 'RefTrans'))
       ->cache(TRUE)
       ->labelWidth(163)
       ->size(5)
