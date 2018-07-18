@@ -24,7 +24,7 @@ class DynamicMarkup extends Filter {
     $callback = $this->callback;
     if (function_exists($callback)) {
       $selected_value = is_array($selected) ? array_shift($selected) : $selected;
-      $markup = $callback($selected_value);
+      $markup = $callback($selected_value, $form, $form_state);
       
       $form [$id] = array(
         '#markup' => $markup,

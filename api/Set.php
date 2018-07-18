@@ -7,6 +7,7 @@ use ChadoSearch\set\result\SetResult;
 use ChadoSearch\set\form\SetBetweenFilter;
 use ChadoSearch\set\form\SetCustomOutput;
 use ChadoSearch\set\form\SetDynamicMarkup;
+use ChadoSearch\set\form\SetDynamicFieldset;
 use ChadoSearch\set\form\SetDynamicSelectFilter;
 use ChadoSearch\set\form\SetDynamicTextFields;
 use ChadoSearch\set\form\SetFieldset;
@@ -14,11 +15,13 @@ use ChadoSearch\set\form\SetFile;
 use ChadoSearch\set\form\SetHidden;
 use ChadoSearch\set\form\SetLabeledFilter;
 use ChadoSearch\set\form\SetMarkup;
+use ChadoSearch\set\form\SetCheckboxes;
 use ChadoSearch\set\form\SetReset;
 use ChadoSearch\set\form\SetSelect;
 use ChadoSearch\set\form\SetSelectFilter;
 use ChadoSearch\set\form\SetSelectOptionFilter;
 use ChadoSearch\set\form\SetSelectShortCut;
+use ChadoSearch\set\form\SetButton;
 use ChadoSearch\set\form\SetSubmit;
 use ChadoSearch\set\form\SetTab;
 use ChadoSearch\set\form\SetTextArea;
@@ -73,6 +76,10 @@ class Set {
     return new SetDynamicMarkup();
   }
   
+  static public function dynamicFieldset () {
+    return new SetDynamicFieldset();
+  }
+  
   static public function dynamicSelectFilter () {
     return new SetDynamicSelectFilter();
   }
@@ -101,6 +108,10 @@ class Set {
     return new SetMarkup();
   }
   
+  static public function checkboxes () {
+    return new SetCheckboxes();
+  }
+  
   static public function reset () {
     return new SetReset();
   }
@@ -119,6 +130,10 @@ class Set {
   
   static public function selectShortCut () {
     return new SetSelectShortCut();
+  }
+  
+  static public function button () {
+    return new SetButton();
   }
   
   static public function submit () {

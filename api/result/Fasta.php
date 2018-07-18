@@ -8,12 +8,19 @@ require_once 'Source.php';
 
 class Fasta extends Source {
   
+  public $search_id;
+  public $path;
+  
   public function __construct($search_id, $path) {
-    $js = $this->jsFasta($search_id, $path);
+    $this->search_id = $search_id;
+    $this->path = $path;
+    $js = $this->jsFasta();
     $this->src = $js; 
   }
   
-  private function jsFasta($search_id, $path) {
+  private function jsFasta() {
+    $search_id = $this->search_id;
+    $path = $this->path;
     $progress_path = '';
     if ($path == NULL) {
       $path = "search/$search_id/fasta";
@@ -72,7 +79,10 @@ class Fasta extends Source {
     return $js;
   }
   
-  public static function createFasta ($search_id, $path, $column = 'feature_id') {
+  public function createFasta ($column = 'feature_id') {
+    $search_id = $this->search_id;
+    $path = $this->path;
+    
     ini_set('max_execution_time', 6000);
     $sql = SessionVar::getSessionVar($search_id, 'sql');
     if (!$sql) {

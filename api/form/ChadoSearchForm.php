@@ -12,6 +12,8 @@ use ChadoSearch\form\control\TextArea;
 use ChadoSearch\form\control\Select;
 use ChadoSearch\form\control\Markup;
 use ChadoSearch\form\control\File;
+use ChadoSearch\form\control\Checkboxes;
+use ChadoSearch\form\control\Button;
 use ChadoSearch\form\control\Submit;
 use ChadoSearch\form\control\Reset;
 
@@ -22,6 +24,7 @@ use ChadoSearch\form\combo\TextAreaFilter;
 use ChadoSearch\form\combo\SelectFilter;
 use ChadoSearch\form\combo\SelectOptionFilter;
 use ChadoSearch\form\combo\DynamicMarkup;
+use ChadoSearch\form\combo\DynamicFieldset;
 use ChadoSearch\form\combo\DynamicSelectFilter;
 use ChadoSearch\form\combo\DynamicTextFields;
 use ChadoSearch\form\combo\Fieldset;
@@ -64,6 +67,8 @@ class ChadoSearchForm {
     }
     $e = new Hidden($this->search_name, $conf->getId());
     $e->value = $conf->getValue();
+    $e->default_value = $conf->getDefaultValue();
+    $e->fieldset_id = $conf->getFieldset();
     $e->newline = $conf->getNewLine();
     $e->attach($this->form, $this->form_state);
   }
@@ -77,6 +82,9 @@ class ChadoSearchForm {
     $e->title = $conf->getTitle();
     $e->required = $conf->getRequired();
     $e->size = $conf->getSize();
+    $e->default_value = $conf->getDefaultValue();
+    $e->display = $conf->getDisplay();
+    $e->fieldset_id = $conf->getFieldset();
     $e->newline = $conf->getNewLine();
     $e->attach($this->form, $this->form_state);
   }
@@ -91,6 +99,9 @@ class ChadoSearchForm {
     $e->required = $conf->getRequired();
     $e->cols = $conf->getColumns();
     $e->rows = $conf->getRows();
+    $e->default_value = $conf->getDefaultValue();
+    $e->display = $conf->getDisplay();
+    $e->fieldset_id = $conf->getFieldset();
     $e->newline = $conf->getNewLine();
     $e->attach($this->form, $this->form_state);
   }
@@ -105,6 +116,9 @@ class ChadoSearchForm {
     $e->options = $conf->getOptions();
     $e->multiple = $conf->getMultiple();
     $e->size = $conf->getSize();
+    $e->default_value = $conf->getDefaultValue();
+    $e->display = $conf->getDisplay();
+    $e->fieldset_id = $conf->getFieldset();
     $e->newline = $conf->getNewLine();
     $e->attach($this->form, $this->form_state);
   }
@@ -116,6 +130,8 @@ class ChadoSearchForm {
     }
     $e = new Markup($this->search_name, $conf->getId());
     $e->markup = t($conf->getText());
+    $e->display = $conf->getDisplay();
+    $e->fieldset_id = $conf->getFieldset();
     $e->newline = $conf->getNewLine();
     $e->attach($this->form, $this->form_state);
   }
@@ -131,7 +147,38 @@ class ChadoSearchForm {
     $e->instruction = $conf->getDescription();
     $e->size = $conf->getSize() ? $conf->getSize() : 20;
     $e->label_width = $conf->getLabelWidth();
+    $e->display = $conf->getDisplay();
+    $e->fieldset_id = $conf->getFieldset();
     $e->newline = $conf->getNewLine();
+    $e->attach($this->form, $this->form_state);
+  }
+  
+  // Checkboxes
+  public function addCheckboxes ($conf = NULL) {
+    if ($conf && !Set::check($conf, 'SetCheckboxes')) {
+      return;
+    }
+    $e = new Checkboxes($this->search_name, $conf->getId());
+    $e->title = $conf->getTitle();
+    $e->options = $conf->getOptions();
+    $e->default_value = $conf->getDefaultValue();
+    $e->display = $conf->getDisplay();
+    $e->fieldset_id = $conf->getFieldset();
+    $e->newline = is_object($conf)? $conf->getNewLine() : FALSE;
+    $e->attach($this->form, $this->form_state);
+  }
+  
+  // Button
+  public function addButton ($conf = NULL) {
+    if ($conf && !Set::check($conf, 'SetButton')) {
+      return;
+    }
+    $value = is_object($conf)? $conf->getValue() : 'Apply';
+    $e = new Button($this->search_name, $conf->getId());
+    $e->value =  $value ? $value : 'Apply';
+    $e->display = $conf->getDisplay();
+    $e->fieldset_id = $conf->getFieldset();
+    $e->newline = is_object($conf)? $conf->getNewLine() : FALSE;
     $e->attach($this->form, $this->form_state);
   }
   
@@ -286,6 +333,25 @@ class ChadoSearchForm {
     $f->id = $conf->getId();
     $f->depend_on_id =$conf->getDependOnId();
     $f->callback = $conf->getCallback();
+    $f->newline = $conf->getNewLine();
+    $f->attach($this->form, $this->form_state);
+  }
+  
+  // addDynamicMarkup (A markup whose value was derived from a select element). A $value variable will be passing into your AJAX function
+  public function addDynamicFieldset ($conf) {
+    if (!Set::check($conf, 'SetDynamicFieldset')) {
+      return;
+    }
+    $f = new DynamicFieldset($this);
+    $f->id = $conf->getId();
+    $f->depend_on_id =$conf->getDependOnId();
+    $f->callback = $conf->getCallback();
+    $f->title = $conf->getTitle();
+    $f->description = $conf->getDescription();
+    $f->collapsible = $conf->getCollapsible();
+    $f->collapsed = $conf->getCollapsed();
+    $f->width = $conf->getWidth();
+    $f->display = $conf->getDisplay();
     $f->newline = $conf->getNewLine();
     $f->attach($this->form, $this->form_state);
   }

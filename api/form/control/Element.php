@@ -74,7 +74,10 @@ class Element {
   public $validate;
   public $value;
   
+  // non-Drupal attributes
   public $newline;
+  public $fieldset_id;
+  public $display;
   
   public function __construct($search_name, $id, $type) {
     $this->search_name = $search_name;
@@ -82,9 +85,15 @@ class Element {
     $this->type = $type;
 
     // Generate values for computed fields
+    $display = $this->display ? 'style="display: ' . $this->display : '';
     $this->eid = 'chado_search-id-' . $id;
-    $this->prefix = "<div id=\"chado_search-$search_name-$type-$id\" class=\"chado_search-$search_name-$type chado_search-$type chado_search-widget\">";
+    $this->prefix = "<div id=\"chado_search-$search_name-$type-$id\" class=\"chado_search-$search_name-$type chado_search-$type chado_search-widget\" $display>";
     $this->suffix = '</div>';
+  }
+  
+  // Add this Element to a fieldset instead of the top-level form
+  function fieldset($fieldset_id) {
+    $this->fieldset_id = $fieldset_id;
   }
   
   // Allow the sub-class to override or add new attributes to the form
@@ -264,15 +273,25 @@ class Element {
     if ($this->value !== NULL) {
       $form[$this->id]['#value'] = $this->value;
     }
-    
-    // Default value. Set only if the value exists
-    if (isset($form_state['values'][$this->id])) {
-      $form[$this->id]['#default_value'] = $form_state['values'][$this->id];
+    if ($this->default_value !== NULL) {
+      $form[$this->id]['#default_value'] = $this->default_value;
     }
     
     // Add a newline to the end of the element
     if ($this->newline) {
       $form[$this->id]['#suffix'] .= "<div class=\"chado_search-element-newline\"> </div>";
+    }
+    
+    // Move the element into a fieldset if specified
+    if ($this->fieldset_id) {
+      if (isset($form[$this->fieldset_id])) {    
+        $form[$this->fieldset_id][$this->id] = $form[$this->id];
+        unset($form[$this->id]);
+        $form_state['input'][$this->id] = $this->value ? $this->value : $this->default_value;
+      }
+      else {
+        form_set_error('invalid_fieldset_id', "To add an element to a fieldset, please ensure the fieldset was created before the " . chado_search_get_class($this) . " element.");
+      }
     }
     
     // Warn if ID is not specified

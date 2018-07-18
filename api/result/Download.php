@@ -6,12 +6,22 @@ use ChadoSearch\SessionVar;
 
 class Download extends Source {
   
-  public function __construct($search_id, $path, $show) {
-    $js = $this->jsDownload($search_id, $path, $show);
+  public $search_id;
+  public $path;
+  public $show;
+  
+  public function __construct($search_id, $path, $show = TRUE) {
+    $this->search_id = $search_id;
+    $this->path = $path;
+    $this->show = $show;
+    $js = $this->jsDownload();
     $this->src = $js; 
   }
   
-  private function jsDownload($search_id, $path, $show) {
+  private function jsDownload() {
+    $search_id = $this->search_id;
+    $path = $this->path;
+    $show = $this->show;
     if ($path == NULL) {
       $path = "search/$search_id/download";
     } else {
@@ -71,7 +81,10 @@ class Download extends Source {
   }
   
   // Set up download
-  public static function createDownload ($search_id, $path, $headers) {
+  public function createDownload ($headers) {
+    $search_id = $this->search_id;
+    $path = $this->path;
+    
     // Do not impose a time limit 
     set_time_limit(0);
 

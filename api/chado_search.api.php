@@ -283,26 +283,26 @@ function chado_search_wrapper_form_submit ($form, &$form_state) {
 
 // Create AJAX pager
 function chado_search_ajax_pager($page, $search_id, $url, $num_per_page) {
-  $search = ChadoSearch::init($search_id, $url, $num_per_page);
-  return drupal_json_output(Pager::switchPage($search_id, $page, $num_per_page));
+  $pg = new Pager($search_id, $url);
+  return drupal_json_output($pg->switchPage($page, $num_per_page));
 }
 
 // Create AJAX download
 function chado_search_ajax_download ($search_id, $url, $num_per_page) {
   $func = 'chado_search_' . $search_id . '_download_definition';
   $func_alt = 'chado_search_' . $search_id . '_table_definition';
+  $headers = array();
   if (function_exists($func)) {
     $headers = $func();
   } else if (function_exists($func_alt)) { // Try using the table difinition if download difinition does not exist.
     $tmp = $func_alt();
-    $headers = array();
     foreach ($tmp AS $k => $v) {
       $key = explode(":", $k);
       $headers[$key[0]] = $v;
     }
   }
-  $search = ChadoSearch::init($search_id, $url, $num_per_page);
-  return drupal_json_output(Download::createDownload($search_id, $url, $headers));
+  $dl = new Download($search_id, $url);
+  return drupal_json_output($dl->createDownload($headers));
 }
 
 // Get AJAX download progress
@@ -319,8 +319,8 @@ function chado_search_ajax_download_fasta_feature ($search_id, $url, $num_per_pa
   } else {
     $feauture_id_column = 'feature_id';
   }
-  $search = ChadoSearch::init($search_id, $url, $num_per_page);
-  return drupal_json_output(Fasta::createFasta($search_id, $url, $feauture_id_column));
+  $fdl = new Fasta($search_id, $url);
+  return drupal_json_output($fdl->createFasta($feauture_id_column));
 }
 
 // Provide an API function for updating AJAX form elements

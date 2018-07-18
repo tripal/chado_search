@@ -27,7 +27,7 @@ class DynamicTextFields extends Filter {
     if (function_exists($callback)) {
       $updates = array();
       foreach ($target_ids AS $id) {
-        $value = $callback($selected_value, $id);
+        $value = $callback($selected_value, $id, $form, $form_state);
         $wrapper = "chado_search-$id-wrapper";
         $updates[$id] = array(
           'value' => $value,

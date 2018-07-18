@@ -6,9 +6,21 @@ use ChadoSearch\SessionVar;
 
 class Pager extends Source {
   
-  public function __construct($search_id, $path, $total_pages, $showPager = TRUE) {
-    $js = $this->jsPager ($search_id, $path);
-    $html = $this->htmlPager ($search_id, $total_pages);
+  public $search_id;
+  public $path;
+  public $total_pages;
+  
+  public function __construct($search_id, $path, $total_pages = -1, $showPager = TRUE) {
+    $this->search_id = $search_id;
+    $this->path = $path;
+    $this->total_pages = $total_pages;
+    // only generate html/js code if $total_pages > 0
+    $js = '';
+    $html = '';
+    if ($total_pages > 0) {
+      $js = $this->jsPager ();
+      $html = $this->htmlPager ();
+    }
     if ($showPager) {
       $this->src = $js . $html;
     } else {
@@ -16,7 +28,9 @@ class Pager extends Source {
     }
   }
   
-  private function htmlPager ($search_id, $total_pages) {
+  private function htmlPager () {
+    $search_id = $this->search_id;
+    $total_pages = $this->total_pages;
     $firstLoadPages = 1000;
     $id = '#' . $search_id . "-pager";
     $pager =
@@ -134,7 +148,9 @@ class Pager extends Source {
     return $pager;
   }
   
-  public function jsPager ($search_id, $path) {
+  public function jsPager () {
+    $search_id = $this->search_id;
+    $path = $this->path;
     if ($path == NULL) {
       $path = "search/$search_id/pager/";
     } else {
@@ -191,7 +207,8 @@ class Pager extends Source {
   }
   
   // Switch to the specified page
-  public static function switchPage ($search_id, $page, $num_per_page) {
+  public function switchPage ($page, $num_per_page) {
+    $search_id = $this->search_id;
     $sql =  SessionVar::getSessionVar($search_id, 'sql');
     if (!$sql) {
       return array('update' => "<script>alert('Session expired. Please re-submit the search form.');</script>");
@@ -220,6 +237,7 @@ class Pager extends Source {
     return array('update' => $update);
   }
   
+  // Calculate how many pages are needed
   public static function totalPages ($total_items, $num_per_page) {
     $total_pages = (int) ($total_items / $num_per_page);
     if ($total_items % $num_per_page != 0) {

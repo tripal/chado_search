@@ -22,6 +22,24 @@
 #chado_search-marker_search-markup-genome_label {
 	width: 110px;
 }
+
+#chado_search-filter-biodata_download-data_filters-field label {
+	margin-top:5px;
+	width: 160px;
+	float: left;
+}
+
+#chado_search-filter-biodata_download-data_filters-field input {
+	float: left;
+	width: 250px;
+	margin-left: 10px;
+}
+#chado_search-biodata_download-button-apply_filters {
+	margin-top: 8px;
+}
+#biodata_download-table-download {
+	margin: 0px 20px;
+}
 /*
 #snp_genotype_search-result-table th {
 	white-space: nowrap;

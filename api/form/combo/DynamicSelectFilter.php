@@ -134,7 +134,7 @@ class DynamicSelectFilter extends Filter {
       "</div>";
     // Add Select
     $callback = $this->callback;
-    $opt = $callback($selected);
+    $opt = $callback($selected, $form, $form_state);
     if (!$opt) {
       $opt = array (0 => 'Any');
     }
