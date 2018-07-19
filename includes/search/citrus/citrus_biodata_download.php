@@ -66,20 +66,46 @@ function chado_search_biodata_download_form ($form) {
     $mview = $form_state['values']['datatype'];
     $mv_def = chado_search_biodata_download_get_mview($mview, 'title');
     if ($mv_def) {
+      $filter_settings = chado_search_biodata_download_get_mview($mview, 'filter');
       // Populate filter list
       $button_added = false;
       $col_opts = array();
       foreach($mv_def AS $col => $title) {
-        // Textfield
-        $text_settings = 
-          Set::textField()
-          ->id('csfilter--'  . $mview . '-'  . $col)
-          ->title($title)
-          ->fieldset('data_filters');
-          if (isset($form_state['values']['csfilter--' . $mview . '-' . $col]) && trim($form_state['values']['csfilter--' . $mview . '-' . $col])) {
-            $text_settings->defaultValue(trim($form_state['values']['csfilter--' . $mview . '-' . $col]));
+        // Get filter type
+        if (key_exists($col, $filter_settings)) {
+          $ftype = $filter_settings[$col]['type'];
+          if ($ftype == 'select') {
+            $options = array('0' => 'Any');
+            $opt_table = $filter_settings[$col]['opt_table'];
+            $sql_opt = "SELECT DISTINCT $col FROM $opt_table";
+            $results = chado_query($sql_opt);
+            while ($obj = $results->fetchObject()) {
+              $options [$obj->$col] = $obj->$col;
+            }            
+            $select_settings = 
+              Set::select()
+              ->id('csfilter--'  . $mview . '-'  . $col)
+              ->title($title)
+              ->options($options)
+              ->fieldset('data_filters');
+            if (isset($form_state['values']['csfilter--' . $mview . '-' . $col]) && trim($form_state['values']['csfilter--' . $mview . '-' . $col])) {
+              $select_settings->defaultValue(trim($form_state['values']['csfilter--' . $mview . '-' . $col]));
+            }
+            $form->addSelect($select_settings);
           }
-          $form->addTextfield($text_settings);
+        }
+        else {
+          // Textfield
+          $text_settings = 
+            Set::textField()
+            ->id('csfilter--'  . $mview . '-'  . $col)
+            ->title($title)
+            ->fieldset('data_filters');
+            if (isset($form_state['values']['csfilter--' . $mview . '-' . $col]) && trim($form_state['values']['csfilter--' . $mview . '-' . $col])) {
+              $text_settings->defaultValue(trim($form_state['values']['csfilter--' . $mview . '-' . $col]));
+            }
+            $form->addTextfield($text_settings);
+        }
         if (!$button_added) {
           $form->addButton(
               Set::button()
@@ -242,7 +268,7 @@ function chado_search_biodata_download_get_mview($mview, $setting = NULL) {
     if ($setting && isset($def[$mview][$setting])) {
       return $def[$mview][$setting];
     }
-    else {
+    else if (!$setting) {
       return $def[$mview];
     }
   }

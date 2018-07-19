@@ -87,7 +87,7 @@ function chado_search_nearby_markers_base_query() {
       FROM {featurepos} FP
       INNER JOIN (SELECT featurepos_id, value FROM {featureposprop} FPP WHERE type_id = (SELECT cvterm_id FROM {cvterm} WHERE name = 'start' AND cv_id = (SELECT cv_id FROM {cv} WHERE name = 'MAIN'))) START ON START.featurepos_id = FP.featurepos_id
       INNER JOIN {feature} F ON F.feature_id = FP.feature_id
-      WHERE F.type_id = (SELECT cvterm_id FROM {cvterm} V WHERE name = 'marker_locus' AND cv_id = (SELECT cv_id FROM {cv} WHERE name = 'sequence'))";
+      WHERE F.type_id = (SELECT cvterm_id FROM {cvterm} V WHERE name = 'marker_locus' AND cv_id = (SELECT cv_id FROM {cv} WHERE name = 'MAIN'))";
   return $query;
 }
 

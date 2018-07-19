@@ -28,7 +28,11 @@
 	width: 160px;
 	float: left;
 }
-
+#chado_search-filter-biodata_download-data_filters-field select {
+	float: left;
+	margin-left: 10px;
+	width: auto;
+}
 #chado_search-filter-biodata_download-data_filters-field input {
 	float: left;
 	width: 250px;

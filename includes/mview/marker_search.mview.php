@@ -105,7 +105,7 @@ function chado_search_create_marker_search_mview() {
       FROM feature LOCUS
       INNER JOIN feature_relationship FR ON FR.subject_id = LOCUS.feature_id
       INNER JOIN featurepos FS ON FS.feature_id = LOCUS.feature_id
-      WHERE LOCUS.type_id = (SELECT cvterm_id FROM cvterm WHERE name = 'marker_locus' AND cv_id = (SELECT cv_id FROM cv WHERE name = 'sequence'))
+      WHERE LOCUS.type_id = (SELECT cvterm_id FROM cvterm WHERE name = 'marker_locus' AND cv_id = (SELECT cv_id FROM cv WHERE name = 'MAIN'))
       AND FR.type_id = (SELECT cvterm_id FROM cvterm WHERE name = 'instance_of' AND cv_id = (SELECT cv_id FROM cv WHERE name = 'relationship'))
       ) MAP ON MAP.object_id = MARKER.feature_id
       LEFT JOIN (SELECT FR.object_id, V.name, seq.name AS seq_name, seq.feature_id, V2.name AS seq_type FROM feature seq INNER JOIN feature_relationship FR ON seq.feature_id = FR.subject_id INNER JOIN cvterm V ON cvterm_id = FR.type_id INNER JOIN cvterm V2 on V2.cvterm_id = seq.type_id WHERE FR.type_id = (SELECT cvterm_id FROM cvterm WHERE name = 'sequence_of')) SEQUENCEOF ON SEQUENCEOF.object_id = MARKER.feature_id

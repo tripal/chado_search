@@ -23,7 +23,6 @@ function chado_search_biodata_download_mview_definition () {
         'name' => 'Name',
         'uniquename' => 'Unique Name',
         'organism' => 'Organism',
-        'feature_type' => 'Type',
         'location' => 'Location',
         'analysis' => 'Analysis',
         'blast_value' => 'BLAST',
@@ -47,6 +46,12 @@ function chado_search_biodata_download_mview_definition () {
         'stop' => 'Stop',
         'location' => 'Location',
         'synonym' => 'Synonym'
+      ),
+      'filter' => array(
+        'marker_type' => array(
+          'type' => 'select',
+          'opt_table' => 'chado_search_cache_chado_search_marker_search_marker_type'
+        )
       )
     ),
     'chado_search_qtl_search' => array(
@@ -66,10 +71,16 @@ function chado_search_biodata_download_mview_definition () {
       'title' => array(
         'name' => 'Sequence Name',
         'uniquename' => 'Unique Name',
-        'featyre_type' => 'Type',
+        'feature_type' => 'Type',
         'organism' => 'Organism',
         'analysis_name' => 'Analysis',
         'location' => 'Location'
+      ),
+      'filter' => array(
+        'feature_type' => array(
+          'type' => 'select',
+          'opt_table' => 'chado_search_cache_chado_search_sequence_search_feature_type'
+        )
       )
     ),
     'chado_search_germplasm_search' => array(
